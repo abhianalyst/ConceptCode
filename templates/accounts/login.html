@@ -31,6 +31,13 @@
             <button type="submit">Login</button>
         </form>
 
+        <!-- Add the password reset link here -->
+        <p>
+            <a href="{% url 'accounts:password-reset' %}">
+                Forgot your password?
+            </a>
+        </p>
+
         <p>
             Don't have an account?
             <a href="{% url 'accounts:register' %}">
