@@ -1,8 +1,8 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import redirect, render
 
-from .forms import RegistrationForm
+from .forms import LoginForm, RegistrationForm
 from .models import Profile
 from .services.email_verification import send_verification_email
 
@@ -72,4 +72,41 @@ def verify_email(request, user_id, token):
     return render(
         request,
         "accounts/email_verified.html",
+    )
+
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data["email"].strip().lower()
+            password = form.cleaned_data["password"]
+
+            user = authenticate(
+                request,
+                email=email,
+                password=password,
+            )
+
+            if user is None:
+                form.add_error(
+                    None,
+                    "Invalid email or password.",
+                )
+            elif not user.email_verified:
+                form.add_error(
+                    None,
+                    "Please verify your email address before logging in.",
+                )
+            else:
+                login(request, user)
+
+                return redirect("core:home")
+    else:
+        form = LoginForm()
+
+    return render(
+        request,
+        "accounts/login.html",
+        {"form": form},
     )
