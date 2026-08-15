@@ -11,13 +11,35 @@
     <h1>ConceptCode</h1>
     <p>AI-powered adaptive learning platform.</p>
 
+    {% if user.is_authenticated %}
     <p>
-        <a href="{% url 'accounts:login' %}">Login</a>
+        Logged in as:
+        <strong>{{ user.email }}</strong>
     </p>
 
     <p>
-        <a href="{% url 'accounts:register' %}">Create an account</a>
+        <a href="{% url 'accounts:account' %}">
+            My Account
+        </a>
     </p>
+
+    <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+    {% else %}
+    <p>
+        <a href="{% url 'accounts:login' %}">
+            Login
+        </a>
+    </p>
+
+    <p>
+        <a href="{% url 'accounts:register' %}">
+            Create an account
+        </a>
+    </p>
+    {% endif %}
 </body>
 
 </html>

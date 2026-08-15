@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - ConceptCode</title>
+</head>
+
+<body>
+    <main>
+        <h1>My Account</h1>
+
+        <p>
+            <strong>Name:</strong>
+            {{ user.full_name }}
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            {{ user.email }}
+        </p>
+
+        <p>
+            <strong>Role:</strong>
+            {{ user.get_role_display }}
+        </p>
+
+        <p>
+            <strong>Email verified:</strong>
+            {{ user.email_verified }}
+        </p>
+
+        <p>
+            <a href="{% url 'core:home' %}">
+                Home
+            </a>
+        </p>
+
+        <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </main>
+</body>
+
+</html>

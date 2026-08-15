@@ -1,7 +1,7 @@
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import redirect, render
-
+from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, RegistrationForm
 from .models import Profile
 from .services.email_verification import send_verification_email
@@ -109,4 +109,17 @@ def login_view(request):
         request,
         "accounts/login.html",
         {"form": form},
+    )
+
+def logout_view(request):
+    logout(request)
+
+    return redirect("core:account")
+
+@login_required
+def account(request):
+    return render(
+        request,
+        "accounts/account.html",
+        {"user": request.user},
     )
