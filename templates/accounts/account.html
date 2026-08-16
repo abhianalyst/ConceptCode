@@ -30,10 +30,21 @@
             <strong>Email verified:</strong>
             {{ user.email_verified }}
         </p>
+        {% if user.profile.profile_picture %}
+        <div>
+            <p>Profile picture:</p>
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile picture" width="150">
+        </div>
+        {% endif %}
 
         <p>
             <a href="{% url 'core:home' %}">
                 Home
+            </a>
+        </p>
+        <p>
+            <a href="{% url 'accounts:profile-edit' %}">
+                Edit Profile
             </a>
         </p>
 

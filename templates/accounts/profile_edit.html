@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - ConceptCode</title>
+</head>
+
+<body>
+    <main>
+        <h1>Edit Profile</h1>
+
+        {% if profile.profile_picture %}
+        <div>
+            <p>Current profile picture:</p>
+            <img src="{{ profile.profile_picture.url }}" alt="Current profile picture" width="150">
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <div>
+                {{ form.full_name.label_tag }}
+                {{ form.full_name }}
+                {{ form.full_name.errors }}
+            </div>
+
+            <div>
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+                {{ form.phone_number.errors }}
+            </div>
+
+            <div>
+                {{ form.profile_picture.label_tag }}
+                {{ form.profile_picture }}
+                {{ form.profile_picture.errors }}
+            </div>
+
+            <p>
+                JPEG or PNG only. Maximum size: 5 MB.
+            </p>
+
+            <button type="submit">
+                Save Profile
+            </button>
+        </form>
+
+        <p>
+            <a href="{% url 'accounts:account' %}">
+                Cancel
+            </a>
+        </p>
+    </main>
+</body>
+
+</html>

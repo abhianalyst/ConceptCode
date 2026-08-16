@@ -1,8 +1,8 @@
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, ProfileForm, RegistrationForm
 from .models import Profile
 from .services.email_verification import send_verification_email
 
@@ -122,4 +122,47 @@ def account(request):
         request,
         "accounts/account.html",
         {"user": request.user},
+    )
+@login_required
+def profile_edit(request):
+    profile = get_object_or_404(
+        Profile,
+        user=request.user,
+    )
+
+    if request.method == "POST":
+        form = ProfileForm(
+            request.POST,
+            request.FILES,
+            user=request.user,
+            profile=profile,
+        )
+
+        if form.is_valid():
+            request.user.full_name = form.cleaned_data["full_name"]
+            request.user.save(update_fields=["full_name"])
+
+            profile.phone_number = form.cleaned_data["phone_number"]
+
+            profile_picture = form.cleaned_data.get("profile_picture")
+
+            if profile_picture:
+                profile.profile_picture = profile_picture
+
+            profile.save()
+
+            return redirect("accounts:account")
+    else:
+        form = ProfileForm(
+            user=request.user,
+            profile=profile,
+        )
+
+    return render(
+        request,
+        "accounts/profile_edit.html",
+        {
+            "form": form,
+            "profile": profile,
+        },
     )
