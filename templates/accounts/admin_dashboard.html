@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Dashboard - ConceptCode</title>
+</head>
+
+<body>
+    <main>
+        <h1>Administrator Dashboard</h1>
+
+        <p>
+            Welcome, {{ request.user.full_name }}.
+        </p>
+
+        <section>
+            <h2>Platform Overview</h2>
+
+            <div>
+                <strong>Total Users</strong>
+                <p>{{ total_users }}</p>
+            </div>
+
+            <div>
+                <strong>Students</strong>
+                <p>{{ total_students }}</p>
+            </div>
+
+            <div>
+                <strong>Administrators</strong>
+                <p>{{ total_admins }}</p>
+            </div>
+
+            <div>
+                <strong>Active Users</strong>
+                <p>{{ active_users }}</p>
+            </div>
+        </section>
+
+        <nav>
+            <h2>Administration</h2>
+
+            <ul>
+                <li>
+                    <a href="/admin/">
+                        Django Admin
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'accounts:account' %}">
+                        My Account
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </main>
+</body>
+
+</html>

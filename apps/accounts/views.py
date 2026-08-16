@@ -6,7 +6,7 @@ from .forms import LoginForm, ProfileForm, RegistrationForm
 from .models import Profile
 from .services.email_verification import send_verification_email
 from .permissions import admin_required
-
+from django.db.models import Count
 
 User = get_user_model()
 
@@ -169,8 +169,25 @@ def profile_edit(request):
     )
 
 @admin_required
-def admin_test(request):
+def admin_dashboard(request):
+    total_users = User.objects.count()
+    total_students = User.objects.filter(
+        role=User.Role.STUDENT
+    ).count()
+    total_admins = User.objects.filter(
+        role=User.Role.ADMIN
+    ).count()
+    active_users = User.objects.filter(
+        is_active=True
+    ).count()
+
     return render(
         request,
-        "accounts/admin_test.html",
+        "accounts/admin_dashboard.html",
+        {
+            "total_users": total_users,
+            "total_students": total_students,
+            "total_admins": total_admins,
+            "active_users": active_users,
+        },
     )

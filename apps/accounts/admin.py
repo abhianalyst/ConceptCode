@@ -26,6 +26,10 @@ class UserAdmin(admin.ModelAdmin):
         "full_name",
     )
 
+    ordering = (
+        "email",
+    )
+
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -38,4 +42,8 @@ class ProfileAdmin(admin.ModelAdmin):
         "user__email",
         "user__full_name",
         "phone_number",
+    )
+
+    ordering = (
+        "user__email",
     )
