@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, ProfileForm, RegistrationForm
 from .models import Profile
 from .services.email_verification import send_verification_email
+from .permissions import admin_required
 
 
 User = get_user_model()
@@ -114,7 +115,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
 
-    return redirect("core:account")
+    return redirect("accounts:login")
 
 @login_required
 def account(request):
@@ -165,4 +166,11 @@ def profile_edit(request):
             "form": form,
             "profile": profile,
         },
+    )
+
+@admin_required
+def admin_test(request):
+    return render(
+        request,
+        "accounts/admin_test.html",
     )
