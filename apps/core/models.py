@@ -37,6 +37,10 @@ class Chapter(models.Model):
         related_name="chapters",
     )
 
+    unit_number = models.PositiveIntegerField(
+        default=0,
+    )
+
     name = models.CharField(
         max_length=150,
     )
@@ -58,7 +62,7 @@ class Chapter(models.Model):
     )
 
     class Meta:
-        ordering = ("subject", "name")
+        ordering = ("subject", "unit_number", "name")
         constraints = [
             models.UniqueConstraint(
                 fields=("subject", "name"),

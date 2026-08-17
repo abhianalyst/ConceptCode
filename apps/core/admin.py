@@ -71,6 +71,7 @@ class TopicAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
+        "unit_number",
         "name",
         "description",
         "chapter__name",
@@ -78,6 +79,7 @@ class TopicAdmin(admin.ModelAdmin):
     )
 
     ordering = (
+        "chapter__subject",
         "chapter",
         "name",
     )
