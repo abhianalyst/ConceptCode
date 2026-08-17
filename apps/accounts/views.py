@@ -191,3 +191,55 @@ def admin_dashboard(request):
             "active_users": active_users,
         },
     )
+
+@admin_required
+def admin_users(request):
+    users = User.objects.all().order_by("email")
+
+    search_query = request.GET.get("q", "").strip()
+    role_filter = request.GET.get("role", "").strip()
+    status_filter = request.GET.get("status", "").strip()
+
+    if search_query:
+        users = users.filter(
+            email__icontains=search_query
+        ) | users.filter(
+            full_name__icontains=search_query
+        )
+
+    if role_filter in {
+        User.Role.STUDENT,
+        User.Role.ADMIN,
+    }:
+        users = users.filter(role=role_filter)
+
+    if status_filter == "active":
+        users = users.filter(is_active=True)
+    elif status_filter == "inactive":
+        users = users.filter(is_active=False)
+
+    return render(
+        request,
+        "accounts/admin_users.html",
+        {
+            "users": users,
+            "search_query": search_query,
+            "role_filter": role_filter,
+            "status_filter": status_filter,
+        },
+    )
+
+@admin_required
+def toggle_user_active(request, user_id):
+    if request.method != "POST":
+        return redirect("accounts:admin-users")
+
+    user = get_object_or_404(User, pk=user_id)
+
+    if user == request.user:
+        return redirect("accounts:admin-users")
+
+    user.is_active = not user.is_active
+    user.save(update_fields=["is_active"])
+
+    return redirect("accounts:admin-users")

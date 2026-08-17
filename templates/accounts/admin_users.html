@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - ConceptCode</title>
+</head>
+
+<body>
+    <main>
+        <h1>User Management</h1>
+
+        <p>
+            <a href="{% url 'accounts:admin-dashboard' %}">
+                Back to Dashboard
+            </a>
+        </p>
+
+        <form method="get">
+            <div>
+                <label for="q">Search</label>
+                <input type="search" id="q" name="q" value="{{ search_query }}" placeholder="Email or name">
+            </div>
+
+            <div>
+                <label for="role">Role</label>
+                <select id="role" name="role">
+                    <option value="">All roles</option>
+
+                    <option value="student" {% if role_filter == "student" %}selected{% endif %}>
+                        Student
+                    </option>
+
+                    <option value="admin" {% if role_filter == "admin" %}selected{% endif %}>
+                        Administrator
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="">All statuses</option>
+
+                    <option value="active" {% if status_filter == "active" %}selected{% endif %}>
+                        Active
+                    </option>
+
+                    <option value="inactive" {% if status_filter == "inactive" %}selected{% endif %}>
+                        Inactive
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit">Apply filters</button>
+        </form>
+
+        <section>
+            <h2>Users</h2>
+
+            {% if users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Role</th>
+                        <th>Email Verified</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.full_name }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                        <td>
+                            {% if user.email_verified %}
+                            Verified
+                            {% else %}
+                            Not verified
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_active %}
+                            Active
+                            {% else %}
+                            Inactive
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user == request.user %}
+                                <span>Current administrator</span>
+                            {% else %}
+                                <form
+                                    method="post"
+                                    action="{% url 'accounts:admin-toggle-user-active' user.id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    {% if user.is_active %}
+                                        <button type="submit">
+                                            Deactivate
+                                        </button>
+                                    {% else %}
+                                        <button type="submit">
+                                            Activate
+                                        </button>
+                                    {% endif %}
+                                </form>
+                                    {% endif %}
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No users found.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+
+</html>

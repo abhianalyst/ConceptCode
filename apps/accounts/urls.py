@@ -14,6 +14,16 @@ urlpatterns = [
     path("profile/edit/", views.profile_edit, name="profile-edit"),
     path("admin/", views.admin_dashboard,name="admin-dashboard"),
     path(
+    "admin/users/",
+    views.admin_users,
+    name="admin-users",
+    ),
+    path(
+    "admin/users/<int:user_id>/toggle-active/",
+    views.toggle_user_active,
+    name="admin-toggle-user-active",
+    ),
+    path(
         "verify-email/<int:user_id>/<str:token>/",
         views.verify_email,
         name="verify-email",
