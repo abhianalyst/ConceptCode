@@ -29,6 +29,7 @@ class SubjectAdmin(admin.ModelAdmin):
 @admin.register(Chapter)
 class ChapterAdmin(admin.ModelAdmin):
     list_display = (
+        "unit_number",
         "name",
         "subject",
         "is_active",
@@ -49,6 +50,7 @@ class ChapterAdmin(admin.ModelAdmin):
 
     ordering = (
         "subject",
+        "unit_number",
         "name",
     )
 
@@ -71,7 +73,6 @@ class TopicAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        "unit_number",
         "name",
         "description",
         "chapter__name",
@@ -80,7 +81,8 @@ class TopicAdmin(admin.ModelAdmin):
 
     ordering = (
         "chapter__subject",
-        "chapter",
+        "chapter__unit_number",
+        "chapter__name",
         "name",
     )
 
