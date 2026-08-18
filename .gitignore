@@ -14,4 +14,3 @@ media/
 
 # Question Generator source PDFs
 question_generator/data/books/**/*.pdf
-
