@@ -1,16 +1,175 @@
-# Environment / secrets
-.env
-.env.*
+# ============================================================
+# ConceptCode - Python / Django / ML Project
+# ============================================================
 
+# ------------------------------------------------------------
 # Python
+# ------------------------------------------------------------
 __pycache__/
 *.py[cod]
+*$py.class
 *.pyo
 *.pyd
 
-# Django
-db.sqlite3
-media/
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
 
-# Question Generator source PDFs
-question_generator/data/books/**/*.pdf
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Coverage / testing
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# ------------------------------------------------------------
+# Django
+# ------------------------------------------------------------
+
+# Local Django database
+db.sqlite3
+db.sqlite3-*
+*.sqlite3
+
+# Django generated files
+media/
+staticfiles/
+
+# Logs
+*.log
+
+# Local environment/settings files
+.env
+.env.*
+!.env.example
+
+# ------------------------------------------------------------
+# Secrets / credentials
+# ------------------------------------------------------------
+
+# API keys / credentials
+*.pem
+*.key
+*.secret
+secrets/
+credentials/
+
+# ------------------------------------------------------------
+# ML / AI generated artifacts
+# ------------------------------------------------------------
+
+# Model weights and checkpoints
+*.pt
+*.pth
+*.bin
+*.ckpt
+*.safetensors
+*.onnx
+
+# Hugging Face / Transformers caches
+.cache/
+huggingface_cache/
+transformers_cache/
+
+# ML experiment/output directories
+runs/
+wandb/
+mlruns/
+checkpoints/
+
+# ------------------------------------------------------------
+# Question Generator generated data
+# ------------------------------------------------------------
+
+# Generated question/output files
+question_generator/output/
+question_generator/outputs/
+question_generator/generated/
+question_generator/tmp/
+
+# Extracted/intermediate text
+question_generator/extracted/
+question_generator/temp/
+
+# ------------------------------------------------------------
+# Books / source PDFs
+# ------------------------------------------------------------
+
+# Do NOT push downloaded textbooks / PDFs to GitHub
+*.pdf
+
+# If you later have a specific folder for source books,
+# this also protects that folder:
+question_generator/data/books/
+
+# ------------------------------------------------------------
+# Generated JSON / datasets
+# ------------------------------------------------------------
+
+# Uncomment these ONLY if these files are generated locally
+# and should not be version-controlled.
+#
+# *.json
+# data/generated/
+# datasets/
+# exports/
+
+# ------------------------------------------------------------
+# IDE / Editors
+# ------------------------------------------------------------
+
+# Visual Studio Code
+.vscode/
+
+# PyCharm / IntelliJ
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ------------------------------------------------------------
+# Operating System
+# ------------------------------------------------------------
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# ------------------------------------------------------------
+# Temporary files
+# ------------------------------------------------------------
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+
+# ------------------------------------------------------------
+# Local development files
+# ------------------------------------------------------------
+*.local
+*.local.*
