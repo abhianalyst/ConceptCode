@@ -189,12 +189,30 @@ def extract_chapter_boundaries(class_name):
 
             printed_page = None
 
-            # Search the following few lines for the page number.
-            for next_line in lines[index + 1:index + 4]:
+            # Search forward until the next standalone page number.
+            # This handles wrapped chapter titles such as:
+            #
+            # Chapter 9
+            # : Strategies for Enhancement in
+            # 165
+            # Food Production
+            #
+            # and normal entries such as:
+            #
+            # Chapter 11
+            # : Biotechnology : Principles and Processes
+            # 193
+
+            for next_line in lines[index + 1:]:
                 next_line = next_line.strip()
 
                 if next_line.isdigit():
                     printed_page = int(next_line)
+                    break
+
+                # Stop if another chapter starts before
+                # finding a page number.
+                if chapter_line_pattern.search(next_line):
                     break
 
             if printed_page is None:
@@ -259,6 +277,9 @@ def extract_chapter_boundaries(class_name):
 
     for page in pages:
         text = page.get("text", "").upper()
+
+        if "CONTENTS" in text:
+            continue
 
         if (
             title in text
