@@ -1,17 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification - ConceptCode</title>
-</head>
-<body>
-    <main>
-        <h1>Email verification failed</h1>
+{% extends "base.html" %}
 
-        <p>{{ message }}</p>
+{% block title %}Email Verification | ConceptCode{% endblock %}
 
-        <a href="{% url 'accounts:register' %}">Create an account</a>
-    </main>
-</body>
-</html>
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <div class="card cc-card shadow-sm">
+                    <div class="card-body p-4 p-md-5 text-center">
+
+                        <h1 class="h3 mb-3">
+                            Email verification failed
+                        </h1>
+
+                        <div
+                            class="alert alert-danger"
+                            role="alert"
+                        >
+                            {{ message }}
+                        </div>
+
+                        <a
+                            href="{% url 'accounts:register' %}"
+                            class="btn cc-primary"
+                        >
+                            Create an account
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

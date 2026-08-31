@@ -1,45 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - ConceptCode</title>
-</head>
-<body>
-    <main>
-        <h1>Create your ConceptCode account</h1>
+{% extends "base.html" %}
 
-        <form method="post">
-            {% csrf_token %}
+{% block title %}Create Account | ConceptCode{% endblock %}
 
-            {{ form.non_field_errors }}
+{% block content %}
 
-            <div>
-                {{ form.full_name.label_tag }}
-                {{ form.full_name }}
-                {{ form.full_name.errors }}
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+
+                <div class="card cc-card shadow-sm">
+                    <div class="card-body p-4">
+
+                        <h1 class="h3 mb-4">
+                            Create your ConceptCode account
+                        </h1>
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                {{ form.full_name.label_tag }}
+                                {{ form.full_name }}
+
+                                {% if form.full_name.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.full_name.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+
+                                {% if form.email.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.email.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.password1.label_tag }}
+                                {{ form.password1 }}
+
+                                {% if form.password1.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.password1.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.password2.label_tag }}
+                                {{ form.password2 }}
+
+                                {% if form.password2.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.password2.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="btn cc-primary w-100"
+                            >
+                                Create Account
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+
             </div>
+        </div>
 
-            <div>
-                {{ form.email.label_tag }}
-                {{ form.email }}
-                {{ form.email.errors }}
-            </div>
+    </div>
+</section>
 
-            <div>
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
-                {{ form.password1.errors }}
-            </div>
-
-            <div>
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
-                {{ form.password2.errors }}
-            </div>
-
-            <button type="submit">Create Account</button>
-        </form>
-    </main>
-</body>
-</html>
+{% endblock %}

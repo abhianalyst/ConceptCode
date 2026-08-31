@@ -1,0 +1,53 @@
+[
+  {
+    "question": "What is a uniform circular motion?",
+    "options": [
+      "When an object follows a circular path at a constant speed, the motion of the object is called uniform circular motion",
+      "The time taken by an object to make one revolution is known as its time period T",
+      "the number of revolution made in one second is called its frequency ν (=1/T)",
+      "An object that is in flight after being thrown or projected is called a projectile"
+    ],
+    "correct_answer": "When an object follows a circular path at a constant speed, the motion of the object is called uniform circular motion",
+    "explanation": "When an object follows a circular path at a constant speed, the motion of the object is called uniform circular motion",
+    "difficulty": "Easy",
+    "subject": "Physics",
+    "chapter": "Kinematics",
+    "topic": "Uniform circular motion",
+    "source": "question_generator\\data\\books\\physics\\NCERT_CLASS_11_PHYSICS_1.pdf",
+    "year_tag": null
+  },
+  {
+    "question": "What is a time period T?",
+    "options": [
+      "The time taken by an object to make one revolution is known as its time period T",
+      "When an object follows a circular path at a constant speed, the motion of the object is called uniform circular motion",
+      "the number of revolution made in one second is called its frequency ν (=1/T)",
+      "An object that is in flight after being thrown or projected is called a projectile"
+    ],
+    "correct_answer": "The time taken by an object to make one revolution is known as its time period T",
+    "explanation": "The time taken by an object to make one revolution is known as its time period T",
+    "difficulty": "Easy",
+    "subject": "Physics",
+    "chapter": "Kinematics",
+    "topic": "Uniform circular motion",
+    "source": "question_generator\\data\\books\\physics\\NCERT_CLASS_11_PHYSICS_1.pdf",
+    "year_tag": null
+  },
+  {
+    "question": "What is a frequency ν (=1/T)?",
+    "options": [
+      "the number of revolution made in one second is called its frequency ν (=1/T)",
+      "When an object follows a circular path at a constant speed, the motion of the object is called uniform circular motion",
+      "The time taken by an object to make one revolution is known as its time period T",
+      "An object that is in flight after being thrown or projected is called a projectile"
+    ],
+    "correct_answer": "the number of revolution made in one second is called its frequency ν (=1/T)",
+    "explanation": "the number of revolution made in one second is called its frequency ν (=1/T)",
+    "difficulty": "Easy",
+    "subject": "Physics",
+    "chapter": "Kinematics",
+    "topic": "Uniform circular motion",
+    "source": "question_generator\\data\\books\\physics\\NCERT_CLASS_11_PHYSICS_1.pdf",
+    "year_tag": null
+  }
+]

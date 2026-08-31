@@ -1,24 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email - ConceptCode</title>
-</head>
-<body>
-    <main>
-        <h1>Check your email</h1>
+{% extends "base.html" %}
 
-        <p>
-            Your ConceptCode account has been created.
-        </p>
+{% block title %}Verify Your Email | ConceptCode{% endblock %}
 
-        <p>
-            We sent a verification link to your email address.
-            Please verify your email before continuing.
-        </p>
+{% block content %}
 
-        <a href="{% url 'core:home' %}">Back to ConceptCode</a>
-    </main>
-</body>
-</html>
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <div class="card cc-card shadow-sm text-center">
+                    <div class="card-body p-4 p-md-5">
+
+                        <h1 class="h3 mb-3">
+                            Check your email
+                        </h1>
+
+                        <p class="mb-2">
+                            Your ConceptCode account has been created.
+                        </p>
+
+                        <div class="alert alert-info" role="alert">
+                            We sent a verification link to your email
+                            address. Please verify your email before
+                            continuing.
+                        </div>
+
+                        <a
+                            href="{% url 'core:home' %}"
+                            class="btn cc-primary"
+                        >
+                            Back to ConceptCode
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

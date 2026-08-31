@@ -34,6 +34,7 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = (
+        'id',
         "user",
         "phone_number",
     )

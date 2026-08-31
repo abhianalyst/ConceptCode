@@ -1,0 +1,42 @@
+{
+  "document": {
+    "filename": "tmp_pipeline.pdf",
+    "title": "",
+    "page_count": 1
+  },
+  "pages": [
+    {
+      "page_number": 1,
+      "text": "Chapter 1\nKinematics\nMotion describes a change in position with time.",
+      "blocks": [
+        {
+          "text": "Chapter 1",
+          "bbox": [
+            72.0,
+            60.17499923706055,
+            120.30098724365234,
+            75.28900146484375
+          ]
+        },
+        {
+          "text": "Kinematics",
+          "bbox": [
+            72.0,
+            98.17500305175781,
+            125.78999328613281,
+            113.28900146484375
+          ]
+        },
+        {
+          "text": "Motion describes a change in position with time.",
+          "bbox": [
+            72.0,
+            138.1750030517578,
+            305.5409851074219,
+            153.28900146484375
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,58 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - ConceptCode</title>
-</head>
+{% block title %}My Account | ConceptCode{% endblock %}
 
-<body>
-    <main>
-        <h1>My Account</h1>
+{% block content %}
 
-        <p>
-            <strong>Name:</strong>
-            {{ user.full_name }}
-        </p>
+<section class="py-5">
+    <div class="container">
 
-        <p>
-            <strong>Email:</strong>
-            {{ user.email }}
-        </p>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
 
-        <p>
-            <strong>Role:</strong>
-            {{ user.get_role_display }}
-        </p>
+                <div class="card cc-card shadow-sm">
+                    <div class="card-body p-4">
 
-        <p>
-            <strong>Email verified:</strong>
-            {{ user.email_verified }}
-        </p>
-        {% if user.profile.profile_picture %}
-        <div>
-            <p>Profile picture:</p>
-            <img src="{{ user.profile.profile_picture.url }}" alt="Profile picture" width="150">
+                        <h1 class="h3 mb-4">
+                            My Account
+                        </h1>
+
+                        {% if user.profile.profile_picture %}
+                            <div class="text-center mb-4">
+                                <img
+                                    src="{{ user.profile.profile_picture.url }}"
+                                    alt="Profile picture"
+                                    class="rounded-circle cc-profile-image"
+                                >
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <div class="text-muted small">
+                                Name
+                            </div>
+                            <div class="fw-semibold">
+                                {{ user.full_name }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="text-muted small">
+                                Email
+                            </div>
+                            <div class="fw-semibold">
+                                {{ user.email }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="text-muted small">
+                                Role
+                            </div>
+                            <div class="fw-semibold">
+                                {{ user.get_role_display }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="text-muted small">
+                                Email verified
+                            </div>
+
+                            {% if user.email_verified %}
+                                <span class="badge text-bg-success">
+                                    Verified
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-warning">
+                                    Not verified
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <a
+                                href="{% url 'core:home' %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Home
+                            </a>
+
+                            <a
+                                href="{% url 'accounts:profile-edit' %}"
+                                class="btn cc-primary"
+                            >
+                                Edit Profile
+                            </a>
+
+                            <form
+                                method="post"
+                                action="{% url 'accounts:logout' %}"
+                                class="d-inline"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-outline-danger"
+                                >
+                                    Logout
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
         </div>
-        {% endif %}
 
-        <p>
-            <a href="{% url 'core:home' %}">
-                Home
-            </a>
-        </p>
-        <p>
-            <a href="{% url 'accounts:profile-edit' %}">
-                Edit Profile
-            </a>
-        </p>
+    </div>
+</section>
 
-        <form method="post" action="{% url 'accounts:logout' %}">
-            {% csrf_token %}
-            <button type="submit">Logout</button>
-        </form>
-    </main>
-</body>
-
-</html>
+{% endblock %}

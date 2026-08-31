@@ -15,6 +15,29 @@ class RegistrationForm(UserCreationForm):
             "full_name",
         )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["email"].widget.attrs.update({
+            "class": "form-control",
+            "autocomplete": "email",
+        })
+
+        self.fields["full_name"].widget.attrs.update({
+            "class": "form-control",
+            "autocomplete": "name",
+        })
+
+        self.fields["password1"].widget.attrs.update({
+            "class": "form-control",
+            "autocomplete": "new-password",
+        })
+
+        self.fields["password2"].widget.attrs.update({
+            "class": "form-control",
+            "autocomplete": "new-password",
+        })
+
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
 
@@ -29,11 +52,22 @@ class RegistrationForm(UserCreationForm):
 class LoginForm(forms.Form):
     email = forms.EmailField(
         required=True,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "email",
+            }
+        ),
     )
 
     password = forms.CharField(
         required=True,
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "current-password",
+            }
+        ),
     )
 
 
@@ -41,15 +75,33 @@ class ProfileForm(forms.Form):
     full_name = forms.CharField(
         max_length=150,
         required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "name",
+            },
+        ),
     )
 
     phone_number = forms.CharField(
         max_length=20,
         required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "autocomplete": "tel",
+            },
+        ),
     )
 
     profile_picture = forms.ImageField(
         required=False,
+        widget=forms.ClearableFileInput(
+            attrs={
+                "class": "form-control",
+                "accept": "image/jpeg,image/png",
+            },
+        ),
     )
 
     def __init__(self, *args, user=None, profile=None, **kwargs):
@@ -57,6 +109,21 @@ class ProfileForm(forms.Form):
 
         self.user = user
         self.profile = profile
+
+        self.fields["full_name"].widget.attrs.update({
+            "class": "form-control",
+            "autocomplete": "name",
+        })
+
+        self.fields["phone_number"].widget.attrs.update({
+            "class": "form-control",
+            "autocomplete": "tel",
+        })
+
+        self.fields["profile_picture"].widget.attrs.update({
+            "class": "form-control",
+            "accept": "image/jpeg,image/png",
+        })
 
         if user is not None:
             self.fields["full_name"].initial = user.full_name

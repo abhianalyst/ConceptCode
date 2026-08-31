@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% block title %}Practice | ConceptCode{% endblock %}
+
+{% block content %}
+
+<section class="py-4 py-md-5">
+    <div class="container">
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+
+            <div>
+                <p class="text-muted mb-1">
+                    Practice Session
+                </p>
+
+                <h1 class="h3 mb-1">
+                    {{ session.topic.name }}
+                </h1>
+
+                <p class="text-muted small mb-0">
+                    {{ session.topic.chapter.subject.name }}
+                    /
+                    {{ session.topic.chapter.name }}
+                </p>
+            </div>
+
+            <span
+                id="session-status"
+                class="badge text-bg-dark"
+            >
+                {{ session.status|title }}
+            </span>
+
+        </div>
+
+        {% if question %}
+
+            <div id="practice-card" class="card cc-card shadow-sm">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <span
+                            id="question-difficulty"
+                            class="badge text-bg-secondary"
+                        >
+                            {{ question.get_difficulty_display }}
+                        </span>
+
+                        <span
+                            id="question-number"
+                            class="text-muted small"
+                        >
+                            Question {{ question.id }}
+                        </span>
+
+                    </div>
+
+                    <h2
+                        id="question-text"
+                        class="h4 mb-4"
+                    >
+                        {{ question.question }}
+                    </h2>
+
+                    <form
+                        id="answer-form"
+                        method="post"
+                        action="{% url 'practice:submit-answer' session.id %}"
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="question_id"
+                            id="question-id"
+                            value="{{ question.id }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="time_taken_seconds"
+                            id="time-taken-seconds"
+                            value="0"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="selected_answer"
+                            id="selected-answer"
+                            value=""
+                        >
+
+                        <div
+                            id="answer-options"
+                            class="d-grid gap-3"
+                        >
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-dark text-start p-3 answer-option"
+                                data-answer="{{ question.option_a }}"
+                            >
+                                <strong class="answer-label">A.</strong>
+                                <span class="answer-text">
+                                    {{ question.option_a }}
+                                </span>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-dark text-start p-3 answer-option"
+                                data-answer="{{ question.option_b }}"
+                            >
+                                <strong class="answer-label">B.</strong>
+                                <span class="answer-text">
+                                    {{ question.option_b }}
+                                </span>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-dark text-start p-3 answer-option"
+                                data-answer="{{ question.option_c }}"
+                            >
+                                <strong class="answer-label">C.</strong>
+                                <span class="answer-text">
+                                    {{ question.option_c }}
+                                </span>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-dark text-start p-3 answer-option"
+                                data-answer="{{ question.option_d }}"
+                            >
+                                <strong class="answer-label">D.</strong>
+                                <span class="answer-text">
+                                    {{ question.option_d }}
+                                </span>
+                            </button>
+
+                        </div>
+
+                        <div class="mt-4">
+
+                            <button
+                                type="submit"
+                                id="submit-answer"
+                                class="btn cc-primary"
+                                disabled
+                            >
+                                Submit Answer
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <div
+                        id="answer-result"
+                        class="mt-4 d-none"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div
+                class="alert alert-warning"
+                role="alert"
+            >
+                No active question is available for this practice topic.
+            </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+    let answerOptions =
+        document.querySelectorAll(".answer-option");
+
+    let selectedAnswerInput =
+        document.getElementById("selected-answer");
+
+    let submitButton =
+        document.getElementById("submit-answer");
+
+    let answerForm =
+        document.getElementById("answer-form");
+
+    let timeInput =
+        document.getElementById("time-taken-seconds");
+
+    let resultContainer =
+        document.getElementById("answer-result");
+
+    let startedAt = Date.now();
+
+
+    function bindQuestionEvents() {
+
+        answerOptions =
+            document.querySelectorAll(".answer-option");
+
+        selectedAnswerInput =
+            document.getElementById("selected-answer");
+
+        submitButton =
+            document.getElementById("submit-answer");
+
+        answerForm =
+            document.getElementById("answer-form");
+
+        timeInput =
+            document.getElementById("time-taken-seconds");
+
+        resultContainer =
+            document.getElementById("answer-result");
+
+        startedAt = Date.now();
+
+        answerOptions.forEach(function (option) {
+
+            option.addEventListener("click", function () {
+
+                answerOptions.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                option.classList.add("active");
+
+                selectedAnswerInput.value =
+                    option.dataset.answer;
+
+                submitButton.disabled = false;
+            });
+
+        });
+
+        answerForm.addEventListener(
+            "submit",
+            submitAnswer
+        );
+    }
+
+
+    async function submitAnswer(event) {
+
+        event.preventDefault();
+
+        const elapsedSeconds = Math.floor(
+            (Date.now() - startedAt) / 1000
+        );
+
+        timeInput.value = elapsedSeconds;
+
+        submitButton.disabled = true;
+
+        const formData =
+            new FormData(answerForm);
+
+        try {
+
+            const response = await fetch(
+                answerForm.action,
+                {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+
+                resultContainer.classList.remove("d-none");
+
+                resultContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${data.error || "Unable to submit answer."}
+                    </div>
+                `;
+
+                submitButton.disabled = false;
+
+                return;
+            }
+
+            resultContainer.classList.remove("d-none");
+
+            const resultClass =
+                data.is_correct
+                    ? "alert-success"
+                    : "alert-danger";
+
+            resultContainer.innerHTML = `
+                <div class="${resultClass}">
+                    <h3 class="h5">
+                        ${data.is_correct
+                            ? "Correct!"
+                            : "Incorrect"}
+                    </h3>
+
+                    <p class="mb-2">
+                        <strong>Correct answer:</strong>
+                        ${data.correct_answer}
+                    </p>
+
+                    <p class="mb-0">
+                        ${data.explanation}
+                    </p>
+                </div>
+            `;
+
+            if (data.session_completed) {
+
+                submitButton.remove();
+
+                const completedMessage =
+                    document.createElement("div");
+
+                completedMessage.className =
+                    "alert alert-info mt-3";
+
+                completedMessage.textContent =
+                    "Practice session completed.";
+
+                resultContainer.appendChild(
+                    completedMessage
+                );
+
+                return;
+            }
+
+            setTimeout(function () {
+                loadNextQuestion(data.next_question);
+            }, 1000);
+
+        } catch (error) {
+
+            resultContainer.classList.remove("d-none");
+
+            resultContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    Something went wrong while submitting your answer.
+                </div>
+            `;
+
+            submitButton.disabled = false;
+        }
+    }
+
+
+    function loadNextQuestion(question) {
+
+        const practiceCard =
+            document.getElementById("practice-card");
+
+        practiceCard.innerHTML = `
+            <div class="card-body p-4 p-md-5">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <span class="badge text-bg-secondary">
+                        ${question.difficulty}
+                    </span>
+
+                    <span class="text-muted small">
+                        Question ${question.id}
+                    </span>
+
+                </div>
+
+                <h2 class="h4 mb-4">
+                    ${question.question}
+                </h2>
+
+                <form
+                    id="answer-form"
+                    method="post"
+                    action="{% url 'practice:submit-answer' session.id %}"
+                >
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="question_id"
+                        value="${question.id}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="time_taken_seconds"
+                        id="time-taken-seconds"
+                        value="0"
+                    >
+
+                    <div class="d-grid gap-3">
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark text-start p-3 answer-option"
+                            data-answer="${question.options[0]}"
+                        >
+                            <strong>A.</strong>
+                            ${question.options[0]}
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark text-start p-3 answer-option"
+                            data-answer="${question.options[1]}"
+                        >
+                            <strong>B.</strong>
+                            ${question.options[1]}
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark text-start p-3 answer-option"
+                            data-answer="${question.options[2]}"
+                        >
+                            <strong>C.</strong>
+                            ${question.options[2]}
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark text-start p-3 answer-option"
+                            data-answer="${question.options[3]}"
+                        >
+                            <strong>D.</strong>
+                            ${question.options[3]}
+                        </button>
+
+                    </div>
+
+                    <input
+                        type="hidden"
+                        name="selected_answer"
+                        id="selected-answer"
+                    >
+
+                    <div class="mt-4">
+
+                        <button
+                            type="submit"
+                            id="submit-answer"
+                            class="btn cc-primary"
+                            disabled
+                        >
+                            Submit Answer
+                        </button>
+
+                    </div>
+
+                </form>
+
+                <div
+                    id="answer-result"
+                    class="mt-4 d-none"
+                ></div>
+
+            </div>
+        `;
+
+        bindQuestionEvents();
+    }
+
+
+    if (answerForm) {
+        bindQuestionEvents();
+    }
+
+</script>
+
+{% endblock %}

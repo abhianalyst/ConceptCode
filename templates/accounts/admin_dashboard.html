@@ -1,67 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrator Dashboard - ConceptCode</title>
-</head>
+{% block title %}Administrator Dashboard | ConceptCode{% endblock %}
 
-<body>
-    <main>
-        <h1>Administrator Dashboard</h1>
+{% block content %}
 
-        <p>
-            Welcome, {{ request.user.full_name }}.
-        </p>
+<section class="py-5">
+    <div class="container">
 
-        <section>
-            <h2>Platform Overview</h2>
+        <div class="mb-4">
+            <h1 class="h2 mb-2">
+                Administrator Dashboard
+            </h1>
 
-            <div>
-                <strong>Total Users</strong>
-                <p>{{ total_users }}</p>
-            </div>
+            <p class="text-muted mb-0">
+                Welcome, {{ request.user.full_name }}.
+            </p>
+        </div>
 
-            <div>
-                <strong>Students</strong>
-                <p>{{ total_students }}</p>
-            </div>
+        <section class="mb-5">
+            <h2 class="h4 mb-3">
+                Platform Overview
+            </h2>
 
-            <div>
-                <strong>Administrators</strong>
-                <p>{{ total_admins }}</p>
-            </div>
+            <div class="row g-3">
 
-            <div>
-                <strong>Active Users</strong>
-                <p>{{ active_users }}</p>
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Total Users
+                            </div>
+
+                            <div class="display-6 fw-semibold">
+                                {{ total_users }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Students
+                            </div>
+
+                            <div class="display-6 fw-semibold">
+                                {{ total_students }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Administrators
+                            </div>
+
+                            <div class="display-6 fw-semibold">
+                                {{ total_admins }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Active Users
+                            </div>
+
+                            <div class="display-6 fw-semibold">
+                                {{ active_users }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
-        <nav>
-            <h2>Administration</h2>
+        <section>
+            <h2 class="h4 mb-3">
+                Administration
+            </h2>
 
-            <ul>
-                <li>
-                    <a href="/admin/">
-                        Django Admin
-                    </a>
-                </li>
+            <div class="card cc-card shadow-sm">
+                <div class="card-body">
 
-                <li>
-                    <a href="{% url 'accounts:account' %}">
-                        My Account
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'accounts:admin-users' %}">
-                        Manage Users
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </main>
-</body>
+                    <div class="d-flex flex-wrap gap-2">
 
-</html>
+                        <a
+                            href="/admin/"
+                            class="btn cc-primary"
+                        >
+                            Django Admin
+                        </a>
+
+                        <a
+                            href="{% url 'accounts:account' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            My Account
+                        </a>
+
+                        <a
+                            href="{% url 'accounts:admin-users' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Manage Users
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+</section>
+
+{% endblock %}

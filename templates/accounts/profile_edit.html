@@ -1,61 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile - ConceptCode</title>
-</head>
+{% block title %}Edit Profile | ConceptCode{% endblock %}
 
-<body>
-    <main>
-        <h1>Edit Profile</h1>
+{% block content %}
 
-        {% if profile.profile_picture %}
-        <div>
-            <p>Current profile picture:</p>
-            <img src="{{ profile.profile_picture.url }}" alt="Current profile picture" width="150">
+<section class="py-5">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+
+                <div class="card cc-card shadow-sm">
+                    <div class="card-body p-4">
+
+                        <h1 class="h3 mb-4">
+                            Edit Profile
+                        </h1>
+
+                        {% if profile.profile_picture %}
+                            <div class="mb-4 text-center">
+                                <p class="fw-semibold mb-2">
+                                    Current profile picture
+                                </p>
+
+                                <img
+                                    src="{{ profile.profile_picture.url }}"
+                                    alt="Current profile picture"
+                                    class="img-thumbnail cc-profile-image"
+                                >
+                            </div>
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <form
+                            method="post"
+                            enctype="multipart/form-data"
+                            novalidate
+                        >
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                {{ form.full_name.label_tag }}
+                                {{ form.full_name }}
+
+                                {% if form.full_name.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.full_name.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.phone_number.label_tag }}
+                                {{ form.phone_number }}
+
+                                {% if form.phone_number.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.phone_number.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.profile_picture.label_tag }}
+                                {{ form.profile_picture }}
+
+                                <div class="form-text">
+                                    JPEG or PNG only. Maximum size: 5 MB.
+                                </div>
+
+                                {% if form.profile_picture.errors %}
+                                    <div class="cc-form-error mt-1">
+                                        {{ form.profile_picture.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button
+                                    type="submit"
+                                    class="btn cc-primary"
+                                >
+                                    Save Profile
+                                </button>
+
+                                <a
+                                    href="{% url 'accounts:account' %}"
+                                    class="btn btn-outline-secondary"
+                                >
+                                    Cancel
+                                </a>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
         </div>
-        {% endif %}
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+    </div>
+</section>
 
-            {{ form.non_field_errors }}
-
-            <div>
-                {{ form.full_name.label_tag }}
-                {{ form.full_name }}
-                {{ form.full_name.errors }}
-            </div>
-
-            <div>
-                {{ form.phone_number.label_tag }}
-                {{ form.phone_number }}
-                {{ form.phone_number.errors }}
-            </div>
-
-            <div>
-                {{ form.profile_picture.label_tag }}
-                {{ form.profile_picture }}
-                {{ form.profile_picture.errors }}
-            </div>
-
-            <p>
-                JPEG or PNG only. Maximum size: 5 MB.
-            </p>
-
-            <button type="submit">
-                Save Profile
-            </button>
-        </form>
-
-        <p>
-            <a href="{% url 'accounts:account' %}">
-                Cancel
-            </a>
-        </p>
-    </main>
-</body>
-
-</html>
+{% endblock %}
