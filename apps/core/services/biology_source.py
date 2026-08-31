@@ -353,3 +353,41 @@ def extract_chapter_boundaries(class_name):
         )
 
     return boundaries
+
+def get_chapter_pages(class_name, chapter_number):
+    """
+    Return the JSON pages belonging to a specific Biology chapter.
+    """
+
+    if not isinstance(chapter_number, int):
+        raise ValueError(
+            "chapter_number must be an integer."
+        )
+
+    boundaries = extract_chapter_boundaries(class_name)
+
+    chapter = next(
+        (
+            item
+            for item in boundaries
+            if item["chapter_number"] == chapter_number
+        ),
+        None,
+    )
+
+    if chapter is None:
+        raise ValueError(
+            f"Chapter {chapter_number} does not exist "
+            f"in {class_name}."
+        )
+
+    pages = get_pages(class_name)
+
+    start_page = chapter["start_page"]
+    end_page = chapter["end_page"]
+
+    return [
+        page
+        for page in pages
+        if start_page <= page["page_number"] <= end_page
+    ]
