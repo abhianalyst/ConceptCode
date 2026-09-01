@@ -11,7 +11,16 @@ class FakeResponses:
 
     def create(self, **kwargs):
         self.kwargs = kwargs
-        return object()
+
+        return type(
+            "FakeResponse",
+            (),
+            {
+                "output_text": (
+                    '{"questions": []}'
+                )
+            },
+        )()
 
 
 class FakeClient:
@@ -89,13 +98,15 @@ class OpenAIQuestionProviderTests(SimpleTestCase):
             model="test-model",
         )
 
-        with self.assertRaises(NotImplementedError):
-            provider.generate(self.context)
+        questions = provider.generate(self.context)
+
+        self.assertEqual(questions, [])
 
         self.assertEqual(
             client.responses.kwargs["model"],
             "test-model",
         )
+
 
     def test_generate_uses_context_as_input(self):
         client = FakeClient()
@@ -105,8 +116,7 @@ class OpenAIQuestionProviderTests(SimpleTestCase):
             model="test-model",
         )
 
-        with self.assertRaises(NotImplementedError):
-            provider.generate(self.context)
+        provider.generate(self.context)
 
         prompt = client.responses.kwargs["input"]
 
@@ -114,6 +124,37 @@ class OpenAIQuestionProviderTests(SimpleTestCase):
             "DNA carries genetic information.",
             prompt,
         )
+
+    def test_generate_requests_structured_json(self):
+        client = FakeClient()
+
+        provider = OpenAIQuestionProvider(
+            client,
+            model="test-model",
+        )
+
+        provider.generate(self.context)
+
+        self.assertIn(
+            "text",
+            client.responses.kwargs,
+        )
+
+        text_config = client.responses.kwargs["text"]
+
+        self.assertEqual(
+            text_config["format"]["type"],
+            "json_schema",
+        )
+
+        self.assertEqual(
+            text_config["format"]["name"],
+            "question_generation",
+        )
+
+        self.assertTrue(
+            text_config["format"]["strict"],
+        )    
 
     def test_parse_response_returns_questions(self):
         response = type(

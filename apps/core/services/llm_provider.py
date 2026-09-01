@@ -1,26 +1,26 @@
 from django.conf import settings
-from openai import OpenAI
+from google import genai
 
-from question_generator.generation.openai_provider import (
-    OpenAIQuestionProvider,
+from question_generator.generation.gemini_provider import (
+    GeminiQuestionProvider,
 )
 
 
-def get_openai_question_provider() -> OpenAIQuestionProvider:
-    """Build an OpenAI-backed question provider from Django settings."""
+def get_gemini_question_provider() -> GeminiQuestionProvider:
+    """Build a Gemini-backed question provider from Django settings."""
 
-    api_key = settings.OPENAI_API_KEY
-    model = settings.OPENAI_MODEL
+    api_key = settings.GEMINI_API_KEY
+    model = settings.GEMINI_MODEL
 
     if not isinstance(api_key, str) or not api_key.strip():
-        raise ValueError("OPENAI_API_KEY is not configured")
+        raise ValueError("GEMINI_API_KEY is not configured")
 
     if not isinstance(model, str) or not model.strip():
-        raise ValueError("OPENAI_MODEL is not configured")
+        raise ValueError("GEMINI_MODEL is not configured")
 
-    client = OpenAI(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
-    return OpenAIQuestionProvider(
+    return GeminiQuestionProvider(
         client,
         model=model,
     )

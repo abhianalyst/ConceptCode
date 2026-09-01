@@ -5,6 +5,41 @@ from question_generator.generation.context import GenerationContext
 from question_generator.schemas import Question
 
 
+QUESTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "questions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "question": {"type": "string"},
+                    "options": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "minItems": 4,
+                        "maxItems": 4,
+                    },
+                    "correct_answer": {"type": "string"},
+                    "explanation": {"type": "string"},
+                    "difficulty": {"type": "string"},
+                },
+                "required": [
+                    "question",
+                    "options",
+                    "correct_answer",
+                    "explanation",
+                    "difficulty",
+                ],
+                "additionalProperties": False,
+            },
+        }
+    },
+    "required": ["questions"],
+    "additionalProperties": False,
+}
+
+
 class OpenAIQuestionProvider:
     """
     Provider adapter for OpenAI-backed question generation.
@@ -42,6 +77,14 @@ class OpenAIQuestionProvider:
         response = self.client.responses.create(
             model=self.model,
             input=prompt,
+            text={
+                "format": {
+                    "type": "json_schema",
+                    "name": "question_generation",
+                    "strict": True,
+                    "schema": QUESTION_SCHEMA,
+                }
+            },
         )
 
         return self._parse_response(response, context)
@@ -53,6 +96,13 @@ class OpenAIQuestionProvider:
         return (
             "Generate multiple-choice questions using only the "
             "provided textbook material.\n\n"
+            "Rules:\n"
+            "- Use only information supported by the textbook material.\n"
+            "- Generate high-quality multiple-choice questions.\n"
+            "- Every question must have exactly 4 options.\n"
+            "- correct_answer must exactly match one option.\n"
+            "- Include a concise explanation.\n"
+            "- Assign an appropriate difficulty.\n\n"
             f"Subject: {context.subject}\n"
             f"Chapter: {context.chapter}\n"
             f"Topic: {context.topic}\n\n"
@@ -66,8 +116,8 @@ class OpenAIQuestionProvider:
         context: GenerationContext,
     ) -> list[Question]:
         if not hasattr(response, "output_text"):
-            raise NotImplementedError(
-                "Structured response parsing requires output_text."
+            raise ValueError(
+                "response does not contain output_text"
             )
 
         output_text = response.output_text

@@ -1,9 +1,13 @@
+import logging
 from pathlib import Path
 
 import pymupdf
 
 from question_generator.pdf.cleaner import clean_text
 from question_generator.schemas.document import Document, Page, TextBlock
+
+
+logger = logging.getLogger(__name__)
 
 
 class PDFExtractionError(Exception):
@@ -27,18 +31,24 @@ def extract_pdf(pdf_path: str | Path) -> Document:
     """
     path = Path(pdf_path)
 
+    logger.info("Starting PDF extraction: %s", path.name)
+
     if not path.exists():
+        logger.error("PDF file not found: %s", path)
         raise FileNotFoundError(f"PDF file not found: {path}")
 
     if not path.is_file():
+        logger.error("PDF path is not a file: %s", path)
         raise ValueError(f"PDF path is not a file: {path}")
 
     if path.suffix.lower() != ".pdf":
+        logger.error("Invalid PDF extension: %s", path)
         raise ValueError(f"Expected a PDF file: {path}")
 
     try:
         pdf = pymupdf.open(path)
     except Exception as exc:
+        logger.exception("Unable to open PDF: %s", path)
         raise PDFExtractionError(
             f"Unable to open PDF: {path}"
         ) from exc
@@ -83,17 +93,36 @@ def extract_pdf(pdf_path: str | Path) -> Document:
                 )
             )
 
+            logger.debug(
+                "Extracted page %s: %s characters, %s blocks",
+                page_index + 1,
+                len(page_text),
+                len(blocks),
+            )
+
         metadata = pdf.metadata or {}
         title = metadata.get("title") or ""
 
-        return Document(
+        document = Document(
             filename=path.name,
             title=title,
             page_count=len(pages),
             pages=pages,
         )
 
+        logger.info(
+            "PDF extraction complete: %s pages from %s",
+            document.page_count,
+            path.name,
+        )
+
+        return document
+
     except Exception as exc:
+        logger.exception(
+            "Failed while extracting PDF: %s",
+            path,
+        )
         raise PDFExtractionError(
             f"Failed while extracting PDF: {path}"
         ) from exc
