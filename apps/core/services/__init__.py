@@ -9,6 +9,9 @@ from apps.core.services.question_generation import (
     get_question_generation_service,
     generate_questions_for_section,
 )
+from apps.core.services.biology_question_generation import (
+    generate_questions_from_biology_json,
+)
 
 __all__ = [
     "BiologySection",

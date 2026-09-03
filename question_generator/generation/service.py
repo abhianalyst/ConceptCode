@@ -1,4 +1,3 @@
-
 from question_generator.generation.base import QuestionGenerator
 from question_generator.generation.context import GenerationContext
 from question_generator.schemas import Question
@@ -9,27 +8,28 @@ from question_generator.validation.validator import validate_question
 class QuestionGenerationService:
     """Generate, validate, and deduplicate questions."""
 
-    def __init__(
-        self,
-        generator: QuestionGenerator,
-    ) -> None:
+    def __init__(self, generator: QuestionGenerator) -> None:
         if not isinstance(generator, QuestionGenerator):
-            raise TypeError(
-                "generator must be a QuestionGenerator"
-            )
+            raise TypeError("generator must be a QuestionGenerator")
 
         self.generator = generator
 
     def generate(
         self,
         context: GenerationContext,
+        *,
+        difficulty: str | None = None,
     ) -> list[Question]:
         if not isinstance(context, GenerationContext):
-            raise TypeError(
-                "context must be a GenerationContext"
-            )
+            raise TypeError("context must be a GenerationContext")
 
-        questions = self.generator.generate(context)
+        if difficulty is None:
+            questions = self.generator.generate(context)
+        else:
+            questions = self.generator.generate(
+                context,
+                difficulty=difficulty,
+            )
 
         validated_questions: list[Question] = []
 

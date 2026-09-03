@@ -4,139 +4,159 @@ from pathlib import Path
 from django.test import SimpleTestCase
 
 from question_generator.output import (
-    GENERATOR_VERSION,
-    export_questions_json,
-    questions_to_dict,
+    export_topic_questions_json,
+    questions_to_topic_dict,
 )
 from question_generator.schemas import Question
 
 
-class JSONExporterTests(SimpleTestCase):
+class TopicJsonExporterTests(SimpleTestCase):
 
-    def make_question(self):
+    def make_question(
+        self,
+        *,
+        topic: str,
+        difficulty: str,
+        number: int,
+    ) -> Question:
+        options = [
+            f"Option A {number}",
+            f"Option B {number}",
+            f"Option C {number}",
+            f"Option D {number}",
+        ]
+
         return Question(
-            question="What carries genetic information?",
-            options=[
-                "DNA",
-                "RNA",
-                "Protein",
-                "Lipid",
-            ],
-            correct_answer="DNA",
-            explanation="DNA carries genetic information.",
-            difficulty="Easy",
+            question=f"Question {number}",
+            options=options,
+            correct_answer=options[0],
+            explanation="Explanation",
+            difficulty=difficulty,
             subject="Biology",
-            chapter="Molecular Basis of Inheritance",
-            topic="DNA",
+            chapter="Biotechnology",
+            topic=topic,
             source="biology_12.pdf",
         )
 
-    def test_questions_to_dict_contains_metadata(self):
-        data = questions_to_dict(
-            [self.make_question()],
-            source_file="biology_12.pdf",
-        )
+    def test_groups_questions_by_topic_and_difficulty(self):
+        questions = [
+            self.make_question(
+                topic="Topic A",
+                difficulty="Easy",
+                number=1,
+            ),
+            self.make_question(
+                topic="Topic A",
+                difficulty="Hard",
+                number=2,
+            ),
+            self.make_question(
+                topic="Topic B",
+                difficulty="Medium",
+                number=3,
+            ),
+        ]
 
-        self.assertIn(
-            "generated_at",
-            data["metadata"],
-        )
-
-        self.assertEqual(
-            data["metadata"]["source_file"],
-            "biology_12.pdf",
-        )
-
-        self.assertEqual(
-            data["metadata"]["generator_version"],
-            GENERATOR_VERSION,
-        )
-
-        self.assertIn(
-            "generated_at",
-            data["metadata"],
-        )
-
-    def test_questions_to_dict_contains_questions(self):
-        data = questions_to_dict(
-            [self.make_question()],
+        data = questions_to_topic_dict(
+            questions,
             source_file="biology_12.pdf",
         )
 
         self.assertEqual(
-            len(data["questions"]),
-            1,
+            data["chapter"],
+            "Biotechnology",
         )
 
         self.assertEqual(
-            data["questions"][0]["question"],
-            "What carries genetic information?",
+            [topic["topic"] for topic in data["topics"]],
+            ["Topic A", "Topic B"],
         )
 
-    def test_questions_to_dict_preserves_question_structure(self):
-        data = questions_to_dict(
-            [self.make_question()],
+        topic_a = data["topics"][0]["questions"]
+
+        self.assertEqual(len(topic_a["Easy"]), 1)
+        self.assertEqual(len(topic_a["Medium"]), 0)
+        self.assertEqual(len(topic_a["Hard"]), 1)
+
+        topic_b = data["topics"][1]["questions"]
+
+        self.assertEqual(len(topic_b["Easy"]), 0)
+        self.assertEqual(len(topic_b["Medium"]), 1)
+        self.assertEqual(len(topic_b["Hard"]), 0)
+
+    def test_requires_single_chapter(self):
+        questions = [
+            self.make_question(
+                topic="Topic A",
+                difficulty="Easy",
+                number=1,
+            ),
+            Question(
+                question="Question 2",
+                options=[
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                ],
+                correct_answer="A",
+                explanation="Explanation",
+                difficulty="Easy",
+                subject="Biology",
+                chapter="Different Chapter",
+                topic="Topic B",
+                source="biology_12.pdf",
+            ),
+        ]
+
+        with self.assertRaises(ValueError):
+            questions_to_topic_dict(
+                questions,
+                source_file="biology_12.pdf",
+            )
+
+    def test_invalid_difficulty_is_rejected(self):
+        question = self.make_question(
+            topic="Topic A",
+            difficulty="Invalid",
+            number=1,
+        )
+
+        with self.assertRaises(ValueError):
+            questions_to_topic_dict(
+                [question],
+                source_file="biology_12.pdf",
+            )
+
+    def test_empty_questions_return_empty_topics(self):
+        data = questions_to_topic_dict(
+            [],
             source_file="biology_12.pdf",
         )
 
-        question = data["questions"][0]
+        self.assertEqual(data["chapter"], "")
+        self.assertEqual(data["topics"], [])
 
-        self.assertEqual(
-            len(question["options"]),
-            4,
-        )
+    def test_export_writes_topic_json(self):
+        questions = [
+            self.make_question(
+                topic="Topic A",
+                difficulty="Easy",
+                number=1,
+            ),
+        ]
 
-        self.assertEqual(
-            question["correct_answer"],
-            "DNA",
-        )
-
-        self.assertEqual(
-            question["difficulty"],
-            "Easy",
-        )
-
-        self.assertEqual(
-            question["subject"],
-            "Biology",
-        )
-
-    def test_export_questions_json_creates_file(self):
-        output = Path(
-            "tests/tmp_export_questions.json"
-        )
+        output = Path("tests") / "tmp_topic_questions.json"
 
         try:
-            result = export_questions_json(
-                [self.make_question()],
+            result = export_topic_questions_json(
+                questions,
                 output,
                 source_file="biology_12.pdf",
             )
 
-            self.assertEqual(
-                result,
-                output,
-            )
-
-            self.assertTrue(
-                output.exists(),
-            )
-
-        finally:
-            if output.exists():
-                output.unlink()
-
-    def test_exported_json_is_valid(self):
-        output = Path(
-            "tests/tmp_export_questions.json"
-        )
-
-        try:
-            export_questions_json(
-                [self.make_question()],
-                output,
-                source_file="biology_12.pdf",
-            )
+            self.assertEqual(result, output)
+            self.assertTrue(output.exists())
 
             with output.open(
                 "r",
@@ -144,42 +164,20 @@ class JSONExporterTests(SimpleTestCase):
             ) as file:
                 data = json.load(file)
 
-            self.assertIn(
-                "metadata",
-                data,
-            )
-
-            self.assertIn(
-                "questions",
-                data,
-            )
-
             self.assertEqual(
-                len(data["questions"]),
+                data["chapter"],
+                "Biotechnology",
+            )
+            self.assertEqual(
+                data["topics"][0]["topic"],
+                "Topic A",
+            )
+            self.assertEqual(
+                len(
+                    data["topics"][0]["questions"]["Easy"]
+                ),
                 1,
             )
-
         finally:
             if output.exists():
                 output.unlink()
-
-    def test_rejects_non_list(self):
-        with self.assertRaises(TypeError):
-            questions_to_dict(
-                "invalid",
-                source_file="biology_12.pdf",
-            )
-
-    def test_rejects_invalid_question_objects(self):
-        with self.assertRaises(TypeError):
-            questions_to_dict(
-                ["invalid"],
-                source_file="biology_12.pdf",
-            )
-
-    def test_rejects_empty_source_file(self):
-        with self.assertRaises(ValueError):
-            questions_to_dict(
-                [self.make_question()],
-                source_file="",
-            )

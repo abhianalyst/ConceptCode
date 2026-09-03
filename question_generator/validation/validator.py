@@ -17,6 +17,11 @@ def validate_question(question: Question) -> Question:
     if len(set(question.options)) != 4:
         raise ValueError("options must be unique")
 
+    if question.correct_answer not in question.options:
+        raise ValueError(
+            "correct_answer must match one of the options"
+        )
+
     if not question.explanation.strip():
         raise ValueError("explanation must be non-empty")
 
@@ -24,5 +29,18 @@ def validate_question(question: Question) -> Question:
         raise ValueError(
             "difficulty must be Easy, Medium, or Hard"
         )
+
+    for field_name in (
+        "subject",
+        "chapter",
+        "topic",
+        "source",
+    ):
+        value = getattr(question, field_name)
+
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(
+                f"{field_name} must be non-empty"
+            )
 
     return question

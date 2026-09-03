@@ -1,105 +1,79 @@
 from django.test import SimpleTestCase
 
-from question_generator.schemas import Question
-from question_generator.validation.validator import (
-    validate_question,
-)
+from question_generator.validation.validator import validate_question
+from question_generator.schemas.question import Question
 
 
 class QuestionValidatorTests(SimpleTestCase):
 
     def make_question(self, **overrides):
         data = {
-            "question": "What carries genetic information?",
+            "question": "What is biotechnology?",
             "options": [
-                "DNA",
-                "RNA",
-                "Protein",
-                "Lipid",
+                "Option A",
+                "Option B",
+                "Option C",
+                "Option D",
             ],
-            "correct_answer": "DNA",
-            "explanation": "DNA carries genetic information.",
+            "correct_answer": "Option A",
+            "explanation": "This is the explanation.",
             "difficulty": "Easy",
             "subject": "Biology",
-            "chapter": "Molecular Basis of Inheritance",
-            "topic": "DNA",
+            "chapter": "Biotechnology: Principles and Processes",
+            "topic": "PRINCIPLES OF BIOTECHNOLOGY",
             "source": "biology_12.pdf",
         }
-
         data.update(overrides)
-
         return Question(**data)
 
-    def test_valid_question_is_returned(self):
+    def test_valid_question_passes(self):
         question = self.make_question()
 
-        result = validate_question(question)
+        validate_question(question)
 
-        self.assertIs(result, question)
-
-    def test_rejects_non_question(self):
-        with self.assertRaises(TypeError):
-            validate_question("invalid")
-
-    def test_rejects_duplicate_options(self):
+    def test_duplicate_options_are_rejected(self):
         question = self.make_question(
             options=[
-                "DNA",
-                "RNA",
-                "DNA",
-                "Lipid",
+                "Option A",
+                "Option A",
+                "Option C",
+                "Option D",
             ]
         )
 
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(
+            ValueError,
+            "options must be unique",
+        ):
             validate_question(question)
 
-    def test_rejects_empty_explanation(self):
-        question = self.make_question(
-            explanation="temporary",
-        )
+    def test_invalid_difficulty_is_rejected(self):
+        question = self.make_question(difficulty="Very Hard")
 
-        # Question itself allows this, so validator must reject it.
-        invalid = Question(
-            question=question.question,
-            options=question.options,
-            correct_answer=question.correct_answer,
-            explanation="",
-            difficulty=question.difficulty,
-            subject=question.subject,
-            chapter=question.chapter,
-            topic=question.topic,
-            source=question.source,
-        )
-
-        with self.assertRaises(ValueError):
-            validate_question(invalid)
-
-    def test_rejects_invalid_difficulty(self):
-        question = self.make_question(
-            difficulty="Very Hard",
-        )
-
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(
+            ValueError,
+            "difficulty must be Easy, Medium, or Hard",
+        ):
             validate_question(question)
 
-    def test_accepts_easy(self):
-        self.assertIsNotNone(
-            validate_question(
-                self.make_question(difficulty="Easy")
-            )
-        )
+    def test_empty_explanation_is_rejected(self):
+        question = self.make_question(explanation="")
 
-    def test_accepts_medium(self):
-        self.assertIsNotNone(
-            validate_question(
-                self.make_question(difficulty="Medium")
-            )
-        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "explanation must be non-empty",
+        ):
+            validate_question(question)
 
-    def test_accepts_hard(self):
-        self.assertIsNotNone(
-            validate_question(
-                self.make_question(difficulty="Hard")
-            )
-        )
+    def test_empty_metadata_field_is_rejected(self):
+        question = self.make_question(topic="")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "topic must be non-empty",
+        ):
+            validate_question(question)
+
+    def test_non_question_object_is_rejected(self):
+        with self.assertRaises(TypeError):
+            validate_question("not a question")

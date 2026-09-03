@@ -5,12 +5,17 @@ from question_generator.generation.context_builder import (
 )
 from question_generator.generation.llm import LLMQuestionGenerator
 from question_generator.generation.mock import MockQuestionGenerator
-from question_generator.generation.service import (
-    QuestionGenerationService,
-)
 from question_generator.generation.pipeline import (
     generate_questions_from_sections,
 )
+from question_generator.generation.service import (
+    QuestionGenerationService,
+)
+from question_generator.generation.topic_generator import (
+    generate_questions_for_topic,
+)
+
+
 __all__ = [
     "QuestionGenerator",
     "GenerationContext",
@@ -19,4 +24,5 @@ __all__ = [
     "MockQuestionGenerator",
     "QuestionGenerationService",
     "generate_questions_from_sections",
+    "generate_questions_for_topic",
 ]
