@@ -154,6 +154,92 @@ class GeminiQuestionProviderTests(SimpleTestCase):
             config.response_schema,
         )
 
+    def test_quota_error_is_not_retried(self):
+        class QuotaModels:
+            def __init__(self):
+                self.calls = 0
+
+            def generate_content(self, **kwargs):
+                self.calls += 1
+                raise RuntimeError(
+                    "429 RESOURCE_EXHAUSTED: quota exceeded"
+                )
+
+        class QuotaClient:
+            def __init__(self):
+                self.models = QuotaModels()
+
+        client = QuotaClient()
+
+        provider = GeminiQuestionProvider(
+            client,
+            model="test-model",
+        )
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Gemini API quota exhausted",
+        ):
+            provider.generate(self.context)
+
+        self.assertEqual(
+            client.models.calls,
+            1,
+        )
+
+    def test_service_unavailable_is_retried(self):
+        class RetryModels:
+            def __init__(self):
+                self.calls = 0
+
+            def generate_content(self, **kwargs):
+                self.calls += 1
+
+                if self.calls < 2:
+                    raise RuntimeError(
+                        "503 UNAVAILABLE"
+                    )
+
+                return type(
+                    "FakeResponse",
+                    (),
+                    {
+                        "text": (
+                            '{"questions": ['
+                            '{'
+                            '"question": "What carries genetic information?",'
+                            '"options": ["DNA", "RNA", "Protein", "Lipid"],'
+                            '"correct_answer": "DNA",'
+                            '"explanation": "DNA carries genetic information.",'
+                            '"difficulty": "Easy"'
+                            '}'
+                            ']}'
+                        )
+                    },
+                )()
+
+        class RetryClient:
+            def __init__(self):
+                self.models = RetryModels()
+
+        client = RetryClient()
+
+        provider = GeminiQuestionProvider(
+            client,
+            model="test-model",
+        )
+
+        questions = provider.generate(self.context)
+
+        self.assertEqual(
+            client.models.calls,
+            2,
+        )
+        self.assertEqual(
+            len(questions),
+            1,
+        )
+        
     def test_generate_returns_questions(self):
         provider = GeminiQuestionProvider(
             FakeClient(),
