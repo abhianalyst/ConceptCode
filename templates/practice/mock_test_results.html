@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mock Test Results | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .results-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    .results-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .results-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .results-header .badge {
+        font-size: 1rem;
+        padding: 0.5rem 1.5rem;
+    }
+
+    /* Score Card */
+    .score-card {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border-radius: 16px;
+        padding: 2.5rem;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .score-card .score-number {
+        font-size: 4rem;
+        font-weight: 700;
+    }
+
+    .score-card .score-label {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+    .score-card .score-details {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .score-card .score-details .detail-item {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .score-card .score-details .detail-item .number {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .score-card .score-details .detail-item .label {
+        font-size: 0.8rem;
+        opacity: 0.7;
+    }
+
+    .score-card .score-details .detail-item.correct .number { color: #28a745; }
+    .score-card .score-details .detail-item.incorrect .number { color: #dc3545; }
+    .score-card .score-details .detail-item.unattempted .number { color: #ffc107; }
+
+    /* Subject Breakdown */
+    .subject-breakdown {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+    }
+
+    .subject-breakdown h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .subject-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .subject-item:last-child {
+        border-bottom: none;
+    }
+
+    .subject-item .subject-name {
+        font-weight: 500;
+    }
+
+    .subject-item .subject-stats {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .subject-item .subject-stats .correct { color: #28a745; }
+    .subject-item .subject-stats .incorrect { color: #dc3545; }
+
+    /* Question Review */
+    .question-review {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .question-review h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .review-item {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        border-left: 4px solid #e9ecef;
+    }
+
+    .review-item.correct {
+        border-left-color: #28a745;
+        background: #f0fff4;
+    }
+
+    .review-item.incorrect {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .review-item.unattempted {
+        border-left-color: #ffc107;
+        background: #fffdf5;
+    }
+
+    .review-item .question-text {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .review-item .answer-details {
+        font-size: 0.9rem;
+        color: #4a5568;
+    }
+
+    .review-item .answer-details .correct-answer {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    .review-item .answer-details .wrong-answer {
+        color: #dc3545;
+        font-weight: 600;
+    }
+
+    .review-item .explanation {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: white;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: #4a5568;
+    }
+
+    @media (max-width: 768px) {
+        .score-card .score-details {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .score-card .score-number {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="results-container">
+
+    <!-- Header -->
+    <div class="results-header">
+        <h1><i class="bi bi-trophy text-warning"></i> Mock Test Results</h1>
+        <p class="text-muted">{{ mock_test.title }}</p>
+        <span class="badge 
+            {% if attempt.status == 'completed' %}bg-success
+            {% else %}bg-warning{% endif %}">
+            {{ attempt.get_status_display }}
+        </span>
+    </div>
+
+    <!-- Score Card -->
+    <div class="score-card">
+        <div class="score-number">{{ result.score }}</div>
+        <div class="score-label">Score</div>
+        <div class="score-details">
+            <div class="detail-item correct">
+                <div class="number">{{ result.correct }}</div>
+                <div class="label">Correct</div>
+            </div>
+            <div class="detail-item incorrect">
+                <div class="number">{{ result.incorrect }}</div>
+                <div class="label">Incorrect</div>
+            </div>
+            <div class="detail-item unattempted">
+                <div class="number">{{ result.unattempted }}</div>
+                <div class="label">Unattempted</div>
+            </div>
+            <div class="detail-item">
+                <div class="number">{{ result.percentage }}%</div>
+                <div class="label">Accuracy</div>
+            </div>
+        </div>
+        <div class="mt-3">
+            <span class="text-muted" style="font-size: 0.9rem;">
+                Time Spent: {{ time_stats.total_time|floatformat:0 }}s • 
+                Avg per question: {{ time_stats.avg_time_per_question }}s
+            </span>
+        </div>
+    </div>
+
+    <!-- Subject Breakdown -->
+    {% if subject_breakdown %}
+    <div class="subject-breakdown">
+        <h3><i class="bi bi-bar-chart text-primary"></i> Subject Breakdown</h3>
+        {% for subject, stats in subject_breakdown.items %}
+            <div class="subject-item">
+                <span class="subject-name">{{ subject }}</span>
+                <span class="subject-stats">
+                    <span class="correct">✓ {{ stats.correct }}</span>
+                    <span class="incorrect">✗ {{ stats.incorrect }}</span>
+                    <span>Total: {{ stats.total }}</span>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Question Review -->
+    <div class="question-review">
+        <h3><i class="bi bi-list-check text-secondary"></i> Question Review</h3>
+        {% for answer in answers %}
+            <div class="review-item 
+                {% if answer.is_correct %}correct
+                {% elif answer.selected_answer %}incorrect
+                {% else %}unattempted{% endif %}">
+                <div class="question-text">
+                    Q{{ forloop.counter }}. {{ answer.question.question }}
+                </div>
+                <div class="answer-details">
+                    {% if answer.selected_answer %}
+                        Your answer: 
+                        {% if answer.is_correct %}
+                            <span class="correct-answer">{{ answer.selected_answer }} ✓</span>
+                        {% else %}
+                            <span class="wrong-answer">{{ answer.selected_answer }} ✗</span>
+                            &nbsp; Correct answer: <span class="correct-answer">{{ answer.question.correct_answer }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="text-muted">Not attempted</span>
+                    {% endif %}
+                </div>
+                <div class="explanation">
+                    <strong>Explanation:</strong> {{ answer.question.explanation }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'practice:mock-test-dashboard' %}" class="btn btn-primary">
+            <i class="bi bi-arrow-left"></i> Back to Mock Tests
+        </a>
+        <a href="{% url 'practice:mock-test-history' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-clock-history"></i> View History
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

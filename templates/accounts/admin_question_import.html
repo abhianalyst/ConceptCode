@@ -1,0 +1,293 @@
+<!-- templates/accounts/admin_question_import.html -->
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Import Questions | ConceptCode Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card cc-card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">
+                        <i class="bi bi-upload"></i> Import Questions
+                    </h1>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Info Section -->
+                    <div class="mb-4">
+                        <h5><i class="bi bi-info-circle text-primary"></i> Supported Formats</h5>
+                        <ul class="list-unstyled ms-3">
+                            <li><i class="bi bi-filetype-json text-success"></i> <strong>JSON</strong> - Array of question objects</li>
+                            <li><i class="bi bi-filetype-csv text-success"></i> <strong>CSV</strong> - Flat file with headers</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-lightbulb"></i> Import Guidelines</h6>
+                        <ul class="mb-0">
+                            <li>Subjects, chapters, and topics will be created automatically if they don't exist</li>
+                            <li>Duplicate questions are detected using content fingerprinting</li>
+                            <li>All four options (A, B, C, D) must be provided</li>
+                            <li>Difficulty must be one of: Easy, Medium, Hard</li>
+                        </ul>
+                    </div>
+
+                    <!-- Sample Format Accordion -->
+                    <div class="accordion mb-4" id="sampleFormat">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#jsonSample">
+                                    <i class="bi bi-filetype-json me-2"></i> View JSON Sample
+                                </button>
+                            </h2>
+                            <div id="jsonSample" class="accordion-collapse collapse" 
+                                 data-bs-parent="#sampleFormat">
+                                <div class="accordion-body">
+                                    <pre class="bg-light p-3 rounded" style="font-size: 12px;"><code>[
+  {
+    "subject": "Biology",
+    "chapter": "Cell: The Unit of Life",
+    "topic": "Cell Organelles",
+    "question": "Which organelle is known as the powerhouse of the cell?",
+    "options": {
+      "A": "Mitochondria",
+      "B": "Ribosome",
+      "C": "Nucleus",
+      "D": "Golgi apparatus"
+    },
+    "correct_answer": "A",
+    "explanation": "Mitochondria produce most of the ATP used by the cell.",
+    "difficulty": "Easy",
+    "source": "NCERT",
+    "year_tag": "2024"
+  },
+  {
+    "subject": "Physics",
+    "chapter": "Motion",
+    "topic": "Kinematics",
+    "question": "What is the SI unit of velocity?",
+    "options": {
+      "A": "m/s",
+      "B": "m/s²",
+      "C": "m",
+      "D": "s"
+    },
+    "correct_answer": "A",
+    "explanation": "Velocity is measured in meters per second (m/s).",
+    "difficulty": "Easy",
+    "source": "NCERT",
+    "year_tag": "2024"
+  }
+]</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#csvSample">
+                                    <i class="bi bi-filetype-csv me-2"></i> View CSV Sample
+                                </button>
+                            </h2>
+                            <div id="csvSample" class="accordion-collapse collapse" 
+                                 data-bs-parent="#sampleFormat">
+                                <div class="accordion-body">
+                                    <pre class="bg-light p-3 rounded" style="font-size: 12px;"><code>subject,chapter,topic,question,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,source,year_tag
+Biology,Cell: The Unit of Life,Cell Organelles,"Which organelle is known as the powerhouse of the cell?",Mitochondria,Ribosome,Nucleus,Golgi apparatus,A,"Mitochondria produce most of the ATP used by the cell.",Easy,NCERT,2024
+Physics,Motion,Kinematics,"What is the SI unit of velocity?",m/s,m/s²,m,s,A,"Velocity is measured in meters per second (m/s).",Easy,NCERT,2024</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Import Form -->
+                    <form method="post" enctype="multipart/form-data" id="import-form">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="{{ form.import_type.id_for_label }}" class="form-label fw-bold">
+                                {{ form.import_type.label }}
+                            </label>
+                            {{ form.import_type }}
+                            {% if form.import_type.errors %}
+                                <div class="text-danger small">{{ form.import_type.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.file.id_for_label }}" class="form-label fw-bold">
+                                {{ form.file.label }}
+                            </label>
+                            {{ form.file }}
+                            {% if form.file.errors %}
+                                <div class="text-danger small">{{ form.file.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Upload a JSON or CSV file containing questions</div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.create_missing }}
+                            <label for="{{ form.create_missing.id_for_label }}" class="form-check-label">
+                                {{ form.create_missing.label }}
+                            </label>
+                            <div class="form-text text-muted small">{{ form.create_missing.help_text }}</div>
+                            {% if form.create_missing.errors %}
+                                <div class="text-danger small">{{ form.create_missing.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.skip_duplicates }}
+                            <label for="{{ form.skip_duplicates.id_for_label }}" class="form-check-label">
+                                {{ form.skip_duplicates.label }}
+                            </label>
+                            <div class="form-text text-muted small">{{ form.skip_duplicates.help_text }}</div>
+                            {% if form.skip_duplicates.errors %}
+                                <div class="text-danger small">{{ form.skip_duplicates.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-success" id="import-btn">
+                                <i class="bi bi-upload"></i> Import Questions
+                            </button>
+                            <a href="{% url 'accounts:admin-questions' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Import Progress (hidden initially) -->
+                    <div id="import-progress" class="mt-4" style="display: none;">
+                        <div class="alert alert-info">
+                            <i class="bi bi-hourglass-split"></i>
+                            <span id="progress-text">Processing your import...</span>
+                            <div class="progress mt-2">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: 100%;" 
+                                     aria-valuenow="100" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    Processing...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Sample Templates -->
+            <div class="card cc-card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5><i class="bi bi-download"></i> Download Sample Templates</h5>
+                    <p class="text-muted small mb-2">Use these templates to format your questions correctly:</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="downloadSampleJSON()">
+                            <i class="bi bi-filetype-json"></i> JSON Template
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="downloadSampleCSV()">
+                            <i class="bi bi-filetype-csv"></i> CSV Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show progress on form submit
+document.getElementById('import-form').addEventListener('submit', function(e) {
+    const importBtn = document.getElementById('import-btn');
+    const progressDiv = document.getElementById('import-progress');
+    
+    importBtn.disabled = true;
+    importBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Importing...';
+    progressDiv.style.display = 'block';
+});
+
+// Download sample JSON template
+function downloadSampleJSON() {
+    const sampleData = [
+        {
+            "subject": "Biology",
+            "chapter": "Cell: The Unit of Life",
+            "topic": "Cell Organelles",
+            "question": "Which organelle is known as the powerhouse of the cell?",
+            "options": {
+                "A": "Mitochondria",
+                "B": "Ribosome",
+                "C": "Nucleus",
+                "D": "Golgi apparatus"
+            },
+            "correct_answer": "A",
+            "explanation": "Mitochondria produce most of the ATP used by the cell.",
+            "difficulty": "Easy",
+            "source": "NCERT",
+            "year_tag": "2024"
+        }
+    ];
+    
+    const blob = new Blob([JSON.stringify(sampleData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sample_questions.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Download sample CSV template
+function downloadSampleCSV() {
+    const headers = 'subject,chapter,topic,question,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,source,year_tag\n';
+    const row = 'Biology,"Cell: The Unit of Life",Cell Organelles,"Which organelle is known as the powerhouse of the cell?",Mitochondria,Ribosome,Nucleus,Golgi apparatus,A,"Mitochondria produce most of the ATP used by the cell.",Easy,NCERT,2024\n';
+    const csv = headers + row;
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sample_questions.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+<style>
+.cc-card {
+    border: none;
+    border-radius: 12px;
+}
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+pre code {
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+}
+</style>
+
+{% endblock %}

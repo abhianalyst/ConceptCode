@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Log Out | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logout-container {
+        max-width: 480px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .logout-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        text-align: center;
+    }
+
+    .logout-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #fee2e2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        font-size: 2.25rem;
+        color: #dc3545;
+    }
+
+    .logout-card h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.5rem;
+    }
+
+    .logout-card .logout-subtitle {
+        color: #6c757d;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    /* User Info */
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+
+    .user-info .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4facfe, #0d6efd);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: white;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .user-info .avatar img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .user-info .user-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .user-info .user-details .user-name {
+        font-weight: 600;
+        color: #1a1a2e;
+        font-size: 0.95rem;
+    }
+
+    .user-info .user-details .user-email {
+        color: #6c757d;
+        font-size: 0.85rem;
+        word-break: break-all;
+    }
+
+    /* Remember Device */
+
+    .remember-device {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .remember-device input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        border: 2px solid #cbd5e0;
+        accent-color: #0d6efd;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .remember-device label {
+        font-size: 0.9rem;
+        color: #4a5568;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    /* Action Buttons */
+
+    .logout-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+
+    .btn-logout {
+        width: 100%;
+        min-height: 46px;
+        padding: 0.7rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .btn-logout:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: #e9ecef;
+        color: #2d3748;
+    }
+
+    .btn-cancel:hover {
+        background: #dee2e6;
+        color: #2d3748;
+    }
+
+    .btn-confirm {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-confirm:hover {
+        background: #c82333;
+        box-shadow: 0 4px 16px rgba(220, 53, 69, 0.3);
+        color: white;
+    }
+
+    /* Responsive */
+
+    @media (max-width: 576px) {
+        .logout-card {
+            padding: 1.75rem 1.25rem;
+        }
+
+        .logout-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .logout-card h1 {
+            font-size: 1.25rem;
+        }
+
+        .user-info {
+            padding: 0.75rem;
+        }
+
+        .user-info .avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .user-info .avatar img {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .logout-card {
+            padding: 1.25rem 1rem;
+        }
+
+        .logout-icon {
+            width: 56px;
+            height: 56px;
+            font-size: 1.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="logout-container">
+
+    <div class="logout-card">
+
+        <!-- Icon -->
+
+        <div class="logout-icon">
+            <i class="bi bi-box-arrow-right"></i>
+        </div>
+
+        <!-- Title -->
+
+        <h1>Log Out?</h1>
+
+        <p class="logout-subtitle">
+            Are you sure you want to end your current session?
+            You can sign back in anytime.
+        </p>
+
+        <!-- User Info -->
+
+        <div class="user-info">
+
+            <div class="avatar">
+
+                {% if request.user.profile.profile_picture %}
+
+                    <img
+                        src="{{ request.user.profile.profile_picture.url }}"
+                        alt="Profile picture"
+                    >
+
+                {% else %}
+
+                    <i class="bi bi-person-fill"></i>
+
+                {% endif %}
+
+            </div>
+
+            <div class="user-details">
+
+                <div class="user-name">
+                    {{ request.user.full_name|default:request.user.email }}
+                </div>
+
+                <div class="user-email">
+                    {{ request.user.email }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Remember Device -->
+
+        <div class="remember-device">
+
+            <input
+                type="checkbox"
+                id="rememberDevice"
+            >
+
+            <label for="rememberDevice">
+                Remember this device
+            </label>
+
+        </div>
+
+        <!-- Action Buttons -->
+
+        <div class="logout-actions">
+
+            <!-- Cancel -->
+
+            <a
+                href="{% url 'core:home' %}"
+                class="btn-logout btn-cancel"
+            >
+                <i class="bi bi-x-circle"></i>
+                Cancel
+            </a>
+
+            <!-- Confirm Logout -->
+
+            <form
+                method="post"
+                action="{% url 'accounts:logout-confirm' %}"
+                style="width: 100%;"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn-logout btn-confirm"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                    Log Out
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const rememberCheckbox =
+        document.getElementById("rememberDevice");
+
+    /*
+     * Remember-device preference.
+     *
+     * This currently stores only the UI preference
+     * in localStorage. It does not change Django
+     * authentication/session behavior.
+     */
+
+    if (rememberCheckbox) {
+
+        const remembered =
+            localStorage.getItem("remember_device");
+
+        if (remembered === "true") {
+            rememberCheckbox.checked = true;
+        }
+
+        rememberCheckbox.addEventListener(
+            "change",
+            function () {
+
+                localStorage.setItem(
+                    "remember_device",
+                    this.checked ? "true" : "false"
+                );
+
+            }
+        );
+    }
+
+    /*
+     * Escape key cancels logout.
+     */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+
+                window.location.href =
+                    "{% url 'core:home' %}";
+
+            }
+
+        }
+    );
+
+});
+</script>
+
+{% endblock %}

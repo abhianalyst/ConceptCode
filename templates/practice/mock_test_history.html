@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mock Test History | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .history-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .history-header h1 i {
+        color: #0d6efd;
+    }
+
+    .history-header p {
+        color: #6c757d;
+        margin: 0;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+    }
+
+    .table-container table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-container th {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        padding: 0.75rem;
+        border-bottom: 2px solid #e9ecef;
+        text-align: left;
+    }
+
+    .table-container td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+    }
+
+    .table-container tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-container tr:hover {
+        background: #f8f9fa;
+    }
+
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+
+    .status-badge.completed { background: #d4edda; color: #155724; }
+    .status-badge.auto_submitted { background: #fff3cd; color: #856404; }
+    .status-badge.in_progress { background: #cce5ff; color: #004085; }
+
+    .score-high { color: #28a745; font-weight: 700; }
+    .score-medium { color: #ffc107; font-weight: 700; }
+    .score-low { color: #dc3545; font-weight: 700; }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1.5rem;
+    }
+
+    .empty-state .icon {
+        font-size: 4rem;
+        color: #cbd5e0;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+    }
+
+    @media (max-width: 768px) {
+        .history-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .table-container {
+            padding: 0.5rem;
+        }
+
+        .table-container th,
+        .table-container td {
+            padding: 0.5rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .table-container {
+            overflow-x: scroll;
+        }
+
+        .table-container table {
+            min-width: 600px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="history-container">
+
+    <!-- Header -->
+    <div class="history-header">
+        <div>
+            <h1><i class="bi bi-clock-history"></i> Mock Test History</h1>
+            <p>View all your past mock test attempts and performance.</p>
+        </div>
+        <div>
+            <a href="{% url 'practice:mock-test-dashboard' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Mock Tests
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        {% if attempts %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Correct</th>
+                        <th>Incorrect</th>
+                        <th>Accuracy</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in attempts %}
+                        <tr>
+                            <td>
+                                <strong>{{ attempt.mock_test.title|truncatechars:30 }}</strong>
+                                <br>
+                                <small class="text-muted">{{ attempt.mock_test.get_test_type_display }}</small>
+                            </td>
+                            <td>{{ attempt.started_at|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="status-badge {{ attempt.status }}">
+                                    {{ attempt.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="
+                                    {% if attempt.score >= 120 %}score-high
+                                    {% elif attempt.score >= 60 %}score-medium
+                                    {% else %}score-low{% endif %}
+                                ">
+                                    {{ attempt.score }}
+                                </span>
+                            </td>
+                            <td>{{ attempt.correct_count }}</td>
+                            <td>{{ attempt.incorrect_count }}</td>
+                            <td>
+                                {% if attempt.mock_test.total_questions > 0 %}
+                                    {{ attempt.correct_count|floatformat:0 }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'practice:mock-test-results' attempt.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Review
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <div class="icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3>No Mock Test Attempts</h3>
+                <p>You haven't attempted any mock tests yet.</p>
+                <a href="{% url 'practice:mock-test-dashboard' %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-play-circle"></i> Start a Mock Test
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'practice:student-dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,267 @@
+<!-- templates/accounts/admin_question_form.html -->
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | ConceptCode Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card cc-card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h4 mb-0">
+                        <i class="bi bi-{% if question %}pencil-square{% else %}plus-circle{% endif %}"></i> {{ title }}
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="question-form">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    <i class="bi bi-exclamation-triangle"></i> {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Subject, Chapter, Topic Selection -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.subject.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.subject.label }}
+                                </label>
+                                {{ form.subject }}
+                                {% if form.subject.errors %}
+                                    <div class="text-danger small">{{ form.subject.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.chapter.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.chapter.label }}
+                                </label>
+                                {{ form.chapter }}
+                                {% if form.chapter.errors %}
+                                    <div class="text-danger small">{{ form.chapter.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.topic.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.topic.label }}
+                                </label>
+                                {{ form.topic }}
+                                {% if form.topic.errors %}
+                                    <div class="text-danger small">{{ form.topic.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Question Text -->
+                        <div class="mb-3">
+                            <label for="{{ form.question.id_for_label }}" class="form-label fw-bold">
+                                {{ form.question.label }}
+                            </label>
+                            {{ form.question }}
+                            {% if form.question.errors %}
+                                <div class="text-danger small">{{ form.question.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.option_a.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.option_a.label }}
+                                </label>
+                                {{ form.option_a }}
+                                {% if form.option_a.errors %}
+                                    <div class="text-danger small">{{ form.option_a.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.option_b.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.option_b.label }}
+                                </label>
+                                {{ form.option_b }}
+                                {% if form.option_b.errors %}
+                                    <div class="text-danger small">{{ form.option_b.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.option_c.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.option_c.label }}
+                                </label>
+                                {{ form.option_c }}
+                                {% if form.option_c.errors %}
+                                    <div class="text-danger small">{{ form.option_c.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.option_d.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.option_d.label }}
+                                </label>
+                                {{ form.option_d }}
+                                {% if form.option_d.errors %}
+                                    <div class="text-danger small">{{ form.option_d.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Correct Answer & Difficulty -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.correct_answer.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.correct_answer.label }}
+                                </label>
+                                {{ form.correct_answer }}
+                                {% if form.correct_answer.errors %}
+                                    <div class="text-danger small">{{ form.correct_answer.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.difficulty.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.difficulty.label }}
+                                </label>
+                                {{ form.difficulty }}
+                                {% if form.difficulty.errors %}
+                                    <div class="text-danger small">{{ form.difficulty.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Explanation -->
+                        <div class="mb-3">
+                            <label for="{{ form.explanation.id_for_label }}" class="form-label fw-bold">
+                                {{ form.explanation.label }}
+                            </label>
+                            {{ form.explanation }}
+                            {% if form.explanation.errors %}
+                                <div class="text-danger small">{{ form.explanation.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Source & Year Tag -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.source.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.source.label }}
+                                </label>
+                                {{ form.source }}
+                                <div class="form-text">{{ form.source.help_text }}</div>
+                                {% if form.source.errors %}
+                                    <div class="text-danger small">{{ form.source.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.year_tag.id_for_label }}" class="form-label fw-bold">
+                                    {{ form.year_tag.label }}
+                                </label>
+                                {{ form.year_tag }}
+                                <div class="form-text">{{ form.year_tag.help_text }}</div>
+                                {% if form.year_tag.errors %}
+                                    <div class="text-danger small">{{ form.year_tag.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Active Status -->
+                        <div class="mb-3 form-check">
+                            {{ form.is_active }}
+                            <label for="{{ form.is_active.id_for_label }}" class="form-check-label fw-bold">
+                                {{ form.is_active.label }}
+                            </label>
+                            {% if form.is_active.errors %}
+                                <div class="text-danger small">{{ form.is_active.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> {{ submit_text }}
+                            </button>
+                            <a href="{% url 'accounts:admin-questions' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for dynamic cascading dropdowns -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const subjectSelect = document.querySelector('#id_subject');
+    const chapterSelect = document.querySelector('#id_chapter');
+    const topicSelect = document.querySelector('#id_topic');
+
+    function updateChapters() {
+        const subjectId = subjectSelect.value;
+        if (subjectId) {
+            fetch(`{% url 'accounts:api-chapters' %}?subject_id=${subjectId}`)
+                .then(response => response.json())
+                .then(data => {
+                    chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+                    data.forEach(chapter => {
+                        chapterSelect.innerHTML += 
+                            `<option value="${chapter.id}">${chapter.name}</option>`;
+                    });
+                    // Reset topic
+                    topicSelect.innerHTML = '<option value="">Select Topic</option>';
+                });
+        } else {
+            chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+            topicSelect.innerHTML = '<option value="">Select Topic</option>';
+        }
+    }
+
+    function updateTopics() {
+        const chapterId = chapterSelect.value;
+        if (chapterId) {
+            fetch(`{% url 'accounts:api-topics' %}?chapter_id=${chapterId}`)
+                .then(response => response.json())
+                .then(data => {
+                    topicSelect.innerHTML = '<option value="">Select Topic</option>';
+                    data.forEach(topic => {
+                        topicSelect.innerHTML += 
+                            `<option value="${topic.id}">${topic.name}</option>`;
+                    });
+                });
+        } else {
+            topicSelect.innerHTML = '<option value="">Select Topic</option>';
+        }
+    }
+
+    subjectSelect.addEventListener('change', updateChapters);
+    chapterSelect.addEventListener('change', updateTopics);
+
+    // Initial population if editing
+    if (subjectSelect.value) {
+        updateChapters();
+    }
+    if (chapterSelect.value) {
+        updateTopics();
+    }
+});
+</script>
+
+<style>
+.cc-card {
+    border: none;
+    border-radius: 12px;
+}
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+.form-label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+</style>
+
+{% endblock %}

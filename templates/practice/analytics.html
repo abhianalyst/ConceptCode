@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Learning Analytics | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    .analytics-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .analytics-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .analytics-header h1 i {
+        color: #4facfe;
+    }
+
+    .analytics-header p {
+        color: #6c757d;
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .stats-grid-analytics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid-analytics {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid-analytics {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .stat-card-analytics {
+        background: white;
+        border-radius: 14px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card-analytics:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card-analytics .stat-icon {
+        font-size: 1.8rem;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-card-analytics .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .stat-card-analytics .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.1rem;
+    }
+
+    .stat-card-analytics .stat-change {
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-top: 0.25rem;
+        display: inline-block;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+    }
+
+    .stat-change.positive {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .stat-card-analytics .stat-number.primary { color: #0d6efd; }
+    .stat-card-analytics .stat-number.success { color: #28a745; }
+    .stat-card-analytics .stat-number.warning { color: #ffc107; }
+    .stat-card-analytics .stat-number.info { color: #0dcaf0; }
+
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .chart-card .chart-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chart-card .chart-title i {
+        color: #4facfe;
+    }
+
+    .trend-chart {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        height: 160px;
+        padding: 0.5rem 0;
+        gap: 0.5rem;
+    }
+
+    .trend-bar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        gap: 0.3rem;
+    }
+
+    .trend-bar-wrapper .bar {
+        width: 100%;
+        max-width: 50px;
+        border-radius: 6px 6px 0 0;
+        transition: height 0.5s ease;
+        min-height: 10px;
+        position: relative;
+    }
+
+    .trend-bar-wrapper .bar-value {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .trend-bar-wrapper .bar-label {
+        font-size: 0.65rem;
+        color: #6c757d;
+    }
+
+    .subject-progress-item {
+        margin-bottom: 0.75rem;
+    }
+
+    .subject-progress-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .subject-progress-item .subject-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.2rem;
+    }
+
+    .subject-progress-item .subject-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #1a1a2e;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .subject-progress-item .subject-name .subject-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .subject-progress-item .subject-stats {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .subject-progress-item .progress-track {
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .subject-progress-item .progress-track .progress-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    .heatmap-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin-bottom: 0.5rem;
+    }
+
+    .heatmap-cell {
+        aspect-ratio: 1;
+        border-radius: 6px;
+        background: #e9ecef;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+    .heatmap-cell.active-1 { background: #d4edda; color: #155724; }
+    .heatmap-cell.active-2 { background: #a8d8b0; color: #155724; }
+    .heatmap-cell.active-3 { background: #7cc48a; color: #155724; }
+    .heatmap-cell.active-4 { background: #50b064; color: white; }
+    .heatmap-cell.active-5 { background: #28a745; color: white; }
+
+    .heatmap-legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+
+    .heatmap-legend .legend-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .topic-accuracy-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .topic-accuracy-item:last-child {
+        border-bottom: none;
+    }
+
+    .topic-accuracy-item .topic-name {
+        font-size: 0.85rem;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .topic-accuracy-item .topic-name .topic-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .topic-accuracy-item .topic-score {
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+    }
+
+    .topic-accuracy-item .topic-score.high {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .topic-accuracy-item .topic-score.medium {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .topic-accuracy-item .topic-score.low {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .bottom-actions-analytics {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action-analytics {
+        padding: 0.6rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-action-analytics:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-upgrade {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        color: white;
+    }
+
+    .btn-upgrade:hover {
+        box-shadow: 0 4px 16px rgba(238, 90, 36, 0.3);
+        color: white;
+    }
+
+    .btn-settings {
+        background: #f8f9fa;
+        color: #2d3748;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-settings:hover {
+        background: #e9ecef;
+        color: #2d3748;
+    }
+
+    .btn-logout {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-logout:hover {
+        background: #c82333;
+        color: white;
+        box-shadow: 0 4px 16px rgba(220, 53, 69, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .analytics-header {
+            padding: 1.25rem;
+        }
+        .analytics-header h1 {
+            font-size: 1.5rem;
+        }
+        .trend-chart {
+            height: 120px;
+        }
+        .bottom-actions-analytics {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .btn-action-analytics {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid-analytics {
+            grid-template-columns: 1fr 1fr;
+        }
+        .heatmap-grid {
+            gap: 2px;
+        }
+        .heatmap-cell {
+            font-size: 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="analytics-container">
+
+    <!-- Header -->
+    <div class="analytics-header">
+        <h1><i class="bi bi-bar-chart"></i> Learning Analytics</h1>
+        <p>Track your progress and AI-driven insights.</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid-analytics">
+        <div class="stat-card-analytics">
+            <span class="stat-icon">⏱️</span>
+            <div class="stat-number primary">{{ total_study_time|default:"0h 0m" }}</div>
+            <div class="stat-label">Total Study Time</div>
+            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 12% this week</span>
+        </div>
+        <div class="stat-card-analytics">
+            <span class="stat-icon">🎯</span>
+            <div class="stat-number success">{{ accuracy|default:0 }}%</div>
+            <div class="stat-label">Overall Accuracy</div>
+            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 8% improvement</span>
+        </div>
+        <div class="stat-card-analytics">
+            <span class="stat-icon">📊</span>
+            <div class="stat-number warning">{{ completion_rate|default:0 }}%</div>
+            <div class="stat-label">Completion Rate</div>
+            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 4% this week</span>
+        </div>
+        <div class="stat-card-analytics">
+            <span class="stat-icon">🔥</span>
+            <div class="stat-number info">{{ streak_days|default:0 }}</div>
+            <div class="stat-label">Day Streak</div>
+            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 3 in progress</span>
+        </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="chart-grid">
+
+        <!-- Learning Trend -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-graph-up"></i> Learning Trend
+                <span class="badge bg-light text-dark ms-auto">Last 4 Weeks</span>
+            </div>
+            <div class="trend-chart">
+                {% if weekly_trend %}
+                    {% for week in weekly_trend %}
+                        <div class="trend-bar-wrapper">
+                            <div class="bar" style="height: {{ week.value|default:0 }}%; background-color: {{ week.color|default:'#4e73df' }};"></div>
+                            <span class="bar-value">{{ week.value|default:0 }}%</span>
+                            <span class="bar-label">{{ week.label|default:'' }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">No trend data available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Subject Progress -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-bar-chart"></i> Subject Progress
+                <span class="badge bg-light text-dark ms-auto">Overall</span>
+            </div>
+            {% if subject_progress %}
+                {% for subject in subject_progress %}
+                    <div class="subject-progress-item">
+                        <div class="subject-header">
+                            <span class="subject-name">
+                                <span class="subject-dot" style="background: {{ subject.color|default:'#6c757d' }};"></span>
+                                {{ subject.name }}
+                            </span>
+                            <span class="subject-stats">{{ subject.completed|default:0 }}/{{ subject.total|default:0 }} topics</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: {{ subject.progress|default:0 }}%; background: {{ subject.color|default:'#4e73df' }};"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted text-center py-3">No subject progress data available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Daily Activity -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-calendar"></i> Daily Activity
+                <span class="badge bg-light text-dark ms-auto">Last 7 Days</span>
+            </div>
+            <div class="heatmap-grid">
+                {% if daily_activity %}
+                    {% for day in daily_activity %}
+                        <div class="heatmap-cell {% if day.activity > 0 %}active-{{ day.activity_level }}{% endif %}" 
+                             title="{{ day.date }}: {{ day.activity }} questions">
+                            {{ day.day }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">No activity data available.</p>
+                {% endif %}
+            </div>
+            <div class="heatmap-legend">
+                <span>Less</span>
+                <span class="legend-dot" style="background: #d4edda;"></span>
+                <span class="legend-dot" style="background: #a8d8b0;"></span>
+                <span class="legend-dot" style="background: #7cc48a;"></span>
+                <span class="legend-dot" style="background: #50b064;"></span>
+                <span class="legend-dot" style="background: #28a745;"></span>
+                <span>More</span>
+            </div>
+        </div>
+
+        <!-- Accuracy by Topic -->
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-pie-chart"></i> Accuracy by Topic
+                <span class="badge bg-light text-dark ms-auto">Top Topics</span>
+            </div>
+            {% if topic_accuracy %}
+                {% for topic in topic_accuracy %}
+                    <div class="topic-accuracy-item">
+                        <span class="topic-name">
+                            <span class="topic-dot" style="background: 
+                                {% if topic.accuracy >= 80 %}#28a745
+                                {% elif topic.accuracy >= 60 %}#ffc107
+                                {% else %}#dc3545{% endif %};">
+                            </span>
+                            {{ topic.name }}
+                        </span>
+                        <span class="topic-score 
+                            {% if topic.accuracy >= 80 %}high
+                            {% elif topic.accuracy >= 60 %}medium
+                            {% else %}low{% endif %}">
+                            {{ topic.accuracy }}%
+                        </span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted text-center py-3">No topic accuracy data available.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-actions-analytics">
+        <a href="#" class="btn-action-analytics btn-upgrade">
+            <i class="bi bi-star"></i> Upgrade to Pro
+        </a>
+        <a href="{% url 'accounts:profile-edit' %}" class="btn-action-analytics btn-settings">
+            <i class="bi bi-gear"></i> Settings
+        </a>
+        <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn-action-analytics btn-logout">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

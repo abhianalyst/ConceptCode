@@ -1,91 +1,519 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Create Account | ConceptCode{% endblock %}
 
+{% block extra_css %}
+<style>
+    .register-page {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .register-container {
+        display: flex;
+        max-width: 1000px;
+        width: 100%;
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .register-container:hover {
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+    }
+
+    /* ============================================================
+       LEFT PANEL - BRANDING
+       ============================================================ */
+    .register-brand {
+        flex: 1;
+        padding: 3rem 2.5rem;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 400px;
+    }
+
+    .register-brand::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -30%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(79, 172, 254, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .register-brand::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .register-brand .brand-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-brand .brand-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-brand .brand-title .highlight {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .register-brand .brand-subtitle {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+        line-height: 1.6;
+    }
+
+    .register-brand .brand-features {
+        position: relative;
+        z-index: 1;
+    }
+
+    .register-brand .brand-features .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
+    }
+
+    .register-brand .brand-features .feature-item i {
+        color: #4facfe;
+        font-size: 1.1rem;
+    }
+
+    /* ============================================================
+       RIGHT PANEL - REGISTER FORM
+       ============================================================ */
+    .register-form-panel {
+        flex: 1;
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 400px;
+    }
+
+    .register-form-panel .form-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .register-form-panel .form-header h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .register-form-panel .form-header p {
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+    .register-form-panel .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .register-form-panel .form-group label {
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: #2d3748;
+        margin-bottom: 0.3rem;
+        display: block;
+    }
+
+    .register-form-panel .form-group .input-wrapper {
+        position: relative;
+    }
+
+    .register-form-panel .form-group .input-wrapper .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .register-form-panel .form-group .form-control {
+        width: 100%;
+        padding: 0.7rem 1rem 0.7rem 2.8rem;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #f8f9fa;
+    }
+
+    .register-form-panel .form-group .form-control:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+        background: white;
+        outline: none;
+    }
+
+    .register-form-panel .form-group .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .register-form-panel .form-group .form-control.is-invalid:focus {
+        box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+    }
+
+    .register-form-panel .form-group .error-text {
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .register-form-panel .form-group .help-text {
+        color: #6c757d;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .btn-register {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+        margin-top: 0.5rem;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(79, 172, 254, 0.4);
+    }
+
+    .btn-register:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .register-form-panel .login-link {
+        text-align: center;
+        margin-top: 1.25rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .register-form-panel .login-link a {
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .register-form-panel .login-link a:hover {
+        text-decoration: underline;
+        color: #0b5ed7;
+    }
+
+    /* ============================================================
+       PASSWORD STRENGTH INDICATOR
+       ============================================================ */
+    .password-strength {
+        margin-top: 0.3rem;
+    }
+
+    .password-strength .strength-bar {
+        height: 4px;
+        border-radius: 2px;
+        background: #e9ecef;
+        overflow: hidden;
+        margin-top: 0.25rem;
+    }
+
+    .password-strength .strength-bar .strength-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.3s ease;
+        width: 0%;
+    }
+
+    .password-strength .strength-text {
+        font-size: 0.7rem;
+        color: #6c757d;
+        margin-top: 0.15rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 768px) {
+        .register-container {
+            flex-direction: column;
+            border-radius: 16px;
+        }
+
+        .register-brand {
+            padding: 2rem 1.5rem;
+            min-height: 200px;
+        }
+
+        .register-brand .brand-title {
+            font-size: 1.5rem;
+        }
+
+        .register-brand .brand-features .feature-item {
+            font-size: 0.8rem;
+        }
+
+        .register-form-panel {
+            padding: 2rem 1.5rem;
+            min-height: auto;
+        }
+
+        .register-form-panel .form-header h2 {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .register-brand {
+            padding: 1.5rem 1rem;
+            min-height: 150px;
+        }
+
+        .register-brand .brand-title {
+            font-size: 1.25rem;
+        }
+
+        .register-brand .brand-subtitle {
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .register-brand .brand-features .feature-item {
+            font-size: 0.75rem;
+        }
+
+        .register-form-panel {
+            padding: 1.5rem 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<section class="py-5">
-    <div class="container">
+<div class="register-page">
+    <div class="register-container">
 
-        <div class="row justify-content-center">
-            <div class="col-md-7 col-lg-6">
-
-                <div class="card cc-card shadow-sm">
-                    <div class="card-body p-4">
-
-                        <h1 class="h3 mb-4">
-                            Create your ConceptCode account
-                        </h1>
-
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ form.non_field_errors }}
-                            </div>
-                        {% endif %}
-
-                        <form method="post" novalidate>
-                            {% csrf_token %}
-
-                            <div class="mb-3">
-                                {{ form.full_name.label_tag }}
-                                {{ form.full_name }}
-
-                                {% if form.full_name.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.full_name.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.email.label_tag }}
-                                {{ form.email }}
-
-                                {% if form.email.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.email.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.password1.label_tag }}
-                                {{ form.password1 }}
-
-                                {% if form.password1.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.password1.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.password2.label_tag }}
-                                {{ form.password2 }}
-
-                                {% if form.password2.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.password2.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="btn cc-primary w-100"
-                            >
-                                Create Account
-                            </button>
-
-                        </form>
-
-                    </div>
+        <!-- Left Panel - Branding -->
+        <div class="register-brand">
+            <div class="brand-icon">
+                <i class="bi bi-code-square"></i>
+            </div>
+            <h1 class="brand-title">
+                <span class="highlight">ConceptCode</span>
+            </h1>
+            <p class="brand-subtitle">
+                Adaptive learning platform for NEET preparation.
+            </p>
+            <div class="brand-features">
+                <div class="feature-item">
+                    <i class="bi bi-check-circle"></i>
+                    <span>10,000+ NEET Practice Questions</span>
                 </div>
-
+                <div class="feature-item">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Track Your Progress & Performance</span>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-trophy"></i>
+                    <span>Full-Length Mock Tests</span>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-robot"></i>
+                    <span>AI-Powered Adaptive Learning</span>
+                </div>
             </div>
         </div>
 
+        <!-- Right Panel - Register Form -->
+        <div class="register-form-panel">
+            <div class="form-header">
+                <h2>Create Your Account</h2>
+                <p>Start your NEET preparation journey today.</p>
+            </div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.full_name.id_for_label }}">Full Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        {{ form.full_name }}
+                    </div>
+                    {% if form.full_name.errors %}
+                        <span class="error-text">{{ form.full_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <i class="bi bi-envelope"></i>
+                        </span>
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                        <span class="error-text">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password1.id_for_label }}">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        {{ form.password1 }}
+                    </div>
+                    {% if form.password1.errors %}
+                        <span class="error-text">{{ form.password1.errors.0 }}</span>
+                    {% endif %}
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <div class="strength-text" id="strengthText">Enter a strong password</div>
+                    </div>
+                    <span class="help-text">Password must be at least 8 characters long.</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </span>
+                        {{ form.password2 }}
+                    </div>
+                    {% if form.password2.errors %}
+                        <span class="error-text">{{ form.password2.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-register" id="registerBtn">
+                    <i class="bi bi-person-plus"></i>
+                    Create Account
+                </button>
+
+                <div class="login-link">
+                    Already have an account? <a href="{% url 'accounts:login' %}">Login here</a>
+                </div>
+            </form>
+        </div>
+
     </div>
-</section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const registerBtn = document.getElementById('registerBtn');
+    const passwordInput = document.getElementById('id_password1');
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+
+    // Form submission loading state
+    form.addEventListener('submit', function() {
+        registerBtn.disabled = true;
+        registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating account...';
+    });
+
+    // Password strength indicator
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            let message = '';
+
+            if (password.length >= 8) strength += 25;
+            if (password.match(/[a-z]/)) strength += 25;
+            if (password.match(/[A-Z]/)) strength += 25;
+            if (password.match(/[0-9]/)) strength += 25;
+
+            strengthFill.style.width = strength + '%';
+
+            if (strength === 0) {
+                strengthFill.style.background = '#e9ecef';
+                message = 'Enter a strong password';
+            } else if (strength <= 25) {
+                strengthFill.style.background = '#dc3545';
+                message = 'Weak password';
+            } else if (strength <= 50) {
+                strengthFill.style.background = '#ffc107';
+                message = 'Fair password';
+            } else if (strength <= 75) {
+                strengthFill.style.background = '#4facfe';
+                message = 'Good password';
+            } else {
+                strengthFill.style.background = '#28a745';
+                message = 'Strong password!';
+            }
+
+            strengthText.textContent = message;
+        });
+    }
+});
+</script>
 
 {% endblock %}

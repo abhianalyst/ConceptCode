@@ -1,0 +1,257 @@
+<!-- templates/accounts/admin_question_list.html -->
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Questions | ConceptCode Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-0">
+                <i class="bi bi-question-circle"></i> Manage Questions
+            </h1>
+            <p class="text-muted">Total: {{ total_questions }} questions ({{ active_questions }} active)</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'accounts:admin-question-create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add Question
+            </a>
+            <a href="{% url 'accounts:admin-question-import' %}" class="btn btn-success">
+                <i class="bi bi-upload"></i> Import
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card cc-card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3" id="filter-form">
+                <div class="col-md-3">
+                    <label for="{{ filter_form.subject.id_for_label }}" class="form-label small fw-bold">
+                        {{ filter_form.subject.label }}
+                    </label>
+                    {{ filter_form.subject }}
+                </div>
+                <div class="col-md-3">
+                    <label for="{{ filter_form.chapter.id_for_label }}" class="form-label small fw-bold">
+                        {{ filter_form.chapter.label }}
+                    </label>
+                    {{ filter_form.chapter }}
+                </div>
+                <div class="col-md-3">
+                    <label for="{{ filter_form.topic.id_for_label }}" class="form-label small fw-bold">
+                        {{ filter_form.topic.label }}
+                    </label>
+                    {{ filter_form.topic }}
+                </div>
+                <div class="col-md-2">
+                    <label for="{{ filter_form.difficulty.id_for_label }}" class="form-label small fw-bold">
+                        {{ filter_form.difficulty.label }}
+                    </label>
+                    {{ filter_form.difficulty }}
+                </div>
+                <div class="col-md-1">
+                    <label for="{{ filter_form.is_active.id_for_label }}" class="form-label small fw-bold">
+                        {{ filter_form.is_active.label }}
+                    </label>
+                    {{ filter_form.is_active }}
+                </div>
+                <div class="col-md-12">
+                    <div class="input-group">
+                        {{ filter_form.search }}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a href="{% url 'accounts:admin-questions' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Questions Table -->
+    <div class="card cc-card shadow-sm">
+        <div class="card-body">
+            {% if page_obj %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Question</th>
+                                <th>Subject</th>
+                                <th>Chapter</th>
+                                <th>Topic</th>
+                                <th>Difficulty</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for question in page_obj %}
+                                <tr>
+                                    <td>#{{ question.id }}</td>
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 250px;" title="{{ question.question }}">
+                                            {{ question.question }}
+                                        </div>
+                                    </td>
+                                    <td>{{ question.topic.chapter.subject.name }}</td>
+                                    <td>{{ question.topic.chapter.name|truncatechars:20 }}</td>
+                                    <td>{{ question.topic.name|truncatechars:20 }}</td>
+                                    <td>
+                                        <span class="badge {% if question.difficulty == 'Easy' %}bg-success{% elif question.difficulty == 'Medium' %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {{ question.difficulty }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if question.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'accounts:admin-question-edit' question.id %}" 
+                                               class="btn btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'accounts:admin-question-delete' question.id %}" 
+                                               class="btn btn-outline-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if page_obj.paginator.num_pages > 1 %}
+                    <nav aria-label="Page navigation" class="mt-3">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&{{ request.GET.urlencode|cut:'page=' }}">&laquo; First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|cut:'page=' }}">Previous</a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                                </span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|cut:'page=' }}">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode|cut:'page=' }}">Last &raquo;</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h3 class="mt-3">No Questions Found</h3>
+                    <p class="text-muted">Start by adding your first question or importing from JSON/CSV.</p>
+                    <div class="mt-3">
+                        <a href="{% url 'accounts:admin-question-create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Question
+                        </a>
+                        <a href="{% url 'accounts:admin-question-import' %}" class="btn btn-success">
+                            <i class="bi bi-upload"></i> Import Questions
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for dynamic filtering -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Subject -> Chapter cascade
+    const subjectSelect = document.querySelector('#id_subject');
+    const chapterSelect = document.querySelector('#id_chapter');
+    const topicSelect = document.querySelector('#id_topic');
+
+    if (subjectSelect && chapterSelect) {
+        subjectSelect.addEventListener('change', function() {
+            const subjectId = this.value;
+            if (subjectId) {
+                fetch(`{% url 'accounts:api-chapters' %}?subject_id=${subjectId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        chapterSelect.innerHTML = '<option value="">All Chapters</option>';
+                        data.forEach(chapter => {
+                            chapterSelect.innerHTML += 
+                                `<option value="${chapter.id}">${chapter.name}</option>`;
+                        });
+                        // Reset topic
+                        if (topicSelect) {
+                            topicSelect.innerHTML = '<option value="">All Topics</option>';
+                        }
+                    });
+            } else {
+                chapterSelect.innerHTML = '<option value="">All Chapters</option>';
+                if (topicSelect) {
+                    topicSelect.innerHTML = '<option value="">All Topics</option>';
+                }
+            }
+        });
+    }
+
+    // Chapter -> Topic cascade
+    if (chapterSelect && topicSelect) {
+        chapterSelect.addEventListener('change', function() {
+            const chapterId = this.value;
+            if (chapterId) {
+                fetch(`{% url 'accounts:api-topics' %}?chapter_id=${chapterId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        topicSelect.innerHTML = '<option value="">All Topics</option>';
+                        data.forEach(topic => {
+                            topicSelect.innerHTML += 
+                                `<option value="${topic.id}">${topic.name}</option>`;
+                        });
+                    });
+            } else {
+                topicSelect.innerHTML = '<option value="">All Topics</option>';
+            }
+        });
+    }
+});
+</script>
+
+<style>
+.cc-card {
+    border: none;
+    border-radius: 12px;
+}
+.cc-card .card-body {
+    padding: 1.5rem;
+}
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+</style>
+
+{% endblock %}

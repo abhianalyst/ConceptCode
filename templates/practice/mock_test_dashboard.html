@@ -1,0 +1,617 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mock Tests | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mock-dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    /* ============================================================
+       HEADER
+       ============================================================ */
+    .mock-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .mock-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .mock-header h1 i {
+        color: #0d6efd;
+    }
+
+    .mock-header p {
+        color: #6c757d;
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* ============================================================
+       STATS CARDS
+       ============================================================ */
+    .stats-grid-mock {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid-mock {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid-mock {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .stat-card-mock {
+        background: white;
+        border-radius: 14px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card-mock:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card-mock .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+
+    .stat-card-mock .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .stat-card-mock .stat-label {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 0.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card-mock .stat-number.primary { color: #0d6efd; }
+    .stat-card-mock .stat-number.success { color: #28a745; }
+    .stat-card-mock .stat-number.warning { color: #ffc107; }
+    .stat-card-mock .stat-number.info { color: #0dcaf0; }
+
+    /* ============================================================
+       SECTION HEADERS
+       ============================================================ */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .section-header h2 i {
+        margin-right: 0.5rem;
+    }
+
+    .section-header .view-all {
+        font-size: 0.85rem;
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .section-header .view-all:hover {
+        text-decoration: underline;
+    }
+
+    /* ============================================================
+       AVAILABLE TESTS
+       ============================================================ */
+    .mock-tests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .mock-card {
+        border: none;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .mock-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+        border-color: #0d6efd;
+    }
+
+    .mock-card .card-badge-top {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        font-size: 0.6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+    }
+
+    .mock-card .card-badge-top.full {
+        background: #dc3545;
+        color: white;
+    }
+
+    .mock-card .card-badge-top.subject {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .mock-card .card-body {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .mock-card .mock-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #4facfe;
+    }
+
+    .mock-card .mock-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .mock-card .mock-description {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .mock-card .mock-details {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .mock-card .mock-details span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .mock-card .mock-details i {
+        color: #0d6efd;
+    }
+
+    .btn-start-mock {
+        background: linear-gradient(135deg, #4facfe, #0d6efd);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        width: 100%;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+
+    .btn-start-mock:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
+        color: white;
+    }
+
+    .btn-start-mock:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* ============================================================
+       PAST ATTEMPTS
+       ============================================================ */
+    .attempts-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .attempts-card .card-body {
+        padding: 0;
+    }
+
+    .attempt-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f0f0f0;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+    }
+
+    .attempt-item:last-child {
+        border-bottom: none;
+    }
+
+    .attempt-item:hover {
+        background: #f8f9fa;
+    }
+
+    .attempt-item .attempt-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .attempt-item .attempt-info .badge {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .attempt-item .attempt-info .badge.completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .attempt-item .attempt-info .badge.auto_submitted {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .attempt-item .attempt-info .badge.in_progress {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .attempt-item .attempt-info .title {
+        font-weight: 500;
+        color: #1a1a2e;
+        font-size: 0.95rem;
+    }
+
+    .attempt-item .attempt-info .date {
+        font-size: 0.8rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .attempt-item .attempt-info .date i {
+        font-size: 0.8rem;
+    }
+
+    .attempt-item .attempt-score {
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .attempt-item .attempt-score.high { color: #28a745; }
+    .attempt-item .attempt-score.medium { color: #ffc107; }
+    .attempt-item .attempt-score.low { color: #dc3545; }
+
+    .attempt-item .attempt-score .score-label {
+        font-weight: 400;
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+
+    .btn-review {
+        padding: 0.2rem 0.8rem;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        background: transparent;
+        font-size: 0.75rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: #2d3748;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+    }
+
+    .btn-review:hover {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+
+    /* ============================================================
+       EMPTY STATE
+       ============================================================ */
+    .empty-state-mock {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #e9ecef;
+    }
+
+    .empty-state-mock .icon {
+        font-size: 3.5rem;
+        color: #cbd5e0;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-mock h3 {
+        color: #1a1a2e;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-mock p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width: 992px) {
+        .mock-tests-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .mock-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .mock-tests-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .attempt-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .attempt-item .attempt-score {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mock-header {
+            padding: 1rem;
+        }
+
+        .stats-grid-mock {
+            gap: 0.5rem;
+        }
+
+        .stat-card-mock {
+            padding: 0.75rem;
+        }
+
+        .stat-card-mock .stat-number {
+            font-size: 1.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="mock-dashboard-container">
+
+    <!-- Header -->
+    <div class="mock-header">
+        <h1><i class="bi bi-file-earmark-check"></i> Mock Tests</h1>
+        <p>Simulate the real NEET examination environment with timed, full-length or subject-specific tests.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid-mock">
+        <div class="stat-card-mock">
+            <span class="stat-icon">📝</span>
+            <div class="stat-number primary">{{ total_attempts|default:0 }}</div>
+            <div class="stat-label">Total Attempts</div>
+        </div>
+        <div class="stat-card-mock">
+            <span class="stat-icon">🏆</span>
+            <div class="stat-number success">{{ avg_score|default:0 }}</div>
+            <div class="stat-label">Average Score</div>
+        </div>
+        <div class="stat-card-mock">
+            <span class="stat-icon">📚</span>
+            <div class="stat-number warning">{{ available_tests.count|default:0 }}</div>
+            <div class="stat-label">Available Tests</div>
+        </div>
+        <div class="stat-card-mock">
+            <span class="stat-icon">🕐</span>
+            <div class="stat-number info">{{ past_attempts.count|default:0 }}</div>
+            <div class="stat-label">Recent Attempts</div>
+        </div>
+    </div>
+
+    <!-- Available Tests -->
+    <div class="section-header">
+        <h2><i class="bi bi-play-circle text-primary"></i> Available Mock Tests</h2>
+    </div>
+
+    {% if available_tests %}
+        <div class="mock-tests-grid">
+            {% for test in available_tests %}
+                <div class="mock-card">
+                    <span class="card-badge-top {% if test.test_type == 'full' %}full{% else %}subject{% endif %}">
+                        {% if test.test_type == 'full' %}Full NEET Mock{% else %}Subject Mock{% endif %}
+                    </span>
+                    <div class="card-body">
+                        <span class="mock-icon">
+                            {% if test.test_type == 'full' %}
+                                <i class="bi bi-file-earmark-check"></i>
+                            {% else %}
+                                <i class="bi bi-book"></i>
+                            {% endif %}
+                        </span>
+                        <h5 class="mock-title">{{ test.title }}</h5>
+                        <p class="mock-description">
+                            {% if test.description %}
+                                {{ test.description|truncatechars:60 }}
+                            {% else %}
+                                Practice {{ test.total_questions }} questions in {{ test.duration_minutes }} minutes.
+                            {% endif %}
+                        </p>
+                        <div class="mock-details">
+                            <span><i class="bi bi-question-circle"></i> {{ test.total_questions }} Questions</span>
+                            <span><i class="bi bi-clock"></i> {{ test.duration_minutes }} Minutes</span>
+                            <span><i class="bi bi-tag"></i> 
+                                {% if test.subject_type == 'all' %}All Subjects{% else %}{{ test.subject_type|title }}{% endif %}
+                            </span>
+                        </div>
+                        <a href="{% url 'practice:mock-test-start' test.id %}" class="btn-start-mock">
+                            <i class="bi bi-play-circle"></i> Start Test
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-mock">
+            <div class="icon">
+                <i class="bi bi-inbox"></i>
+            </div>
+            <h3>No Mock Tests Available</h3>
+            <p>Mock tests will appear here once they are created by the admin.</p>
+            {% if user.role == 'admin' or user.is_staff %}
+                <a href="{% url 'admin:core_mocktest_add' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create Mock Test
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Recent Attempts -->
+    <div class="section-header">
+        <h2><i class="bi bi-clock-history text-secondary"></i> Recent Attempts</h2>
+        {% if past_attempts %}
+            <a href="{% url 'practice:mock-test-history' %}" class="view-all">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="attempts-card">
+        <div class="card-body">
+            {% if past_attempts %}
+                {% for attempt in past_attempts %}
+                    <div class="attempt-item">
+                        <div class="attempt-info">
+                            <span class="badge {{ attempt.status }}">
+                                {{ attempt.get_status_display }}
+                            </span>
+                            <span class="title">{{ attempt.mock_test.title|truncatechars:30 }}</span>
+                            <span class="date">
+                                <i class="bi bi-calendar3"></i> {{ attempt.started_at|date:"M d, Y" }}
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="attempt-score 
+                                {% if attempt.score >= 120 %}high
+                                {% elif attempt.score >= 60 %}medium
+                                {% else %}low{% endif %}">
+                                {{ attempt.score }}
+                                <span class="score-label">/ 100</span>
+                            </span>
+                            <a href="{% url 'practice:mock-test-results' attempt.id %}" class="btn-review">
+                                <i class="bi bi-eye"></i> Review
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="text-center py-3">
+                    <a href="{% url 'practice:mock-test-history' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-list"></i> View All Attempts
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-inbox d-block mb-2" style="font-size: 2rem; color: #cbd5e0;"></i>
+                    <p class="text-muted mb-0">You haven't attempted any mock tests yet.</p>
+                    <a href="#available-tests" class="btn btn-primary btn-sm mt-2">
+                        <i class="bi bi-play-circle"></i> Start Your First Mock Test
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="text-center mt-3">
+        <a href="{% url 'practice:student-dashboard' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

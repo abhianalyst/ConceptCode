@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.db import OperationalError
 
-from .models import Chapter, Question, Subject, Topic
+from .models import Chapter, Question, Subject, Topic, QuestionReport
 
 
 @admin.register(Subject)
@@ -92,6 +93,7 @@ class TopicAdmin(admin.ModelAdmin):
     )
     def subject_name(self, obj):
         return obj.chapter.subject.name
+
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
@@ -206,3 +208,76 @@ class QuestionAdmin(admin.ModelAdmin):
     )
     def chapter_name(self, obj):
         return obj.topic.chapter.name
+
+
+# ============================================================
+# QUESTION REPORT ADMIN
+# ============================================================
+
+try:
+    @admin.register(QuestionReport)
+    class QuestionReportAdmin(admin.ModelAdmin):
+        list_display = (
+            "id",
+            "question_preview",
+            "reported_by",
+            "report_type",
+            "status",
+            "created_at",
+        )
+        list_filter = (
+            "status",
+            "report_type",
+            "created_at",
+        )
+        search_fields = (
+            "question__question",
+            "description",
+            "reported_by__email",
+        )
+        readonly_fields = (
+            "created_at",
+            "updated_at",
+        )
+        ordering = ("-created_at",)
+        
+        fieldsets = (
+            ("Report Information", {
+                "fields": (
+                    "question",
+                    "reported_by",
+                    "report_type",
+                    "description",
+                    "status"
+                )
+            }),
+            ("Admin Actions", {
+                "fields": (
+                    "admin_notes",
+                    "resolved_by"
+                )
+            }),
+            ("Metadata", {
+                "fields": (
+                    "created_at",
+                    "updated_at"
+                ),
+                "classes": ("collapse",)
+            }),
+        )
+        
+        @admin.display(
+            description="Question",
+            ordering="question__question"
+        )
+        def question_preview(self, obj):
+            return obj.question.question[:100] + ("..." if len(obj.question.question) > 100 else "")
+        
+        def save_model(self, request, obj, form, change):
+            if obj.status == QuestionReport.ReportStatus.RESOLVED and not obj.resolved_by:
+                obj.resolved_by = request.user
+            super().save_model(request, obj, form, change)
+
+except (OperationalError, NameError, AttributeError):
+    # Table doesn't exist yet or model not fully defined
+    pass

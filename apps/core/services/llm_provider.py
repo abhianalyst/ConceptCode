@@ -1,26 +1,33 @@
-from django.conf import settings
-from google import genai
+# apps/core/services/llm_provider.py
+"""
+LLM Provider wrapper.
 
-from question_generator.generation.gemini_provider import (
-    GeminiQuestionProvider,
-)
+Note: This is a stub. Full LLM functionality requires the optional
+question_generator module.
+"""
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def get_gemini_question_provider() -> GeminiQuestionProvider:
-    """Build a Gemini-backed question provider from Django settings."""
-
-    api_key = settings.GEMINI_API_KEY
-    model = settings.GEMINI_MODEL
-
-    if not isinstance(api_key, str) or not api_key.strip():
-        raise ValueError("GEMINI_API_KEY is not configured")
-
-    if not isinstance(model, str) or not model.strip():
-        raise ValueError("GEMINI_MODEL is not configured")
-
-    client = genai.Client(api_key=api_key)
-
-    return GeminiQuestionProvider(
-        client,
-        model=model,
+def get_gemini_question_provider(*args, **kwargs):
+    """
+    Get Gemini question provider.
+    
+    This is a stub. Full implementation requires the optional
+    question_generator module.
+    
+    Raises:
+        ImportError: Always raises as this is a stub
+    """
+    raise ImportError(
+        "LLM provider is not available. "
+        "The question_generator module is optional and not currently installed. "
+        "To use AI question generation, please install and configure question_generator."
     )
+
+
+__all__ = [
+    'get_gemini_question_provider',
+]

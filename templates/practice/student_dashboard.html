@@ -1,0 +1,944 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        border-radius: 16px;
+        padding: 2rem 2.5rem;
+        margin-bottom: 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 400px;
+        height: 400px;
+        background: rgba(79, 172, 254, 0.1);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .welcome-section .welcome-text h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .welcome-section .welcome-text .subtitle {
+        opacity: 0.8;
+        font-size: 1rem;
+    }
+
+    .welcome-section .streak-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .welcome-section .streak-badge i {
+        color: #ffc107;
+    }
+
+    .quick-nav {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .quick-nav .nav-item {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .quick-nav .nav-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .stat-card .stat-number.primary {
+        color: #0d6efd;
+    }
+
+    .stat-card .stat-number.success {
+        color: #28a745;
+    }
+
+    .stat-card .stat-number.warning {
+        color: #ffc107;
+    }
+
+    .stat-card .stat-number.danger {
+        color: #dc3545;
+    }
+
+    .stat-card .stat-number.info {
+        color: #0dcaf0;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .welcome-section {
+            padding: 1.25rem;
+        }
+
+        .welcome-section .welcome-text h1 {
+            font-size: 1.25rem;
+        }
+    }
+
+    .dash-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.25rem;
+    }
+
+    .dash-card .card-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .progress-track {
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-track .progress-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    .weak-topic-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .weak-topic-item:last-child {
+        border-bottom: none;
+    }
+
+    .weak-topic-item .topic-name {
+        font-size: 0.9rem;
+        color: #2d3748;
+    }
+
+    .weak-topic-item .topic-accuracy {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .weak-topic-item .topic-accuracy.low {
+        color: #dc3545;
+    }
+
+    .weak-topic-item .topic-accuracy.medium {
+        color: #ffc107;
+    }
+
+    .weak-topic-item .topic-accuracy.high {
+        color: #28a745;
+    }
+
+    .subject-chart-container {
+        height: 200px;
+        position: relative;
+    }
+
+    .chart-bars {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        height: 180px;
+        padding: 0.5rem 0;
+    }
+
+    .chart-bar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        flex: 1;
+    }
+
+    .chart-bar {
+        width: 50px;
+        height: var(--bar-height);
+        background: var(--bar-color);
+        border-radius: 4px 4px 0 0;
+        transition: height 0.5s ease;
+        min-height: 10px;
+        position: relative;
+    }
+
+    .chart-bar .bar-value {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .chart-bar-wrapper .bar-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+
+    /* Leaderboard */
+    .leaderboard-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .leaderboard-item:last-child {
+        border-bottom: none;
+    }
+
+    .leaderboard-item .rank {
+        font-weight: 700;
+        font-size: 0.9rem;
+        width: 30px;
+        text-align: center;
+    }
+
+    .leaderboard-item .rank.gold {
+        color: #ffc107;
+    }
+
+    .leaderboard-item .rank.silver {
+        color: #adb5bd;
+    }
+
+    .leaderboard-item .rank.bronze {
+        color: #cd7f32;
+    }
+
+    .leaderboard-item .user-name {
+        flex: 1;
+        font-size: 0.9rem;
+        color: #2d3748;
+    }
+
+    .leaderboard-item .user-score {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0d6efd;
+    }
+
+    /* Mock Test Reminder */
+    .mock-test-reminder {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .mock-test-reminder .test-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .mock-test-reminder .test-info i {
+        color: #856404;
+    }
+
+    .mock-test-reminder .test-date {
+        font-size: 0.8rem;
+        color: #856404;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+
+        <div class="row align-items-center">
+
+            <div class="col-md-8">
+
+                <div class="welcome-text">
+
+                    <h1>
+                        Welcome back,
+                        {{ request.user.full_name|default:request.user.email }}!
+                    </h1>
+
+                    <p class="subtitle">
+                        Track your practice and continue learning.
+                    </p>
+
+                    <div class="streak-badge">
+                        <i class="bi bi-fire"></i>
+                        <span>
+                            {{ streak_days|default:0 }}-day learning streak.
+                            Keep it up!
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- Quick Navigation -->
+                <div class="quick-nav">
+
+                    <!-- Subjects -->
+                    <a
+                        href="{% url 'practice:subjects' %}"
+                        class="nav-item"
+                    >
+                        <i class="bi bi-book"></i>
+                        Subjects
+                    </a>
+
+                    <!-- Analytics -->
+                    <a
+                        href="{% url 'practice:analytics' %}"
+                        class="nav-item"
+                    >
+                        <i class="bi bi-bar-chart"></i>
+                        Analytics
+                    </a>
+
+                    <!-- Mock Tests -->
+                    <a
+                        href="{% url 'practice:mock-test-dashboard' %}"
+                        class="nav-item"
+                    >
+                        <i class="bi bi-file-earmark-check"></i>
+                        Mock Tests
+                    </a>
+
+                    <!-- Admin -->
+                    {% if user.role == 'admin' or user.is_staff %}
+                        <a
+                            href="{% url 'accounts:admin-dashboard' %}"
+                            class="nav-item"
+                        >
+                            <i class="bi bi-shield-lock"></i>
+                            Admin
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                <a
+                    href="{% url 'practice:subjects' %}"
+                    class="btn btn-light"
+                >
+                    <i class="bi bi-play-circle"></i>
+                    Start Practicing
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-number primary">
+                {{ today_attempts|default:0 }}
+            </div>
+
+            <div class="stat-label">
+                Questions Today
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-number success">
+                {{ accuracy|default:0 }}%
+            </div>
+
+            <div class="stat-label">
+                Accuracy
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-number info">
+                {{ study_time|default:"0m" }}
+            </div>
+
+            <div class="stat-label">
+                Study Time (Week)
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-number warning">
+                #{{ user_rank|default:1 }}
+            </div>
+
+            <div class="stat-label">
+                Leaderboard Rank
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+
+        <!-- Left Column -->
+        <div class="left-column">
+
+            <!-- Continue Where You Left Off -->
+            {% if active_session %}
+
+                <div class="dash-card">
+
+                    <div class="card-title">
+
+                        <span>
+                            <i class="bi bi-arrow-repeat text-primary"></i>
+                            Continue Where You Left Off
+                        </span>
+
+                        <span class="badge bg-warning">
+                            In Progress
+                        </span>
+
+                    </div>
+
+                    <h5>
+                        {{ active_session.topic_name }}
+                    </h5>
+
+                    <p class="text-muted small">
+                        {{ active_session.answered_questions }}
+                        of
+                        {{ active_session.total_questions }}
+                        questions
+                    </p>
+
+                    <div class="progress-track">
+
+                        <div
+                            class="progress-fill active-session-progress"
+                            data-progress="{{ active_session.progress }}"
+                            style="background: linear-gradient(90deg, #4facfe, #00f2fe);"
+                        ></div>
+
+                    </div>
+
+                    <a
+                        href="{% url 'practice:practice-session' session_id=active_session.id %}"
+                        class="btn btn-primary w-100 mt-2"
+                    >
+                        <i class="bi bi-arrow-right-circle"></i>
+                        Resume Practice
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- Subject-wise Performance Chart -->
+            <div class="dash-card">
+
+                <div class="card-title">
+
+                    <span>
+                        <i class="bi bi-bar-chart text-primary"></i>
+                        Subject Performance
+                    </span>
+
+                </div>
+
+                <div class="chart-bars">
+
+                    {% for subject in subject_performance %}
+
+                        <div class="chart-bar-wrapper">
+
+                            <div
+                                class="chart-bar"
+                                style="
+                                    --bar-height: {{ subject.accuracy }}%;
+                                    --bar-color: {{ subject.color }};
+                                "
+                            >
+                                <span class="bar-value">
+                                    {{ subject.accuracy }}%
+                                </span>
+                            </div>
+
+                            <span class="bar-label">
+                                {{ subject.name }}
+                            </span>
+
+                        </div>
+
+                    {% empty %}
+
+                        <p class="text-muted text-center py-3">
+                            Complete practice sessions to see subject performance.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Weakest Topics -->
+            <div class="dash-card">
+
+                <div class="card-title">
+
+                    <span>
+                        <i class="bi bi-exclamation-triangle text-danger"></i>
+                        Weakest Topics
+                    </span>
+
+                    <span class="badge bg-danger">
+                        Need Improvement
+                    </span>
+
+                </div>
+
+                {% if weak_topics %}
+
+                    {% for topic in weak_topics %}
+
+                        <div class="weak-topic-item">
+
+                            <span class="topic-name">
+                                {{ topic.name }}
+                            </span>
+
+                            <span class="topic-accuracy low">
+                                {{ topic.accuracy }}% accuracy
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted text-center py-3">
+                        <i class="bi bi-check-circle text-success"></i>
+                        No weak topics detected. Keep practicing!
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Right Column -->
+        <div class="right-column">
+
+            <!-- Upcoming Mock Tests -->
+            <div class="dash-card">
+
+                <div class="card-title">
+
+                    <span>
+                        <i class="bi bi-calendar-event text-warning"></i>
+                        Upcoming Mock Tests
+                    </span>
+
+                </div>
+
+                {% if upcoming_mock_tests %}
+
+                    {% for test in upcoming_mock_tests %}
+
+                        <div class="mock-test-reminder">
+
+                            <div class="test-info">
+                                <i class="bi bi-file-earmark-text"></i>
+
+                                <span>
+                                    {{ test.name }}
+                                </span>
+
+                            </div>
+
+                            <span class="test-date">
+                                {{ test.date }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted text-center py-3">
+                        No upcoming mock tests scheduled.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Mock Tests Quick Access -->
+            <div class="dash-card">
+
+                <div class="card-title">
+
+                    <span>
+                        <i class="bi bi-file-earmark-check text-primary"></i>
+                        Mock Tests
+                    </span>
+
+                    <a
+                        href="{% url 'practice:mock-test-dashboard' %}"
+                        class="text-decoration-none small"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+                <div class="text-center py-2">
+
+                    <div class="row g-2">
+
+                        <div class="col-6">
+
+                            <div class="bg-light rounded p-2">
+
+                                <div class="fw-bold text-primary">
+                                    {{ total_mock_attempts|default:0 }}
+                                </div>
+
+                                <div class="text-muted small">
+                                    Attempts
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-6">
+
+                            <div class="bg-light rounded p-2">
+
+                                <div class="fw-bold text-success">
+                                    {{ avg_mock_score|default:0 }}
+                                </div>
+
+                                <div class="text-muted small">
+                                    Avg Score
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="{% url 'practice:mock-test-dashboard' %}"
+                        class="btn btn-outline-primary btn-sm mt-2 w-100"
+                    >
+                        <i class="bi bi-play-circle"></i>
+                        Start a Mock Test
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recent Practice -->
+            <div class="dash-card">
+
+                <div class="card-title">
+
+                    <span>
+                        <i class="bi bi-clock-history text-primary"></i>
+                        Recent Practice
+                    </span>
+
+                    <a
+                        href="{% url 'practice:subjects' %}"
+                        class="text-decoration-none small"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+                {% if recent_sessions %}
+
+                    {% for session in recent_sessions|slice:":5" %}
+
+                        <div class="weak-topic-item">
+
+                            <span class="topic-name">
+                                {{ session.topic_name|truncatechars:25 }}
+                            </span>
+
+                            <span
+                                class="
+                                    topic-accuracy
+                                    {% if session.correct_questions > 0 %}
+                                        high
+                                    {% else %}
+                                        low
+                                    {% endif %}
+                                "
+                            >
+                                {{ session.correct_questions }}/{{ session.answered_questions }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted text-center py-3">
+                        No practice sessions yet.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- Quick Stats -->
+            <div class="dash-card">
+
+                <div class="card-title">
+
+                    <span>
+                        <i class="bi bi-stats text-primary"></i>
+                        Quick Stats
+                    </span>
+
+                </div>
+
+                <div class="row g-2">
+
+                    <div class="col-6">
+
+                        <div class="bg-light rounded p-2 text-center">
+
+                            <div class="fw-bold text-primary">
+                                {{ total_sessions|default:0 }}
+                            </div>
+
+                            <div class="text-muted small">
+                                Sessions
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="bg-light rounded p-2 text-center">
+
+                            <div class="fw-bold text-success">
+                                {{ total_attempts|default:0 }}
+                            </div>
+
+                            <div class="text-muted small">
+                                Questions
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="bg-light rounded p-2 text-center">
+
+                            <div class="fw-bold text-info">
+                                {{ correct_answers|default:0 }}
+                            </div>
+
+                            <div class="text-muted small">
+                                Correct
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="bg-light rounded p-2 text-center">
+
+                            <div class="fw-bold text-danger">
+                                {{ incorrect_answers|default:0 }}
+                            </div>
+
+                            <div class="text-muted small">
+                                Incorrect
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const progressElement = document.querySelector(
+            '.active-session-progress'
+        );
+
+        if (progressElement) {
+            progressElement.style.width =
+                `${progressElement.dataset.progress}%`;
+        }
+    });
+</script>
+{% endblock %}

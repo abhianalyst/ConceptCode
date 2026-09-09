@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Report #{{ report.id }} | ConceptCode Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .detail-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+    
+    .detail-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid #e9ecef;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .detail-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #2d3748;
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .detail-value {
+        font-size: 0.95rem;
+        color: #1a1a2e;
+    }
+    
+    .detail-value .question-text {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #0d6efd;
+    }
+    
+    .detail-value .options-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .detail-value .options-list li {
+        padding: 0.3rem 0.5rem;
+        border-radius: 4px;
+        margin-bottom: 0.2rem;
+        font-size: 0.9rem;
+    }
+    
+    .detail-value .options-list li.correct {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .detail-value .options-list li.incorrect {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .status-select {
+        padding: 0.3rem 1rem;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        font-weight: 500;
+    }
+    
+    .status-select.pending { border-color: #ffc107; color: #856404; }
+    .status-select.reviewing { border-color: #0d6efd; color: #004085; }
+    .status-select.resolved { border-color: #28a745; color: #155724; }
+    .status-select.rejected { border-color: #dc3545; color: #721c24; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <!-- Navigation -->
+    <div class="mb-3">
+        <a href="{% url 'accounts:admin-reports' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Reports
+        </a>
+    </div>
+
+    <!-- Report Detail -->
+    <div class="card detail-card">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="h4 mb-0">
+                    <i class="bi bi-flag text-danger"></i> Report #{{ report.id }}
+                </h1>
+                <small class="text-muted">
+                    Reported on {{ report.created_at|date:"F d, Y \a\t H:i" }}
+                </small>
+            </div>
+            <span class="status-badge {{ report.status }}">
+                {{ report.get_status_display }}
+            </span>
+        </div>
+        
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- Left Column - Report Info -->
+                <div class="col-md-7">
+                    
+                    <!-- Question -->
+                    <div class="mb-4">
+                        <div class="detail-label">Question</div>
+                        <div class="detail-value">
+                            <div class="question-text">
+                                {{ report.question.question }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Options -->
+                    <div class="mb-4">
+                        <div class="detail-label">Options</div>
+                        <div class="detail-value">
+                            <ul class="options-list">
+                                <li class="{% if report.question.correct_answer == 'A' %}correct{% else %}incorrect{% endif %}">
+                                    <strong>A.</strong> {{ report.question.option_a }}
+                                    {% if report.question.correct_answer == 'A' %}
+                                        <span class="badge bg-success ms-2">✓ Correct</span>
+                                    {% endif %}
+                                </li>
+                                <li class="{% if report.question.correct_answer == 'B' %}correct{% else %}incorrect{% endif %}">
+                                    <strong>B.</strong> {{ report.question.option_b }}
+                                    {% if report.question.correct_answer == 'B' %}
+                                        <span class="badge bg-success ms-2">✓ Correct</span>
+                                    {% endif %}
+                                </li>
+                                <li class="{% if report.question.correct_answer == 'C' %}correct{% else %}incorrect{% endif %}">
+                                    <strong>C.</strong> {{ report.question.option_c }}
+                                    {% if report.question.correct_answer == 'C' %}
+                                        <span class="badge bg-success ms-2">✓ Correct</span>
+                                    {% endif %}
+                                </li>
+                                <li class="{% if report.question.correct_answer == 'D' %}correct{% else %}incorrect{% endif %}">
+                                    <strong>D.</strong> {{ report.question.option_d }}
+                                    {% if report.question.correct_answer == 'D' %}
+                                        <span class="badge bg-success ms-2">✓ Correct</span>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                            <div class="mt-2">
+                                <span class="badge bg-primary">Correct Answer: {{ report.question.correct_answer }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explanation -->
+                    <div class="mb-4">
+                        <div class="detail-label">Explanation</div>
+                        <div class="detail-value">
+                            <p>{{ report.question.explanation }}</p>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Right Column - Report Info -->
+                <div class="col-md-5">
+                    
+                    <!-- Report Details -->
+                    <div class="mb-4">
+                        <div class="detail-label">Report Details</div>
+                        <div class="detail-value">
+                            <p><strong>Report Type:</strong> {{ report.get_report_type_display }}</p>
+                            <p><strong>Reported By:</strong> {{ report.reported_by.email }}</p>
+                            <p><strong>Description:</strong></p>
+                            <div class="bg-light p-3 rounded">
+                                {{ report.description }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Notes -->
+                    <div class="mb-4">
+                        <div class="detail-label">Admin Notes</div>
+                        <div class="detail-value">
+                            {% if report.admin_notes %}
+                                <p>{{ report.admin_notes }}</p>
+                            {% else %}
+                                <p class="text-muted">No admin notes yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Update Status -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="mb-3">Update Status</h6>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row g-2">
+                                <div class="col-8">
+                                    <select name="status" class="form-select status-select {{ report.status }}">
+                                        <option value="pending" {% if report.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="reviewing" {% if report.status == 'reviewing' %}selected{% endif %}>Under Review</option>
+                                        <option value="resolved" {% if report.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                                        <option value="rejected" {% if report.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-check"></i> Update
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label for="admin_notes" class="form-label small">Add note (optional)</label>
+                                <textarea name="admin_notes" class="form-control" rows="2" placeholder="Add admin notes...">{{ report.admin_notes }}</textarea>
+                            </div>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+.status-badge.reviewing {
+    background: #cce5ff;
+    color: #004085;
+}
+.status-badge.resolved {
+    background: #d4edda;
+    color: #155724;
+}
+.status-badge.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+</style>
+{% endblock %}

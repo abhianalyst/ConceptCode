@@ -1,72 +1,51 @@
-from apps.core.models import Topic
-from apps.core.services.llm_provider import (
-    get_gemini_question_provider,
-)
-from question_generator.generation import (
-    QuestionGenerationService,
-    build_generation_context,
-)
-from question_generator.generation.llm import (
-    LLMQuestionGenerator,
-)
-from question_generator.persistence import save_questions
-from question_generator.schemas import Section
+# apps/core/services/question_generation.py
+"""
+Question generation service.
+
+Note: This is a stub. Full question generation requires the optional
+question_generator module.
+"""
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def get_question_generation_service() -> QuestionGenerationService:
-    """Build the production question-generation service."""
-
-    provider = get_gemini_question_provider()
-
-    generator = LLMQuestionGenerator(
-        provider.generate,
-    )
-
-    return QuestionGenerationService(
-        generator,
-    )
-
-
-def generate_questions_for_section(
-    section: Section,
-    *,
-    topic: Topic,
-    service: QuestionGenerationService | None = None,
-):
+def get_question_generation_service():
     """
-    Generate, validate, deduplicate, and persist questions
-    for one textbook section.
-
-    If no service is supplied, the production Gemini-backed
-    service is created automatically.
+    Get question generation service.
+    
+    This is a stub. Full implementation requires the optional
+    question_generator module.
+    
+    Raises:
+        ImportError: Always raises as this is a stub
     """
-
-    if not isinstance(section, Section):
-        raise TypeError("section must be a Section")
-
-    if not isinstance(topic, Topic):
-        raise TypeError("topic must be a Topic")
-
-    if service is None:
-        service = get_question_generation_service()
-
-    if not isinstance(
-        service,
-        QuestionGenerationService,
-    ):
-        raise TypeError(
-            "service must be a QuestionGenerationService"
-        )
-
-    context = build_generation_context(
-        section,
-        subject=section.subject or "",
-        source=section.source,
+    raise ImportError(
+        "Question generation service is not available. "
+        "The question_generator module is optional and not currently installed. "
+        "To use AI question generation, please install and configure question_generator."
     )
 
-    questions = service.generate(context)
 
-    return save_questions(
-        questions,
-        topic=topic,
+def generate_questions_for_section(section_data, num_questions=5):
+    """
+    Generate questions for a section.
+    
+    This is a stub. Full implementation requires the optional
+    question_generator module.
+    
+    Raises:
+        ImportError: Always raises as this is a stub
+    """
+    raise ImportError(
+        "Question generation is not available. "
+        "The question_generator module is optional and not currently installed. "
+        "To use AI question generation, please install and configure question_generator."
     )
+
+
+__all__ = [
+    'get_question_generation_service',
+    'generate_questions_for_section',
+]

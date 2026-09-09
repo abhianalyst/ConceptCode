@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Select Topic | ConceptCode{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <div class="mb-3">
+        <a href="{% url 'practice:chapters' subject_id=subject.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Chapters
+        </a>
+    </div>
+
+    <div class="text-center mb-4">
+        <span class="badge text-bg-dark mb-2">
+            <i class="bi bi-book"></i> Practice
+        </span>
+        <h1 class="h2 mb-2">{{ chapter.name }}</h1>
+        <p class="text-muted">{{ subject.name }} → Select a topic to start practicing.</p>
+    </div>
+
+    {% if topics_data %}
+        <div class="row g-3">
+            {% for topic in topics_data %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="card topic-card h-100 p-3 {% if topic.status == 'needs_attention' %}border-danger{% endif %}">
+                        <div class="card-body text-center">
+                            <div class="topic-icon mb-2">
+                                {% if topic.status == 'needs_attention' %}
+                                    <i class="bi bi-exclamation-triangle text-danger"></i>
+                                {% else %}
+                                    <i class="bi bi-circle text-success"></i>
+                                {% endif %}
+                            </div>
+                            <h5 class="fw-semibold mb-2">{{ topic.name }}</h5>
+                            
+                            <!-- Stats -->
+                            <div class="row g-1 mb-2">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">{{ topic.total_questions }} questions</small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">{{ topic.completion }}% done</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="progress-track mb-2" style="height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden;">
+                                <div class="progress-fill {% if topic.completion >= 80 %}progress-complete{% elif topic.completion >= 50 %}progress-in-progress{% else %}progress-needs-attention{% endif %}" data-completion="{{ topic.completion|default:0 }}"></div>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            <div class="mb-2">
+                                {% if topic.status == 'needs_attention' %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-exclamation-triangle"></i> Needs Attention ({{ topic.accuracy }}%)
+                                    </span>
+                                {% elif topic.status == 'completed' %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Completed
+                                    </span>
+                                {% elif topic.status == 'in_progress' %}
+                                    <span class="badge bg-info text-white">
+                                        <i class="bi bi-hourglass-split"></i> In Progress ({{ topic.accuracy }}%)
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Not Started</span>
+                                {% endif %}
+                            </div>
+                            
+                            <button class="btn-start start-practice-btn" data-topic-id="{{ topic.id }}">
+                                <i class="bi bi-play-circle"></i> Start Practice
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle"></i> No topics available for this chapter.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle fs-4 d-block mb-2"></i>
+            No topics available for this chapter.
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+.topic-card {
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: white;
+    border: 2px solid #e9ecef;
+}
+
+.topic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.topic-card.border-danger {
+    border-color: #dc3545 !important;
+    background: #fff5f5;
+}
+
+.topic-card .topic-icon {
+    font-size: 1.5rem;
+}
+
+.topic-card .btn-start {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.topic-card .btn-start:hover {
+    background: #218838;
+    transform: scale(1.02);
+}
+
+.topic-card .btn-start:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.topic-card.border-danger .btn-start {
+    background: #dc3545;
+}
+
+.topic-card.border-danger .btn-start:hover {
+    background: #c82333;
+}
+
+.progress-track {
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+.progress-complete {
+    background: #28a745;
+}
+
+.progress-in-progress {
+    background: #ffc107;
+}
+
+.progress-needs-attention {
+    background: #dc3545;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.topic-card {
+    animation: fadeInUp 0.5s ease forwards;
+}
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.progress-fill[data-completion]').forEach(function(progress) {
+        progress.style.width = `${Number(progress.dataset.completion) || 0}%`;
+    });
+
+    // Handle start practice button clicks
+    document.querySelectorAll('.start-practice-btn').forEach(button => {
+        button.addEventListener('click', async function(event) {
+            const topicId = this.dataset.topicId;
+            const button = this;
+            const originalText = button.innerHTML;
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Starting...';
+            
+            try {
+                // Get CSRF token from cookie
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                    document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+                
+                const response = await fetch(`/practice/topics/${topicId}/sessions/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken || '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to start practice.');
+                }
+                
+                if (data.session_id) {
+                    window.location.href = `/practice/sessions/${data.session_id}/`;
+                } else {
+                    throw new Error('Session ID not returned.');
+                }
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% endblock %}

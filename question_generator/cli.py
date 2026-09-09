@@ -1,189 +1,96 @@
-import argparse
-import logging
-from pathlib import Path
+# cli.py (Modified - Local Only)
+import click
+from pipeline import LocalQuestionPipeline
+import json
+from typing import Optional
 
-from question_generator.generation import (
-    generate_questions_from_sections,
-)
-from question_generator.output import export_questions_json
-from question_generator.pdf.extractor import extract_pdf
-from question_generator.sections import extract_sections
+@click.group()
+def cli():
+    """Local Question Generator CLI"""
+    pass
 
-
-logger = logging.getLogger(__name__)
-
-
-def generate_questions_from_pdf(
-    pdf_path: str | Path,
-    output_path: str | Path,
-    *,
-    subject: str,
-    chapter: str,
-) -> Path:
-    """
-    Generate questions from a textbook PDF and export them as JSON.
-
-    Pipeline:
-
-        PDF
-        -> extraction
-        -> section extraction
-        -> generation
-        -> validation
-        -> deduplication
-        -> JSON export
-    """
-
-    if not isinstance(subject, str) or not subject.strip():
-        raise ValueError(
-            "subject must be a non-empty string"
-        )
-
-    if not isinstance(chapter, str) or not chapter.strip():
-        raise ValueError(
-            "chapter must be a non-empty string"
-        )
-
-    pdf_path = Path(pdf_path)
-
-    logger.info(
-        "Extracting PDF: %s",
-        pdf_path,
+@cli.command()
+@click.option('--topic', required=True, help='Topic for questions')
+@click.option('--num', default=5, help='Number of questions')
+@click.option('--difficulty', default='medium', 
+              type=click.Choice(['easy', 'medium', 'hard']))
+@click.option('--question-type', multiple=True,
+              type=click.Choice(['MCQ', 'ShortAnswer', 'LongAnswer', 'Numerical']))
+@click.option('--output', help='Output file path')
+@click.option('--subtopic', help='Specific subtopic')
+def generate(topic, num, difficulty, question_type, output, subtopic):
+    """Generate questions using local LLM"""
+    
+    # Initialize pipeline
+    pipeline = LocalQuestionPipeline()
+    
+    # Generate questions
+    print(f"Generating {num} questions about '{topic}'...")
+    questions = pipeline.generate_questions(
+        topic=topic,
+        num_questions=num,
+        difficulty=difficulty,
+        question_types=list(question_type) if question_type else None,
+        subtopic=subtopic
     )
+    
+    # Format output
+    output_data = {
+        'topic': topic,
+        'subtopic': subtopic,
+        'difficulty': difficulty,
+        'questions': [
+            {
+                'question': q.question_text,
+                'answer': q.answer_text,
+                'options': q.options,
+                'type': q.question_type.value,
+                'difficulty': q.difficulty.value,
+                'marks': q.marks,
+                'explanation': q.explanation
+            }
+            for q in questions
+        ]
+    }
+    
+    # Output
+    if output:
+        with open(output, 'w') as f:
+            json.dump(output_data, f, indent=2)
+        print(f"✅ Saved to {output}")
+    else:
+        print(json.dumps(output_data, indent=2))
 
-    document = extract_pdf(pdf_path)
+@cli.command()
+@click.option('--textbook', required=True, help='Path to textbook JSON')
+@click.option('--chunk-size', default=512, help='Chunk size for processing')
+def setup_rag(textbook, chunk_size):
+    """Setup RAG pipeline with textbook content"""
+    
+    pipeline = LocalQuestionPipeline()
+    pipeline.setup_rag_pipeline(textbook_json_path=textbook)
+    print("✅ RAG pipeline setup complete")
 
-    logger.info(
-        "PDF extracted: %d pages",
-        document.page_count,
-    )
-
-    pages = [
-        page.to_dict()
-        for page in document.pages
-    ]
-
-    logger.info(
-        "Extracting sections from chapter: %s",
-        chapter,
-    )
-
-    sections = extract_sections(
-        pages,
-        source=document.filename,
-        chapter=chapter,
-        subject=subject,
-    )
-
-    if not sections:
-        raise ValueError(
-            f"No sections found in PDF: {pdf_path}"
-        )
-
-    logger.info(
-        "Found %d sections",
-        len(sections),
-    )
-
-    from apps.core.services.question_generation import (
-        get_question_generation_service,
-    )
-
-    service = get_question_generation_service()
-
-    logger.info(
-        "Generating questions",
-    )
-
-    questions = generate_questions_from_sections(
-        sections,
-        subject=subject,
-        source=document.filename,
-        service=service,
-    )
-
-    logger.info(
-        "Generated %d questions",
-        len(questions),
-    )
-
-    output = export_questions_json(
-        questions,
-        output_path,
-        source_file=document.filename,
-    )
-
-    logger.info(
-        "Questions exported: %s",
-        output,
-    )
-
-    return output
-
-
-def build_parser() -> argparse.ArgumentParser:
-    """Build the command-line argument parser."""
-
-    parser = argparse.ArgumentParser(
-        description=(
-            "Generate educational questions "
-            "from a textbook PDF."
-        )
-    )
-
-    parser.add_argument(
-        "--input",
-        required=True,
-        help="Path to the input PDF.",
-    )
-
-    parser.add_argument(
-        "--output",
-        required=True,
-        help="Path to the output JSON file.",
-    )
-
-    parser.add_argument(
-        "--subject",
-        required=True,
-        help="Subject name, for example Biology.",
-    )
-
-    parser.add_argument(
-        "--chapter",
-        required=True,
-        help="Chapter name represented by the PDF input.",
-    )
-
-    return parser
-
-
-def main() -> int:
-    """Run the question-generation CLI."""
-
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(levelname)s: %(message)s",
-    )
-
-    parser = build_parser()
-    args = parser.parse_args()
-
-    try:
-        output = generate_questions_from_pdf(
-            pdf_path=args.input,
-            output_path=args.output,
-            subject=args.subject,
-            chapter=args.chapter,
-        )
-    except Exception as exc:
-        logger.error("%s", exc)
-        return 1
-
-    print(f"Questions written to: {output}")
-
-    return 0
-
+@cli.command()
+def check_models():
+    """Check available local models"""
+    
+    from local_llm.model_loader import LocalModelLoader
+    loader = LocalModelLoader()
+    models = loader.get_model_info()
+    
+    print("\nAvailable Models:")
+    print("-" * 40)
+    
+    for model_type, model_list in models.items():
+        print(f"\n{model_type.upper()}:")
+        if model_list:
+            for model in model_list:
+                print(f"  ✓ {model}")
+        else:
+            print("  ✗ No models found")
+    
+    print("\nTo download models, run: python scripts/download_models.py")
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    cli()

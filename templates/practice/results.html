@@ -1,0 +1,611 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Test Results | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== RESULTS PAGE STYLES ===== */
+    .results-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    /* Header */
+    .results-header {
+        text-align: center;
+        padding: 2rem 1rem 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .results-header .brand {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        letter-spacing: 2px;
+    }
+
+    .results-header .brand i {
+        color: #4facfe;
+    }
+
+    /* Completion Badge */
+    .completion-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Score Circle */
+    .score-circle-wrapper {
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+
+    .score-circle {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        box-shadow: 0 4px 24px rgba(79, 172, 254, 0.3);
+        position: relative;
+    }
+
+    .score-circle .score-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1;
+    }
+
+    .score-circle .score-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin: 1.5rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .stat-card .stat-number.green { color: #28a745; }
+    .stat-card .stat-number.red { color: #dc3545; }
+    .stat-card .stat-number.orange { color: #fd7e14; }
+    .stat-card .stat-number.blue { color: #0d6efd; }
+
+    /* AI Insight Section */
+    .insight-card {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .insight-card .insight-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .insight-card .insight-title i {
+        color: #4facfe;
+        margin-right: 0.5rem;
+    }
+
+    .insight-card .insight-heading {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 0.5rem;
+    }
+
+    .insight-card .insight-text {
+        font-size: 0.95rem;
+        color: #4a5568;
+        line-height: 1.6;
+    }
+
+    /* Focus Areas */
+    .focus-areas {
+        margin: 1.5rem 0;
+    }
+
+    .focus-areas .focus-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+    }
+
+    .focus-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .focus-item:last-child {
+        border-bottom: none;
+    }
+
+    .focus-item .focus-name {
+        font-size: 0.9rem;
+        color: #2d3748;
+    }
+
+    .focus-item .focus-stats {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .focus-item .focus-stats .badge-incorrect {
+        background: #fee2e2;
+        color: #dc3545;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    .focus-item .focus-stats .badge-skipped {
+        background: #fff3cd;
+        color: #856404;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+
+    /* Performance Trend */
+    .trend-section {
+        margin: 1.5rem 0;
+    }
+
+    .trend-section .trend-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+    }
+
+    .trend-bars {
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-end;
+        padding: 0.5rem 0;
+    }
+
+    .trend-bar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        flex: 1;
+    }
+
+    .trend-bar-wrapper .bar-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+
+    .trend-bar {
+        width: 60px;
+        height: 80px;
+        background: #e9ecef;
+        border-radius: 6px 6px 0 0;
+        position: relative;
+        overflow: hidden;
+        transition: height 0.5s ease;
+    }
+
+    .trend-bar .bar-fill {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 6px 6px 0 0;
+        transition: height 0.5s ease;
+    }
+
+    .trend-bar .bar-fill.current {
+        background: linear-gradient(180deg, #4facfe, #0d6efd);
+    }
+
+    .trend-bar .bar-fill.previous {
+        background: linear-gradient(180deg, #a8c8ff, #6c8cff);
+        opacity: 0.5;
+    }
+
+    .trend-bar .bar-value {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.7rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-retry {
+        background: #0d6efd;
+        color: white;
+        border: none;
+    }
+
+    .btn-retry:hover {
+        background: #0b5ed7;
+        box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
+        color: white;
+    }
+
+    .btn-dashboard {
+        background: #e9ecef;
+        color: #2d3748;
+    }
+
+    .btn-dashboard:hover {
+        background: #dee2e6;
+        color: #2d3748;
+    }
+
+    .btn-review {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-review:hover {
+        background: #218838;
+        box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+        }
+
+        .score-circle .score-number {
+            font-size: 2rem;
+        }
+
+        .trend-bar {
+            width: 40px;
+            height: 60px;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-action {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .results-header .brand {
+            font-size: 1rem;
+        }
+
+        .stat-card .stat-number {
+            font-size: 1.25rem;
+        }
+
+        .insight-card {
+            padding: 1rem;
+        }
+
+        .trend-bars {
+            gap: 0.75rem;
+        }
+
+        .trend-bar {
+            width: 30px;
+            height: 50px;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .results-container > * {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .results-container > *:nth-child(2) { animation-delay: 0.1s; }
+    .results-container > *:nth-child(3) { animation-delay: 0.2s; }
+    .results-container > *:nth-child(4) { animation-delay: 0.3s; }
+    .results-container > *:nth-child(5) { animation-delay: 0.4s; }
+    .results-container > *:nth-child(6) { animation-delay: 0.5s; }
+
+    @keyframes popIn {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+        70% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .score-circle {
+        animation: popIn 0.6s ease forwards;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="results-container">
+
+    <!-- Header -->
+    <div class="results-header">
+        <div class="brand">
+            <i class="bi bi-code-square"></i> ConceptCode
+        </div>
+        <div style="margin-top: 0.5rem;">
+            <span class="completion-badge">
+                <i class="bi bi-check-circle-fill"></i> {{ session.topic.name }} Completed
+            </span>
+        </div>
+        <h1 class="h3 mt-3 mb-1">Great Job!</h1>
+        <p class="text-muted">
+            You've demonstrated a strong understanding of {{ session.topic.name }}. Keep up the momentum.
+        </p>
+    </div>
+
+    <!-- Score Circle -->
+    <div class="score-circle-wrapper">
+        <div class="score-circle">
+            <span class="score-number">{{ accuracy|default:0 }}%</span>
+            <span class="score-label">SCORE</span>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number blue">{{ accuracy|default:0 }}%</div>
+            <div class="stat-label">Accuracy</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number green">{{ correct_answers|default:0 }}</div>
+            <div class="stat-label">Correct</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number red">{{ incorrect_answers|default:0 }}</div>
+            <div class="stat-label">Incorrect</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number orange">{{ skipped_questions|default:0 }}</div>
+            <div class="stat-label">Skipped</div>
+        </div>
+    </div>
+
+    <!-- AI Insight -->
+    <div class="insight-card">
+        <div class="insight-title">
+            <i class="bi bi-robot"></i> AI INSIGHT
+        </div>
+        <div class="insight-heading">Personalized Advice</div>
+        <div class="insight-text">
+            {% if accuracy >= 80 %}
+                Excellent work overall! You showed strong competency in {{ session.topic.name }}. 
+                {% if incorrect_answers > 0 %}
+                    However, your responses indicate a slight hesitation with some concepts. 
+                    I recommend reviewing the topics where you made mistakes before proceeding.
+                {% else %}
+                    Perfect score! You have mastered this topic completely.
+                {% endif %}
+            {% elif accuracy >= 60 %}
+                Good effort! You have a solid foundation in {{ session.topic.name }}. 
+                Focus on reviewing the concepts where you made mistakes to strengthen your understanding.
+            {% else %}
+                You've made a start on {{ session.topic.name }}. 
+                I recommend going back to review the fundamental concepts before attempting this topic again.
+                Focus on understanding the core principles first.
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Focus Areas -->
+    {% if weak_areas %}
+    <div class="focus-areas">
+        <div class="focus-title"><i class="bi bi-bullseye"></i> Focus Areas</div>
+        {% for area in weak_areas %}
+        <div class="focus-item">
+            <span class="focus-name">{{ area.name }}</span>
+            <div class="focus-stats">
+                {% if area.incorrect > 0 %}
+                    <span class="badge-incorrect">{{ area.incorrect }} Incorrect</span>
+                {% endif %}
+                {% if area.skipped > 0 %}
+                    <span class="badge-skipped">{{ area.skipped }} Skipped</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Performance Trend -->
+    <div class="trend-section">
+        <div class="trend-title"><i class="bi bi-graph-up"></i> Performance Trend</div>
+        <div class="trend-bars">
+            <div class="trend-bar-wrapper">
+                <div class="trend-bar">
+                    <div class="bar-fill previous" style="height: {{ previous_accuracy|default:0 }}%;"></div>
+                    <span class="bar-value">{{ previous_accuracy|default:0 }}%</span>
+                </div>
+                <span class="bar-label">Previous</span>
+            </div>
+            <div class="trend-bar-wrapper">
+                <div class="trend-bar">
+                    <div class="bar-fill current" style="height: {{ accuracy|default:0 }}%;"></div>
+                    <span class="bar-value">{{ accuracy|default:0 }}%</span>
+                </div>
+                <span class="bar-label">This Test</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'practice:topics' subject_id=session.topic.chapter.subject.id chapter_id=session.topic.chapter.id %}" class="btn-action btn-review">
+            <i class="bi bi-eye"></i> Exit Review
+        </a>
+        <button onclick="retryTest()" class="btn-action btn-retry" id="retryBtn">
+            <i class="bi bi-arrow-repeat"></i> Retry Test
+        </button>
+        <a href="{% url 'practice:student-dashboard' %}" class="btn-action btn-dashboard">
+            <i class="bi bi-speedometer2"></i> Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+<script>
+// ===== RETRY TEST FUNCTION =====
+async function retryTest() {
+    const retryBtn = document.getElementById('retryBtn');
+    const originalText = retryBtn.innerHTML;
+    
+    // Disable button and show loading
+    retryBtn.disabled = true;
+    retryBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Starting...';
+    
+    try {
+        const topicId = {{ session.topic.id }};
+        
+        // Get CSRF token
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+            document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+        
+        const response = await fetch(`/practice/topics/${topicId}/sessions/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken || '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({})
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to start practice.');
+        }
+        
+        if (data.session_id) {
+            window.location.href = `/practice/sessions/${data.session_id}/`;
+        } else {
+            throw new Error('Session ID not returned.');
+        }
+        
+    } catch (error) {
+        alert('Error: ' + error.message);
+        retryBtn.disabled = false;
+        retryBtn.innerHTML = originalText;
+    }
+}
+</script>
+
+{% endblock %}

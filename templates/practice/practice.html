@@ -1,492 +1,2705 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Practice | ConceptCode{% endblock %}
+{% block title %}Practice Test | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== PRACTICE TEST STYLES ===== */
+    .practice-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .test-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1.5rem;
+        background: #1a1a2e;
+        border-radius: 12px;
+        color: white;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .test-header .test-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .test-header .test-title .brand {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #4facfe;
+        letter-spacing: 1px;
+    }
+
+    .test-header .test-title .separator {
+        opacity: 0.3;
+    }
+
+    .test-header .test-title .subject-name {
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .test-header .test-timer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.3rem 0.8rem;
+        border-radius: 8px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .test-header .test-timer i {
+        color: #ffc107;
+    }
+
+    .test-header .test-timer.warning {
+        color: #ffc107;
+    }
+
+    .test-header .test-timer.danger {
+        color: #dc3545;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .test-grid {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .test-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .palette-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: fit-content;
+    }
+
+    .palette-card .palette-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+        text-align: center;
+    }
+
+    .palette-legend {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem;
+        margin-bottom: 0.75rem;
+        background: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 8px;
+    }
+
+    .palette-legend .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.7rem;
+        color: #6c757d;
+    }
+
+    .palette-legend .legend-item .legend-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+
+    .legend-dot.answered {
+        background: #28a745;
+    }
+
+    .legend-dot.flagged {
+        background: #ffc107;
+    }
+
+    .legend-dot.unanswered {
+        background: #e9ecef;
+        border: 1px solid #dee2e6;
+    }
+
+    .legend-dot.current {
+        background: #0d6efd;
+    }
+
+    .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.4rem;
+    }
+
+    .palette-btn {
+        aspect-ratio: 1;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: #e9ecef;
+        color: #6c757d;
+        width: 100%;
+    }
+
+    .palette-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .palette-btn.answered {
+        background: #28a745;
+        color: white;
+    }
+
+    .palette-btn.flagged {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .palette-btn.current {
+        background: #0d6efd;
+        color: white;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.3);
+    }
+
+    .palette-btn.unanswered {
+        background: #e9ecef;
+        color: #6c757d;
+    }
+
+    .palette-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .question-area {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .question-area .question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .question-area .question-header .q-number {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #1a1a2e;
+    }
+
+    .question-area .question-header .q-status {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.7rem;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+
+    .q-status.answered {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .q-status.flagged {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .q-status.unanswered {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .question-area .question-text {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #1a1a2e;
+        line-height: 1.7;
+        margin-bottom: 1.25rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #0d6efd;
+    }
+
+    .question-area .question-text .q-label {
+        color: #0d6efd;
+        font-weight: 700;
+        margin-right: 0.3rem;
+    }
+
+    .options-grid {
+        display: grid;
+        gap: 0.6rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .option-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+    .option-item:hover:not(.disabled) {
+        border-color: #0d6efd;
+        background: #f0f7ff;
+        transform: translateX(3px);
+    }
+
+    .option-item .option-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #eef2f7;
+        color: #2d3748;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .option-item .option-text {
+        font-size: 0.95rem;
+        color: #2d3748;
+        flex: 1;
+        padding-top: 0.1rem;
+    }
+
+    .option-item.selected {
+        border-color: #0d6efd;
+        background: #f0f7ff;
+    }
+
+    .option-item.selected .option-label {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .option-item.correct {
+        border-color: #28a745;
+        background: #f0fff4;
+    }
+
+    .option-item.correct .option-label {
+        background: #28a745;
+        color: white;
+    }
+
+    .option-item.incorrect {
+        border-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .option-item.incorrect .option-label {
+        background: #dc3545;
+        color: white;
+    }
+
+    .option-item.disabled {
+        cursor: default;
+    }
+
+    .feedback-section {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-top: 1rem;
+        border-left: 4px solid #0d6efd;
+        display: none;
+    }
+
+    .feedback-section.show {
+        display: block;
+        animation: fadeSlideIn 0.3s ease;
+    }
+
+    .feedback-section.correct {
+        border-left-color: #28a745;
+        background: #f0fff4;
+    }
+
+    .feedback-section.incorrect {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .feedback-section .feedback-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .feedback-section .feedback-title.correct-text {
+        color: #28a745;
+    }
+
+    .feedback-section .feedback-title.incorrect-text {
+        color: #dc3545;
+    }
+
+    .feedback-section .feedback-explanation {
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .feedback-section .feedback-correct-answer {
+        font-weight: 600;
+        color: #28a745;
+        margin-top: 0.2rem;
+        font-size: 0.9rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.6rem;
+        margin-top: 1.25rem;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .action-buttons .btn-group-left {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn-group-right {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1.25rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .btn-action:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+    .btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-prev {
+        background: #e9ecef;
+        color: #2d3748;
+    }
+
+    .btn-prev:hover:not(:disabled) {
+        background: #dee2e6;
+    }
+
+    .btn-next {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-next:hover:not(:disabled) {
+        background: #0b5ed7;
+        box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
+    }
+
+    .btn-flag {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-flag:hover:not(:disabled) {
+        background: #e0a800;
+    }
+
+    .btn-flag.flagged {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-flag.flagged:hover:not(:disabled) {
+        background: #c82333;
+    }
+
+    .btn-bookmark {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-bookmark:hover:not(:disabled) {
+        background: #5a6268;
+        color: white;
+    }
+
+    .btn-bookmark.bookmarked {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-bookmark.bookmarked:hover:not(:disabled) {
+        background: #e0a800;
+        color: #212529;
+    }
+
+    .btn-report {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-report:hover:not(:disabled) {
+        background: #c82333;
+        color: white;
+    }
+
+    .btn-finish {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-finish:hover:not(:disabled) {
+        background: #218838;
+        box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
+        color: white;
+    }
+
+    @keyframes fadeSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Modal Customization */
+    .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #f0f0f0;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #f0f0f0;
+        padding: 1rem 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .test-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .palette-grid {
+            grid-template-columns: repeat(10, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .test-header {
+            padding: 0.5rem 1rem;
+        }
+
+        .test-header .test-title .brand {
+            font-size: 0.8rem;
+        }
+
+        .test-header .test-title .subject-name {
+            font-size: 0.75rem;
+        }
+
+        .test-header .test-timer {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .question-area {
+            padding: 1rem;
+        }
+
+        .question-area .question-text {
+            font-size: 0.95rem;
+            padding: 0.75rem;
+        }
+
+        .option-item {
+            padding: 0.6rem 0.75rem;
+        }
+
+        .option-item .option-label {
+            width: 24px;
+            height: 24px;
+            font-size: 0.7rem;
+        }
+
+        .option-item .option-text {
+            font-size: 0.85rem;
+        }
+
+        .palette-grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-buttons .btn-group-left,
+        .action-buttons .btn-group-right {
+            justify-content: center;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            justify-content: center;
+            flex: 1;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .test-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .palette-legend {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .palette-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 
-<section class="py-4 py-md-5">
-    <div class="container">
+<div class="practice-container">
 
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <!-- Test Header -->
+    <div class="test-header">
+        <div class="test-title">
+            <span class="brand">
+                <i class="bi bi-code-square"></i> CONCEPTCODE
+            </span>
 
-            <div>
-                <p class="text-muted mb-1">
-                    Practice Session
-                </p>
+            <span class="separator">|</span>
 
-                <h1 class="h3 mb-1">
-                    {{ session.topic.name }}
-                </h1>
+            <span class="subject-name">
+                {{ session.topic.chapter.subject.name }} - {{ session.topic.name }}
+            </span>
+        </div>
 
-                <p class="text-muted small mb-0">
-                    {{ session.topic.chapter.subject.name }}
-                    /
-                    {{ session.topic.chapter.name }}
-                </p>
+        <div class="test-timer" id="timer">
+            <i class="bi bi-clock"></i>
+            <span id="timer-display">00:00</span>
+        </div>
+    </div>
+
+    <!-- Test Grid -->
+    <div class="test-grid">
+
+        <!-- Question Palette -->
+        <div class="palette-card">
+
+            <div class="palette-title">
+                <i class="bi bi-grid"></i> QUESTION PALETTE
             </div>
 
-            <span
-                id="session-status"
-                class="badge text-bg-dark"
-            >
-                {{ session.status|title }}
-            </span>
+            <div class="palette-legend">
+
+                <div class="legend-item">
+                    <span class="legend-dot answered"></span>
+                    Answered
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot flagged"></span>
+                    Flagged
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot unanswered"></span>
+                    Unanswered
+                </div>
+
+            </div>
+
+            <div class="palette-grid" id="paletteGrid">
+                <!-- Palette buttons generated by JavaScript -->
+            </div>
 
         </div>
 
-        {% if question %}
+        <!-- Question Area -->
+        <div class="question-area" id="questionArea">
 
-            <div id="practice-card" class="card cc-card shadow-sm">
+            <!-- Question Header -->
+            <div class="question-header">
 
-                <div class="card-body p-4 p-md-5">
+                <span class="q-number" id="qNumber">
+                    Question 1 of {{ total_questions }}
+                </span>
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="q-status unanswered" id="qStatus">
+                    <i class="bi bi-circle"></i>
+                    Unanswered
+                </span>
 
-                        <span
-                            id="question-difficulty"
-                            class="badge text-bg-secondary"
-                        >
-                            {{ question.get_difficulty_display }}
-                        </span>
+            </div>
 
-                        <span
-                            id="question-number"
-                            class="text-muted small"
-                        >
-                            Question {{ question.id }}
-                        </span>
+            <!-- Question Text -->
+            <div class="question-text" id="questionText">
+                <span class="q-label">Q.</span>
+                <span id="questionContent">
+                    {{ question.question }}
+                </span>
+            </div>
 
-                    </div>
+            <!-- Options -->
+            <div class="options-grid" id="optionsGrid">
 
-                    <h2
-                        id="question-text"
-                        class="h4 mb-4"
-                    >
-                        {{ question.question }}
-                    </h2>
+                <div class="option-item"
+                     data-option="A"
+                     onclick="selectOption('A')">
 
-                    <form
-                        id="answer-form"
-                        method="post"
-                        action="{% url 'practice:submit-answer' session.id %}"
-                    >
-                        {% csrf_token %}
+                    <span class="option-label">A</span>
 
-                        <input
-                            type="hidden"
-                            name="question_id"
-                            id="question-id"
-                            value="{{ question.id }}"
-                        >
+                    <span class="option-text">
+                        {{ question.option_a }}
+                    </span>
 
-                        <input
-                            type="hidden"
-                            name="time_taken_seconds"
-                            id="time-taken-seconds"
-                            value="0"
-                        >
+                </div>
 
-                        <input
-                            type="hidden"
-                            name="selected_answer"
-                            id="selected-answer"
-                            value=""
-                        >
+                <div class="option-item"
+                     data-option="B"
+                     onclick="selectOption('B')">
 
-                        <div
-                            id="answer-options"
-                            class="d-grid gap-3"
-                        >
+                    <span class="option-label">B</span>
 
-                            <button
-                                type="button"
-                                class="btn btn-outline-dark text-start p-3 answer-option"
-                                data-answer="{{ question.option_a }}"
-                            >
-                                <strong class="answer-label">A.</strong>
-                                <span class="answer-text">
-                                    {{ question.option_a }}
-                                </span>
-                            </button>
+                    <span class="option-text">
+                        {{ question.option_b }}
+                    </span>
 
-                            <button
-                                type="button"
-                                class="btn btn-outline-dark text-start p-3 answer-option"
-                                data-answer="{{ question.option_b }}"
-                            >
-                                <strong class="answer-label">B.</strong>
-                                <span class="answer-text">
-                                    {{ question.option_b }}
-                                </span>
-                            </button>
+                </div>
 
-                            <button
-                                type="button"
-                                class="btn btn-outline-dark text-start p-3 answer-option"
-                                data-answer="{{ question.option_c }}"
-                            >
-                                <strong class="answer-label">C.</strong>
-                                <span class="answer-text">
-                                    {{ question.option_c }}
-                                </span>
-                            </button>
+                <div class="option-item"
+                     data-option="C"
+                     onclick="selectOption('C')">
 
-                            <button
-                                type="button"
-                                class="btn btn-outline-dark text-start p-3 answer-option"
-                                data-answer="{{ question.option_d }}"
-                            >
-                                <strong class="answer-label">D.</strong>
-                                <span class="answer-text">
-                                    {{ question.option_d }}
-                                </span>
-                            </button>
+                    <span class="option-label">C</span>
 
-                        </div>
+                    <span class="option-text">
+                        {{ question.option_c }}
+                    </span>
 
-                        <div class="mt-4">
+                </div>
 
-                            <button
-                                type="submit"
-                                id="submit-answer"
-                                class="btn cc-primary"
-                                disabled
-                            >
-                                Submit Answer
-                            </button>
+                <div class="option-item"
+                     data-option="D"
+                     onclick="selectOption('D')">
 
-                        </div>
+                    <span class="option-label">D</span>
 
-                    </form>
-
-                    <div
-                        id="answer-result"
-                        class="mt-4 d-none"
-                    ></div>
+                    <span class="option-text">
+                        {{ question.option_d }}
+                    </span>
 
                 </div>
 
             </div>
 
-        {% else %}
+            <!-- Feedback -->
+            <div class="feedback-section" id="feedbackSection">
 
-            <div
-                class="alert alert-warning"
-                role="alert"
-            >
-                No active question is available for this practice topic.
+                <div class="feedback-title" id="feedbackTitle">
+                    <span id="feedbackIcon"></span>
+                    <span id="feedbackHeading"></span>
+                </div>
+
+                <div class="feedback-explanation"
+                     id="feedbackExplanation">
+                </div>
+
+                <div class="feedback-correct-answer"
+                     id="feedbackCorrectAnswer">
+                </div>
+
             </div>
 
-        {% endif %}
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+
+                <div class="btn-group-left">
+
+                    <button
+                        class="btn-action btn-prev"
+                        id="prevBtn"
+                        onclick="prevQuestion()"
+                        disabled>
+
+                        <i class="bi bi-arrow-left"></i>
+                        Previous
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-flag"
+                        id="flagBtn"
+                        onclick="toggleFlag()">
+
+                        <i class="bi bi-flag"></i>
+                        Flag for Review
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-bookmark"
+                        id="bookmarkBtn"
+                        onclick="toggleBookmark()">
+
+                        <i class="bi bi-bookmark"></i>
+                        Bookmark
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-report"
+                        id="reportBtn"
+                        onclick="showReportModal()">
+
+                        <i class="bi bi-flag"></i>
+                        Report
+
+                    </button>
+
+                </div>
+
+                <div class="btn-group-right">
+
+                    <button
+                        class="btn-action btn-next"
+                        id="nextBtn"
+                        onclick="nextQuestion()">
+
+                        Next
+                        <i class="bi bi-arrow-right"></i>
+
+                    </button>
+
+                    <button
+                        class="btn-action btn-finish"
+                        id="finishBtn"
+                        onclick="finishPractice()">
+
+                        <i class="bi bi-check2-circle"></i>
+                        Finish Test
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
-</section>
 
-{% endblock %}
+</div>
 
 
-{% block extra_js %}
+<!-- ============================================================
+     REPORT MODAL
+     ============================================================ -->
+
+<div
+    class="modal fade"
+    id="reportModal"
+    tabindex="-1"
+    aria-labelledby="reportModalLabel"
+    aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="reportModalLabel">
+                    <i class="bi bi-flag text-danger"></i>
+                    Report Question
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p class="text-muted small mb-3">
+                    Help us improve by reporting issues with this question.
+                </p>
+
+                <div class="mb-3">
+
+                    <label
+                        for="reportType"
+                        class="form-label fw-semibold">
+
+                        Issue Type
+
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="reportType">
+
+                        <option value="wrong_answer">
+                            Wrong Answer
+                        </option>
+
+                        <option value="incorrect_explanation">
+                            Incorrect Explanation
+                        </option>
+
+                        <option value="typo">
+                            Typo/Spelling Error
+                        </option>
+
+                        <option value="duplicate">
+                            Duplicate Question
+                        </option>
+
+                        <option value="other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label
+                        for="reportDescription"
+                        class="form-label fw-semibold">
+
+                        Description
+
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        id="reportDescription"
+                        rows="3"
+                        placeholder="Please describe the issue in detail..."></textarea>
+
+                    <div class="form-text">
+                        Provide specific details about what's wrong with this question.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    <i class="bi bi-x-circle"></i>
+                    Cancel
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    onclick="submitReport()">
+
+                    <i class="bi bi-send"></i>
+                    Submit Report
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script>
 
-    let answerOptions =
-        document.querySelectorAll(".answer-option");
+/* ============================================================
+   PRACTICE SESSION STATE
+   ============================================================ */
 
-    let selectedAnswerInput =
-        document.getElementById("selected-answer");
+const sessionId = "{{ session.id|escapejs }}";
 
-    let submitButton =
-        document.getElementById("submit-answer");
+const totalQuestions =
+    Number("{{ total_questions|escapejs }}");
 
-    let answerForm =
-        document.getElementById("answer-form");
+let questions = [];
 
-    let timeInput =
-        document.getElementById("time-taken-seconds");
+let currentIndex = 0;
 
-    let resultContainer =
-        document.getElementById("answer-result");
+let selectedOption = null;
 
-    let startedAt = Date.now();
+let isAnswered = false;
+
+let isFlagged = false;
+
+let isBookmarked = false;
+
+let timerInterval = null;
+
+let seconds = 0;
+
+let currentQuestionId =
+    Number("{{ question.id|escapejs }}");
+
+let questionStartTime = 0;
 
 
-    function bindQuestionEvents() {
+/* ============================================================
+   CURRENT QUESTION DATA
+   ============================================================ */
 
-        answerOptions =
-            document.querySelectorAll(".answer-option");
+let currentQuestionData = {
 
-        selectedAnswerInput =
-            document.getElementById("selected-answer");
+    id: Number("{{ question.id|escapejs }}"),
 
-        submitButton =
-            document.getElementById("submit-answer");
+    text: "{{ question.question|escapejs }}",
 
-        answerForm =
-            document.getElementById("answer-form");
+    option_a: "{{ question.option_a|escapejs }}",
 
-        timeInput =
-            document.getElementById("time-taken-seconds");
+    option_b: "{{ question.option_b|escapejs }}",
 
-        resultContainer =
-            document.getElementById("answer-result");
+    option_c: "{{ question.option_c|escapejs }}",
 
-        startedAt = Date.now();
+    option_d: "{{ question.option_d|escapejs }}"
 
-        answerOptions.forEach(function (option) {
+};
 
-            option.addEventListener("click", function () {
 
-                answerOptions.forEach(function (item) {
-                    item.classList.remove("active");
-                });
+/* ============================================================
+   SHUFFLE ARRAY
+   ============================================================ */
 
-                option.classList.add("active");
+function shuffleArray(array) {
 
-                selectedAnswerInput.value =
-                    option.dataset.answer;
+    for (let i = array.length - 1; i > 0; i--) {
 
-                submitButton.disabled = false;
-            });
+        const j =
+            Math.floor(Math.random() * (i + 1));
 
-        });
+        [array[i], array[j]] =
+            [array[j], array[i]];
+    }
 
-        answerForm.addEventListener(
-            "submit",
-            submitAnswer
+    return array;
+}
+
+
+/* ============================================================
+   CREATE SHUFFLED OPTIONS
+   ============================================================ */
+
+function createShuffledOptions(questionData) {
+
+    const options = [
+
+        {
+            label: 'A',
+            text: questionData.option_a || ''
+        },
+
+        {
+            label: 'B',
+            text: questionData.option_b || ''
+        },
+
+        {
+            label: 'C',
+            text: questionData.option_c || ''
+        },
+
+        {
+            label: 'D',
+            text: questionData.option_d || ''
+        }
+
+    ];
+
+    return shuffleArray(options);
+}
+
+
+/* ============================================================
+   INITIALIZE
+   ============================================================ */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    /*
+     * Store the first question.
+     * The shuffled options are stored here so
+     * the order remains unchanged while revisiting it.
+     */
+
+    questions[0] = {
+
+        id: currentQuestionData.id,
+
+        data: currentQuestionData,
+
+        answered: false,
+
+        flagged: false,
+
+        shuffledOptions:
+            createShuffledOptions(currentQuestionData)
+
+    };
+
+
+    startTimer();
+
+    initPalette();
+
+    updateQuestionDisplay();
+
+    questionStartTime = Date.now();
+
+    checkBookmarkStatus();
+
+});
+
+
+/* ============================================================
+   REPORT MODAL
+   ============================================================ */
+
+function showReportModal() {
+
+    const modal =
+        new bootstrap.Modal(
+            document.getElementById('reportModal')
         );
+
+    modal.show();
+}
+
+
+async function submitReport() {
+
+    const reportType =
+        document.getElementById('reportType').value;
+
+    const description =
+        document
+            .getElementById('reportDescription')
+            .value
+            .trim();
+
+
+    if (!description) {
+
+        alert(
+            'Please provide a description of the issue.'
+        );
+
+        return;
     }
 
 
-    async function submitAnswer(event) {
-
-        event.preventDefault();
-
-        const elapsedSeconds = Math.floor(
-            (Date.now() - startedAt) / 1000
+    const submitBtn =
+        document.querySelector(
+            '#reportModal .btn-danger'
         );
 
-        timeInput.value = elapsedSeconds;
+    const originalText =
+        submitBtn.innerHTML;
 
-        submitButton.disabled = true;
 
-        const formData =
-            new FormData(answerForm);
+    submitBtn.disabled = true;
 
-        try {
+    submitBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm"></span> Submitting...';
 
-            const response = await fetch(
-                answerForm.action,
+
+    try {
+
+        const response = await fetch(
+            `/practice/questions/${currentQuestionId}/report/`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+
+                    'X-CSRFToken':
+                        '{{ csrf_token }}'
+                },
+
+                body: JSON.stringify({
+
+                    report_type: reportType,
+
+                    description: description
+
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                'Failed to submit report'
+            );
+        }
+
+
+        alert('✅ ' + data.message);
+
+
+        const modal =
+            bootstrap.Modal.getInstance(
+                document.getElementById('reportModal')
+            );
+
+        modal.hide();
+
+
+        document.getElementById(
+            'reportDescription'
+        ).value = '';
+
+
+    } catch (error) {
+
+        alert(
+            'Error: ' + error.message
+        );
+
+    } finally {
+
+        submitBtn.disabled = false;
+
+        submitBtn.innerHTML =
+            originalText;
+    }
+}
+
+
+/* ============================================================
+   BOOKMARK
+   ============================================================ */
+
+async function toggleBookmark() {
+
+    const btn =
+        document.getElementById('bookmarkBtn');
+
+    const originalText =
+        btn.innerHTML;
+
+
+    btn.disabled = true;
+
+    btn.innerHTML =
+        '<span class="spinner-border spinner-border-sm"></span>';
+
+
+    try {
+
+        const response = await fetch(
+            `/practice/questions/${currentQuestionId}/bookmark/`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'X-CSRFToken':
+                        '{{ csrf_token }}'
+                }
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.bookmarked) {
+
+            btn.innerHTML =
+                '<i class="bi bi-bookmark-fill"></i> Bookmarked';
+
+            btn.classList.add('bookmarked');
+
+            isBookmarked = true;
+
+        } else {
+
+            btn.innerHTML =
+                '<i class="bi bi-bookmark"></i> Bookmark';
+
+            btn.classList.remove('bookmarked');
+
+            isBookmarked = false;
+        }
+
+
+    } catch (error) {
+
+        alert(
+            'Error: ' + error.message
+        );
+
+        btn.innerHTML =
+            originalText;
+
+    } finally {
+
+        btn.disabled = false;
+    }
+}
+
+
+async function checkBookmarkStatus() {
+
+    /*
+     * Reset first because we are now checking
+     * the bookmark status of a new question.
+     */
+
+    isBookmarked = false;
+
+
+    const btn =
+        document.getElementById('bookmarkBtn');
+
+    btn.innerHTML =
+        '<i class="bi bi-bookmark"></i> Bookmark';
+
+    btn.classList.remove('bookmarked');
+
+
+    try {
+
+        const response = await fetch(
+            `/practice/questions/${currentQuestionId}/bookmark-status/`
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (data.bookmarked) {
+
+            btn.innerHTML =
+                '<i class="bi bi-bookmark-fill"></i> Bookmarked';
+
+            btn.classList.add('bookmarked');
+
+            isBookmarked = true;
+        }
+
+
+    } catch (error) {
+
+        // Ignore bookmark status errors
+    }
+}
+
+
+/* ============================================================
+   TIMER
+   ============================================================ */
+
+function startTimer() {
+
+    timerInterval =
+        setInterval(function () {
+
+            seconds++;
+
+
+            const mins =
+                Math.floor(seconds / 60);
+
+            const secs =
+                seconds % 60;
+
+
+            document.getElementById(
+                'timer-display'
+            ).textContent =
+
+                String(mins).padStart(2, '0') +
+                ':' +
+                String(secs).padStart(2, '0');
+
+
+            const timer =
+                document.getElementById('timer');
+
+
+            if (
+                seconds > 600 &&
+                seconds < 660
+            ) {
+
+                timer.classList.add(
+                    'warning'
+                );
+
+            } else if (seconds > 660) {
+
+                timer.classList.remove(
+                    'warning'
+                );
+
+                timer.classList.add(
+                    'danger'
+                );
+            }
+
+        }, 1000);
+}
+
+
+/* ============================================================
+   PALETTE
+   ============================================================ */
+
+function initPalette() {
+
+    const paletteGrid =
+        document.getElementById(
+            'paletteGrid'
+        );
+
+
+    paletteGrid.innerHTML = '';
+
+
+    for (
+        let i = 1;
+        i <= totalQuestions;
+        i++
+    ) {
+
+        const btn =
+            document.createElement('button');
+
+
+        btn.className =
+            'palette-btn current';
+
+
+        btn.id =
+            'palette-' + i;
+
+
+        btn.textContent =
+            i;
+
+
+        btn.onclick =
+            function () {
+
+                goToQuestion(i - 1);
+
+            };
+
+
+        paletteGrid.appendChild(btn);
+    }
+
+
+    updatePalette();
+}
+
+
+function updatePalette() {
+
+    for (
+        let i = 1;
+        i <= totalQuestions;
+        i++
+    ) {
+
+        const btn =
+            document.getElementById(
+                'palette-' + i
+            );
+
+
+        if (!btn) {
+            continue;
+        }
+
+
+        btn.className =
+            'palette-btn';
+
+
+        if (i - 1 === currentIndex) {
+
+            btn.classList.add(
+                'current'
+            );
+        }
+
+
+        if (
+            questions[i - 1] &&
+            questions[i - 1].answered
+        ) {
+
+            btn.classList.add(
+                'answered'
+            );
+
+        } else if (
+            questions[i - 1] &&
+            questions[i - 1].flagged
+        ) {
+
+            btn.classList.add(
+                'flagged'
+            );
+
+        } else {
+
+            btn.classList.add(
+                'unanswered'
+            );
+        }
+    }
+}
+
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+function goToQuestion(index) {
+
+    if (
+        index < 0 ||
+        index >= totalQuestions
+    ) {
+        return;
+    }
+
+
+    /*
+     * Only allow navigation to a question
+     * that has already been loaded.
+     *
+     * Future questions are loaded by nextQuestion().
+     */
+
+    if (
+        !questions[index] ||
+        !questions[index].data
+    ) {
+
+        return;
+    }
+
+
+    currentIndex =
+        index;
+
+
+    currentQuestionData =
+        questions[index].data;
+
+
+    currentQuestionId =
+        currentQuestionData.id;
+
+
+    updateQuestionDisplay();
+
+    updatePalette();
+
+    checkBookmarkStatus();
+
+    questionStartTime =
+        Date.now();
+}
+
+
+async function nextQuestion() {
+
+    if (
+        currentIndex >=
+        totalQuestions - 1
+    ) {
+
+        finishPractice();
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/practice/sessions/${sessionId}/next/`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                'Failed to load next question'
+            );
+        }
+
+
+        if (data.completed) {
+
+            finishPractice();
+
+            return;
+        }
+
+
+        const nextQuestionData = {
+
+            id: data.question_id,
+
+            text: data.question_text,
+
+            option_a: data.options.A,
+
+            option_b: data.options.B,
+
+            option_c: data.options.C,
+
+            option_d: data.options.D
+
+        };
+
+
+        const nextIndex =
+            currentIndex + 1;
+
+
+        /*
+         * Store question data and its shuffled
+         * option order.
+         */
+
+        questions[nextIndex] = {
+
+            id: nextQuestionData.id,
+
+            data: nextQuestionData,
+
+            answered: false,
+
+            flagged: false,
+
+            shuffledOptions:
+                createShuffledOptions(
+                    nextQuestionData
+                )
+
+        };
+
+
+        currentIndex =
+            nextIndex;
+
+
+        currentQuestionId =
+            nextQuestionData.id;
+
+
+        currentQuestionData =
+            nextQuestionData;
+
+
+        updateQuestionDisplay();
+
+        updatePalette();
+
+        checkBookmarkStatus();
+
+        questionStartTime =
+            Date.now();
+
+
+    } catch (error) {
+
+        alert(
+            'Error loading next question: ' +
+            error.message
+        );
+    }
+}
+
+
+function prevQuestion() {
+
+    if (currentIndex <= 0) {
+        return;
+    }
+
+
+    currentIndex--;
+
+
+    if (
+        questions[currentIndex] &&
+        questions[currentIndex].data
+    ) {
+
+        currentQuestionData =
+            questions[currentIndex].data;
+
+        currentQuestionId =
+            currentQuestionData.id;
+    }
+
+
+    updateQuestionDisplay();
+
+    updatePalette();
+
+    checkBookmarkStatus();
+
+    questionStartTime =
+        Date.now();
+}
+
+
+/* ============================================================
+   SELECT OPTION
+   ============================================================ */
+
+function selectOption(option) {
+
+    if (isAnswered) {
+        return;
+    }
+
+
+    document
+        .querySelectorAll('.option-item')
+        .forEach(function (el) {
+
+            el.classList.remove(
+                'selected'
+            );
+
+        });
+
+
+    /*
+     * "option" is the DISPLAYED label.
+     *
+     * Example:
+     *
+     * Displayed A -> Original C
+     *
+     * The user clicked A, but the backend
+     * must receive C.
+     */
+
+    const selectedEl =
+        document.querySelector(
+            `.option-item[data-option="${option}"]`
+        );
+
+
+    if (selectedEl) {
+
+        selectedEl.classList.add(
+            'selected'
+        );
+
+
+        selectedOption =
+            selectedEl.dataset.originalLabel;
+
+
+        submitAnswer();
+    }
+}
+
+
+/* ============================================================
+   SUBMIT ANSWER
+   ============================================================ */
+
+async function submitAnswer() {
+
+    if (
+        !selectedOption ||
+        isAnswered
+    ) {
+
+        return;
+    }
+
+
+    const timeTaken =
+        (Date.now() - questionStartTime) /
+        1000;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/practice/sessions/${sessionId}/answer/`,
                 {
-                    method: "POST",
-                    body: formData,
+                    method: 'POST',
+
                     headers: {
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
+
+                        'Content-Type':
+                            'application/json',
+
+                        'X-CSRFToken':
+                            '{{ csrf_token }}'
+
+                    },
+
+                    body: JSON.stringify({
+
+                        question_id:
+                            currentQuestionId,
+
+                        /*
+                         * This is the ORIGINAL
+                         * database option label.
+                         */
+
+                        selected_answer:
+                            selectedOption,
+
+                        time_taken:
+                            timeTaken
+
+                    })
                 }
             );
 
-            const data = await response.json();
 
-            if (!response.ok) {
+        const data =
+            await response.json();
 
-                resultContainer.classList.remove("d-none");
 
-                resultContainer.innerHTML = `
-                    <div class="alert alert-danger">
-                        ${data.error || "Unable to submit answer."}
-                    </div>
-                `;
+        if (!response.ok) {
 
-                submitButton.disabled = false;
+            throw new Error(
+                data.error ||
+                'Failed to submit answer'
+            );
+        }
 
-                return;
-            }
 
-            resultContainer.classList.remove("d-none");
+        processAnswer(data);
 
-            const resultClass =
-                data.is_correct
-                    ? "alert-success"
-                    : "alert-danger";
 
-            resultContainer.innerHTML = `
-                <div class="${resultClass}">
-                    <h3 class="h5">
-                        ${data.is_correct
-                            ? "Correct!"
-                            : "Incorrect"}
-                    </h3>
+    } catch (error) {
 
-                    <p class="mb-2">
-                        <strong>Correct answer:</strong>
-                        ${data.correct_answer}
-                    </p>
+        alert(
+            'Error: ' +
+            error.message
+        );
+    }
+}
 
-                    <p class="mb-0">
-                        ${data.explanation}
-                    </p>
-                </div>
-            `;
 
-            if (data.session_completed) {
+/* ============================================================
+   PROCESS ANSWER
+   ============================================================ */
 
-                submitButton.remove();
+function processAnswer(data) {
 
-                const completedMessage =
-                    document.createElement("div");
+    isAnswered = true;
 
-                completedMessage.className =
-                    "alert alert-info mt-3";
 
-                completedMessage.textContent =
-                    "Practice session completed.";
+    if (!questions[currentIndex]) {
 
-                resultContainer.appendChild(
-                    completedMessage
+        questions[currentIndex] = {};
+    }
+
+
+    questions[currentIndex].answered =
+        true;
+
+
+    questions[currentIndex].correct =
+        data.is_correct;
+
+
+    questions[currentIndex].data =
+        currentQuestionData;
+
+
+    const statusEl =
+        document.getElementById(
+            'qStatus'
+        );
+
+
+    statusEl.className =
+        'q-status answered';
+
+
+    statusEl.innerHTML =
+        '<i class="bi bi-check-circle"></i> Answered';
+
+
+    const feedbackSection =
+        document.getElementById(
+            'feedbackSection'
+        );
+
+
+    const feedbackTitle =
+        document.getElementById(
+            'feedbackTitle'
+        );
+
+
+    const feedbackIcon =
+        document.getElementById(
+            'feedbackIcon'
+        );
+
+
+    const feedbackHeading =
+        document.getElementById(
+            'feedbackHeading'
+        );
+
+
+    const feedbackExplanation =
+        document.getElementById(
+            'feedbackExplanation'
+        );
+
+
+    const feedbackCorrect =
+        document.getElementById(
+            'feedbackCorrectAnswer'
+        );
+
+
+    feedbackSection.className =
+        'feedback-section show ' +
+        (
+            data.is_correct
+                ? 'correct'
+                : 'incorrect'
+        );
+
+
+    feedbackSection.style.display =
+        'block';
+
+
+    if (data.is_correct) {
+
+        feedbackTitle.className =
+            'feedback-title correct-text';
+
+        feedbackIcon.textContent =
+            '✅';
+
+        feedbackHeading.textContent =
+            'Correct!';
+
+    } else {
+
+        feedbackTitle.className =
+            'feedback-title incorrect-text';
+
+        feedbackIcon.textContent =
+            '❌';
+
+        feedbackHeading.textContent =
+            'Incorrect';
+    }
+
+
+    feedbackExplanation.textContent =
+        data.explanation ||
+        'No explanation provided.';
+
+
+    feedbackCorrect.textContent =
+        data.is_correct
+            ? ''
+            : `Correct answer: ${data.correct_answer}`;
+
+
+    /*
+     * IMPORTANT:
+     *
+     * data.correct_answer is the ORIGINAL
+     * database label.
+     *
+     * Therefore we compare it against
+     * data-original-label, NOT data-option.
+     */
+
+    document
+        .querySelectorAll('.option-item')
+        .forEach(function (el) {
+
+            el.classList.add(
+                'disabled'
+            );
+
+
+            const originalOption =
+                el.dataset.originalLabel;
+
+
+            /*
+             * Highlight the correct option.
+             */
+
+            if (
+                originalOption ===
+                data.correct_answer
+            ) {
+
+                el.classList.add(
+                    'correct'
                 );
 
-                return;
             }
 
-            setTimeout(function () {
-                loadNextQuestion(data.next_question);
-            }, 1000);
 
-        } catch (error) {
+            /*
+             * Highlight the selected option
+             * if it was incorrect.
+             */
 
-            resultContainer.classList.remove("d-none");
+            else if (
+                originalOption ===
+                    selectedOption &&
+                !data.is_correct
+            ) {
 
-            resultContainer.innerHTML = `
-                <div class="alert alert-danger">
-                    Something went wrong while submitting your answer.
-                </div>
-            `;
+                el.classList.add(
+                    'incorrect'
+                );
+            }
 
-            submitButton.disabled = false;
+        });
+
+
+    updatePalette();
+}
+
+
+/* ============================================================
+   TOGGLE FLAG
+   ============================================================ */
+
+function toggleFlag() {
+
+    if (!questions[currentIndex]) {
+
+        questions[currentIndex] = {};
+    }
+
+
+    isFlagged =
+        !isFlagged;
+
+
+    questions[currentIndex].flagged =
+        isFlagged;
+
+
+    if (
+        !questions[currentIndex].data
+    ) {
+
+        questions[currentIndex].data =
+            currentQuestionData;
+    }
+
+
+    const flagBtn =
+        document.getElementById(
+            'flagBtn'
+        );
+
+
+    const statusEl =
+        document.getElementById(
+            'qStatus'
+        );
+
+
+    if (isFlagged) {
+
+        flagBtn.classList.add(
+            'flagged'
+        );
+
+        flagBtn.innerHTML =
+            '<i class="bi bi-flag-fill"></i> Flagged';
+
+
+        statusEl.className =
+            'q-status flagged';
+
+        statusEl.innerHTML =
+            '<i class="bi bi-flag"></i> Flagged';
+
+
+    } else {
+
+        flagBtn.classList.remove(
+            'flagged'
+        );
+
+        flagBtn.innerHTML =
+            '<i class="bi bi-flag"></i> Flag for Review';
+
+
+        /*
+         * If the question is already answered,
+         * preserve the Answered status.
+         */
+
+        if (
+            questions[currentIndex].answered
+        ) {
+
+            statusEl.className =
+                'q-status answered';
+
+            statusEl.innerHTML =
+                '<i class="bi bi-check-circle"></i> Answered';
+
+        } else {
+
+            statusEl.className =
+                'q-status unanswered';
+
+            statusEl.innerHTML =
+                '<i class="bi bi-circle"></i> Unanswered';
         }
     }
 
 
-    function loadNextQuestion(question) {
+    updatePalette();
+}
 
-        const practiceCard =
-            document.getElementById("practice-card");
 
-        practiceCard.innerHTML = `
-            <div class="card-body p-4 p-md-5">
+/* ============================================================
+   UPDATE QUESTION DISPLAY
+   ============================================================ */
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
+function updateQuestionDisplay() {
 
-                    <span class="badge text-bg-secondary">
-                        ${question.difficulty}
-                    </span>
+    selectedOption = null;
 
-                    <span class="text-muted small">
-                        Question ${question.id}
-                    </span>
 
-                </div>
+    const qData =
+        questions[currentIndex] || {};
 
-                <h2 class="h4 mb-4">
-                    ${question.question}
-                </h2>
 
-                <form
-                    id="answer-form"
-                    method="post"
-                    action="{% url 'practice:submit-answer' session.id %}"
-                >
-                    {% csrf_token %}
+    const q =
+        currentQuestionData;
 
-                    <input
-                        type="hidden"
-                        name="question_id"
-                        value="${question.id}"
-                    >
 
-                    <input
-                        type="hidden"
-                        name="time_taken_seconds"
-                        id="time-taken-seconds"
-                        value="0"
-                    >
+    document.getElementById(
+        'qNumber'
+    ).textContent =
 
-                    <div class="d-grid gap-3">
+        `Question ${currentIndex + 1} of ${totalQuestions}`;
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark text-start p-3 answer-option"
-                            data-answer="${question.options[0]}"
-                        >
-                            <strong>A.</strong>
-                            ${question.options[0]}
-                        </button>
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark text-start p-3 answer-option"
-                            data-answer="${question.options[1]}"
-                        >
-                            <strong>B.</strong>
-                            ${question.options[1]}
-                        </button>
+    document.getElementById(
+        'questionContent'
+    ).textContent =
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark text-start p-3 answer-option"
-                            data-answer="${question.options[2]}"
-                        >
-                            <strong>C.</strong>
-                            ${question.options[2]}
-                        </button>
+        q.text ||
+        'Loading question...';
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark text-start p-3 answer-option"
-                            data-answer="${question.options[3]}"
-                        >
-                            <strong>D.</strong>
-                            ${question.options[3]}
-                        </button>
 
-                    </div>
+    /*
+     * ========================================================
+     * GET STORED SHUFFLED OPTIONS
+     * ========================================================
+     *
+     * If this question has already been displayed,
+     * use its existing shuffle.
+     *
+     * Otherwise create a new shuffle.
+     */
 
-                    <input
-                        type="hidden"
-                        name="selected_answer"
-                        id="selected-answer"
-                    >
+    if (
+        !qData.shuffledOptions
+    ) {
 
-                    <div class="mt-4">
+        qData.shuffledOptions =
+            createShuffledOptions(q);
 
-                        <button
-                            type="submit"
-                            id="submit-answer"
-                            class="btn cc-primary"
-                            disabled
-                        >
-                            Submit Answer
-                        </button>
-
-                    </div>
-
-                </form>
-
-                <div
-                    id="answer-result"
-                    class="mt-4 d-none"
-                ></div>
-
-            </div>
-        `;
-
-        bindQuestionEvents();
+        questions[currentIndex] =
+            qData;
     }
 
 
-    if (answerForm) {
-        bindQuestionEvents();
+    const shuffledOptions =
+        qData.shuffledOptions;
+
+
+    const displayLabels =
+        ['A', 'B', 'C', 'D'];
+
+
+    const optionItems =
+        document.querySelectorAll(
+            '.option-item'
+        );
+
+
+    optionItems.forEach(
+        function (el, index) {
+
+            const displayLabel =
+                displayLabels[index];
+
+
+            const option =
+                shuffledOptions[index];
+
+
+            /*
+             * DISPLAYED LABEL
+             *
+             * This is what the user sees.
+             */
+
+            el.dataset.option =
+                displayLabel;
+
+
+            /*
+             * ORIGINAL LABEL
+             *
+             * This is what Django uses
+             * for answer validation.
+             */
+
+            el.dataset.originalLabel =
+                option.label;
+
+
+            el.querySelector(
+                '.option-label'
+            ).textContent =
+                displayLabel;
+
+
+            el.querySelector(
+                '.option-text'
+            ).textContent =
+                option.text;
+
+
+            /*
+             * Reset option styling.
+             */
+
+            el.className =
+                'option-item';
+        }
+    );
+
+
+    /* ========================================================
+       QUESTION STATUS
+       ======================================================== */
+
+    const statusEl =
+        document.getElementById(
+            'qStatus'
+        );
+
+
+    if (qData.answered) {
+
+        isAnswered = true;
+
+
+        statusEl.className =
+            'q-status answered';
+
+
+        statusEl.innerHTML =
+            '<i class="bi bi-check-circle"></i> Answered';
+
+
+    } else if (qData.flagged) {
+
+        isAnswered = false;
+
+        isFlagged = true;
+
+
+        statusEl.className =
+            'q-status flagged';
+
+
+        statusEl.innerHTML =
+            '<i class="bi bi-flag"></i> Flagged';
+
+
+    } else {
+
+        isAnswered = false;
+
+        isFlagged = false;
+
+
+        statusEl.className =
+            'q-status unanswered';
+
+
+        statusEl.innerHTML =
+            '<i class="bi bi-circle"></i> Unanswered';
     }
+
+
+    /* ========================================================
+       FLAG BUTTON
+       ======================================================== */
+
+    const flagBtn =
+        document.getElementById(
+            'flagBtn'
+        );
+
+
+    if (qData.flagged) {
+
+        flagBtn.classList.add(
+            'flagged'
+        );
+
+        flagBtn.innerHTML =
+            '<i class="bi bi-flag-fill"></i> Flagged';
+
+
+    } else {
+
+        flagBtn.classList.remove(
+            'flagged'
+        );
+
+        flagBtn.innerHTML =
+            '<i class="bi bi-flag"></i> Flag for Review';
+    }
+
+
+    /* ========================================================
+       FEEDBACK
+       ======================================================== */
+
+    const feedbackSection =
+        document.getElementById(
+            'feedbackSection'
+        );
+
+
+    feedbackSection.className =
+        'feedback-section';
+
+
+    feedbackSection.style.display =
+        'none';
+
+
+    /* ========================================================
+       PREVIOUS BUTTON
+       ======================================================== */
+
+    document.getElementById(
+        'prevBtn'
+    ).disabled =
+
+        currentIndex === 0;
+
+
+    /* ========================================================
+       NEXT BUTTON
+       ======================================================== */
+
+    const nextBtn =
+        document.getElementById(
+            'nextBtn'
+        );
+
+
+    if (
+        currentIndex ===
+        totalQuestions - 1
+    ) {
+
+        nextBtn.innerHTML =
+            'Finish <i class="bi bi-check2-circle"></i>';
+
+
+        nextBtn.onclick =
+            finishPractice;
+
+
+    } else {
+
+        nextBtn.innerHTML =
+            'Next <i class="bi bi-arrow-right"></i>';
+
+
+        nextBtn.onclick =
+            nextQuestion;
+    }
+
+
+    /* ========================================================
+       BOOKMARK BUTTON
+       ======================================================== */
+
+    const bookmarkBtn =
+        document.getElementById(
+            'bookmarkBtn'
+        );
+
+
+    /*
+     * Bookmark status is loaded separately
+     * through checkBookmarkStatus().
+     */
+
+    bookmarkBtn.innerHTML =
+        '<i class="bi bi-bookmark"></i> Bookmark';
+
+
+    bookmarkBtn.classList.remove(
+        'bookmarked'
+    );
+
+
+    isBookmarked = false;
+}
+
+
+/* ============================================================
+   FINISH PRACTICE
+   ============================================================ */
+
+async function finishPractice() {
+
+    const finishBtn =
+        document.getElementById(
+            'finishBtn'
+        );
+
+
+    const nextBtn =
+        document.getElementById(
+            'nextBtn'
+        );
+
+
+    finishBtn.disabled = true;
+
+    nextBtn.disabled = true;
+
+
+    finishBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm"></span> Finishing...';
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/practice/sessions/${sessionId}/complete/`,
+                {
+                    method: 'POST',
+
+                    headers: {
+
+                        'X-CSRFToken':
+                            '{{ csrf_token }}',
+
+                        'X-Requested-With':
+                            'XMLHttpRequest'
+
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                'Failed to complete session'
+            );
+        }
+
+
+        window.location.href =
+            `/practice/sessions/${sessionId}/results/`;
+
+
+    } catch (error) {
+
+        alert(
+            'Error: ' +
+            error.message
+        );
+
+
+        finishBtn.disabled = false;
+
+        nextBtn.disabled = false;
+
+
+        finishBtn.innerHTML =
+            '<i class="bi bi-check2-circle"></i> Finish Test';
+    }
+}
+
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+
+document.addEventListener(
+    'keydown',
+    function (e) {
+
+        /*
+         * 1 = A
+         * 2 = B
+         * 3 = C
+         * 4 = D
+         */
+
+        if (
+            e.key >= '1' &&
+            e.key <= '4' &&
+            !e.ctrlKey &&
+            !e.metaKey
+        ) {
+
+            const options =
+                ['A', 'B', 'C', 'D'];
+
+
+            selectOption(
+                options[
+                    parseInt(e.key) - 1
+                ]
+            );
+        }
+
+
+        /* ====================================================
+           NEXT
+           ==================================================== */
+
+        if (e.key === 'ArrowRight') {
+
+            e.preventDefault();
+
+
+            if (
+                currentIndex ===
+                totalQuestions - 1
+            ) {
+
+                finishPractice();
+
+            } else {
+
+                nextQuestion();
+            }
+        }
+
+
+        /* ====================================================
+           PREVIOUS
+           ==================================================== */
+
+        if (e.key === 'ArrowLeft') {
+
+            e.preventDefault();
+
+            prevQuestion();
+        }
+
+
+        /* ====================================================
+           FLAG
+           ==================================================== */
+
+        if (
+            (e.key === 'f' ||
+             e.key === 'F') &&
+            !e.ctrlKey &&
+            !e.metaKey
+        ) {
+
+            e.preventDefault();
+
+            toggleFlag();
+        }
+
+
+        /* ====================================================
+           BOOKMARK
+           ==================================================== */
+
+        if (
+            (e.key === 'b' ||
+             e.key === 'B') &&
+            !e.ctrlKey &&
+            !e.metaKey
+        ) {
+
+            e.preventDefault();
+
+            toggleBookmark();
+        }
+
+    }
+);
+
+
+/* ============================================================
+   CLEANUP TIMER
+   ============================================================ */
+
+window.addEventListener(
+    'beforeunload',
+    function () {
+
+        if (timerInterval) {
+
+            clearInterval(
+                timerInterval
+            );
+        }
+
+    }
+);
 
 </script>
 

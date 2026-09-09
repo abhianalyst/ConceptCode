@@ -1,115 +1,455 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}My Account | ConceptCode{% endblock %}
 
+{% block extra_css %}
+<style>
+    .account-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .account-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .account-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .account-header p {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    /* Profile Card */
+    .profile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .profile-card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+    }
+
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        flex: 1;
+    }
+
+    .profile-name h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.1rem;
+    }
+
+    .profile-name .user-role {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .user-role.student {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .user-role.admin {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        transition: all 0.2s ease;
+    }
+
+    .info-item:hover {
+        background: #f0f7ff;
+    }
+
+    .info-item .label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-item .value {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #1a1a2e;
+        word-break: break-all;
+    }
+
+    .info-item .value .verified-badge {
+        display: inline-block;
+        background: #d4edda;
+        color: #155724;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    .info-item .value .unverified-badge {
+        display: inline-block;
+        background: #f8d7da;
+        color: #721c24;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    /* Stats Row */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+
+    .stat-item:hover {
+        background: #f0f7ff;
+        transform: translateY(-2px);
+    }
+
+    .stat-item .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0d6efd;
+    }
+
+    .stat-item .stat-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.1rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .btn-action {
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-primary-custom {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-primary-custom:hover {
+        background: #0b5ed7;
+        box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
+        color: white;
+    }
+
+    .btn-secondary-custom {
+        background: #e9ecef;
+        color: #2d3748;
+    }
+
+    .btn-secondary-custom:hover {
+        background: #dee2e6;
+        color: #2d3748;
+    }
+
+    .btn-danger-custom {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger-custom:hover {
+        background: #c82333;
+        box-shadow: 0 4px 16px rgba(220, 53, 69, 0.3);
+        color: white;
+    }
+
+    .btn-success-custom {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-success-custom:hover {
+        background: #218838;
+        box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .account-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-row {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .action-buttons {
+            justify-content: center;
+        }
+
+        .btn-action {
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .account-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .profile-card {
+            padding: 1.25rem;
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            font-size: 2rem;
+        }
+
+        .profile-avatar img {
+            width: 64px;
+            height: 64px;
+        }
+
+        .profile-name h2 {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .profile-card {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<section class="py-5">
-    <div class="container">
+<div class="account-container">
 
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+    <!-- Header -->
+    <div class="account-header">
+        <h1><i class="bi bi-person-circle text-primary"></i> My Account</h1>
+        <p>Manage your profile and account settings.</p>
+    </div>
 
-                <div class="card cc-card shadow-sm">
-                    <div class="card-body p-4">
+    <!-- Profile Card -->
+    <div class="profile-card">
 
-                        <h1 class="h3 mb-4">
-                            My Account
-                        </h1>
-
-                        {% if user.profile.profile_picture %}
-                            <div class="text-center mb-4">
-                                <img
-                                    src="{{ user.profile.profile_picture.url }}"
-                                    alt="Profile picture"
-                                    class="rounded-circle cc-profile-image"
-                                >
-                            </div>
-                        {% endif %}
-
-                        <div class="mb-3">
-                            <div class="text-muted small">
-                                Name
-                            </div>
-                            <div class="fw-semibold">
-                                {{ user.full_name }}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="text-muted small">
-                                Email
-                            </div>
-                            <div class="fw-semibold">
-                                {{ user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="text-muted small">
-                                Role
-                            </div>
-                            <div class="fw-semibold">
-                                {{ user.get_role_display }}
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="text-muted small">
-                                Email verified
-                            </div>
-
-                            {% if user.email_verified %}
-                                <span class="badge text-bg-success">
-                                    Verified
-                                </span>
-                            {% else %}
-                                <span class="badge text-bg-warning">
-                                    Not verified
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-flex flex-wrap gap-2">
-
-                            <a
-                                href="{% url 'core:home' %}"
-                                class="btn btn-outline-secondary"
-                            >
-                                Home
-                            </a>
-
-                            <a
-                                href="{% url 'accounts:profile-edit' %}"
-                                class="btn cc-primary"
-                            >
-                                Edit Profile
-                            </a>
-
-                            <form
-                                method="post"
-                                action="{% url 'accounts:logout' %}"
-                                class="d-inline"
-                            >
-                                {% csrf_token %}
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-outline-danger"
-                                >
-                                    Logout
-                                </button>
-                            </form>
-
-                        </div>
-
-                    </div>
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {% if request.user.profile.profile_picture %}
+                    <img src="{{ request.user.profile.profile_picture.url }}" alt="{{ request.user.full_name }}">
+                {% else %}
+                    <i class="bi bi-person-fill"></i>
+                {% endif %}
+            </div>
+            <div class="profile-name">
+                <h2>{{ request.user.full_name|default:request.user.email }}</h2>
+                <span class="user-role {{ request.user.role }}">
+                    {{ request.user.get_role_display|default:request.user.role|title }}
+                </span>
+                <div style="margin-top: 0.3rem;">
+                    <span class="badge {% if request.user.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                        {% if request.user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                    <span class="badge {% if request.user.email_verified %}bg-success{% else %}bg-warning{% endif %} ms-1">
+                        {% if request.user.email_verified %}✓ Verified{% else %}⚠️ Unverified{% endif %}
+                    </span>
                 </div>
-
             </div>
         </div>
 
+        <!-- Info Grid -->
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="label">Full Name</div>
+                <div class="value">{{ request.user.full_name|default:"Not set" }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Email Address</div>
+                <div class="value">{{ request.user.email }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Role</div>
+                <div class="value">{{ request.user.get_role_display|default:request.user.role|title }}</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Email Verification</div>
+                <div class="value">
+                    {% if request.user.email_verified %}
+                        <span class="verified-badge"><i class="bi bi-check-circle"></i> Verified</span>
+                    {% else %}
+                        <span class="unverified-badge"><i class="bi bi-exclamation-circle"></i> Unverified</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-number">{{ total_practice_sessions|default:0 }}</div>
+                <div class="stat-label">Practice Sessions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ total_questions_answered|default:0 }}</div>
+                <div class="stat-label">Questions Answered</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ accuracy|default:0 }}%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'core:home' %}" class="btn-action btn-secondary-custom">
+                <i class="bi bi-house"></i> Home
+            </a>
+            <a href="{% url 'accounts:profile-edit' %}" class="btn-action btn-primary-custom">
+                <i class="bi bi-pencil-square"></i> Edit Profile
+            </a>
+            <a href="{% url 'accounts:settings' %}" class="btn-action btn-secondary-custom">
+                <i class="bi bi-gear"></i> Settings
+            </a>
+            <a href="{% url 'practice:student-dashboard' %}" class="btn-action btn-success-custom">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{% url 'accounts:logout' %}" class="btn-action btn-danger-custom">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+
     </div>
-</section>
+
+</div>
 
 {% endblock %}

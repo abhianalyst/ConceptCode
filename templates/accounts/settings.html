@@ -1,0 +1,1458 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Settings | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    /* Header */
+    .settings-header {
+        margin-bottom: 2rem;
+    }
+
+    .settings-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .settings-header p {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    /* Settings Grid */
+    .settings-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 992px) {
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Sidebar */
+    .settings-sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: fit-content;
+        position: sticky;
+        top: 90px;
+    }
+
+    .settings-sidebar .sidebar-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        border-radius: 8px;
+        color: #2d3748;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        width: 100%;
+        font-size: 0.9rem;
+        text-align: left;
+    }
+
+    .settings-sidebar .sidebar-item:hover {
+        background: #f8f9fa;
+    }
+
+    .settings-sidebar .sidebar-item.active {
+        background: #e7f1ff;
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    .settings-sidebar .sidebar-item i {
+        font-size: 1.1rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    .settings-sidebar .sidebar-item .badge {
+        margin-left: auto;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .settings-sidebar .sidebar-divider {
+        height: 1px;
+        background: #e9ecef;
+        margin: 0.5rem 0;
+    }
+
+    /* Main Content */
+    .settings-content {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .settings-content .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .settings-content .section-subtitle {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Profile Card */
+    .profile-card {
+        display: flex;
+        gap: 1.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .profile-card .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4facfe, #0d6efd);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .profile-card .avatar img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-card .profile-info {
+        flex: 1;
+    }
+
+    .profile-card .profile-info .name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .profile-card .profile-info .username {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .profile-card .profile-info .meta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .profile-card .profile-info .meta-item {
+        font-size: 0.85rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .profile-card .profile-info .meta-item i {
+        color: #0d6efd;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+
+    .form-group .form-control {
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+
+    .form-group .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        outline: none;
+    }
+
+    .form-group .form-control:disabled {
+        background: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    .form-group .help-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 0.2rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 576px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Security Items */
+    .security-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .security-item:last-child {
+        border-bottom: none;
+    }
+
+    .security-item .security-info .security-title {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #1a1a2e;
+    }
+
+    .security-item .security-info .security-desc {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .security-item .security-action {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-security {
+        padding: 0.3rem 1rem;
+        border-radius: 6px;
+        border: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #e9ecef;
+        color: #2d3748;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .btn-security:hover {
+        background: #dee2e6;
+        text-decoration: none;
+        color: #2d3748;
+    }
+
+    .btn-security.primary {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-security.primary:hover {
+        background: #0b5ed7;
+        color: white;
+    }
+
+    .btn-security.success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-security.success:hover {
+        background: #218838;
+        color: white;
+    }
+
+    .btn-security.danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-security.danger:hover {
+        background: #c82333;
+        color: white;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #cbd5e0;
+        transition: 0.3s;
+        border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background: white;
+        transition: 0.3s;
+        border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+        background: #28a745;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+    }
+
+    /* Action Buttons */
+    .settings-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-save {
+        padding: 0.6rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-save:hover {
+        background: #0b5ed7;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
+    }
+
+    .btn-cancel {
+        padding: 0.6rem 2rem;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: transparent;
+        color: #6c757d;
+    }
+
+    .btn-cancel:hover {
+        background: #f8f9fa;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .settings-container {
+            padding: 0.5rem;
+        }
+
+        .settings-content {
+            padding: 1rem;
+        }
+
+        .profile-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-card .profile-info .meta {
+            justify-content: center;
+        }
+
+        .security-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .security-item .security-action {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .settings-sidebar {
+            position: static;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .settings-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .settings-actions {
+            flex-direction: column;
+        }
+
+        .settings-actions .btn-save,
+        .settings-actions .btn-cancel {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="settings-container">
+
+    <!-- Header -->
+    <div class="settings-header">
+        <h1>
+            <i class="bi bi-gear text-primary"></i>
+            Settings
+        </h1>
+
+        <p>
+            Manage your account, preferences, notifications, and privacy.
+        </p>
+    </div>
+
+
+    <!-- Settings Grid -->
+    <div class="settings-grid">
+
+        <!-- Sidebar -->
+        <div class="settings-sidebar">
+
+            <button
+                type="button"
+                class="sidebar-item active"
+                data-section="profile"
+                onclick="showSection('profile')"
+            >
+                <i class="bi bi-person"></i>
+                Profile Information
+            </button>
+
+            <button
+                type="button"
+                class="sidebar-item"
+                data-section="security"
+                onclick="showSection('security')"
+            >
+                <i class="bi bi-shield-lock"></i>
+                Account &amp; Security
+            </button>
+
+            <button
+                type="button"
+                class="sidebar-item"
+                data-section="notifications"
+                onclick="showSection('notifications')"
+            >
+                <i class="bi bi-bell"></i>
+                Notifications
+
+                <span class="badge bg-primary">
+                    3
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="sidebar-item"
+                data-section="privacy"
+                onclick="showSection('privacy')"
+            >
+                <i class="bi bi-lock"></i>
+                Privacy
+            </button>
+
+            <div class="sidebar-divider"></div>
+
+            <button
+                type="button"
+                class="sidebar-item"
+                data-section="danger"
+                onclick="showSection('danger')"
+                style="color: #dc3545;"
+            >
+                <i class="bi bi-exclamation-triangle"></i>
+                Danger Zone
+            </button>
+
+        </div>
+
+
+        <!-- Main Content -->
+        <div class="settings-content">
+
+            <!-- ================================================= -->
+            <!-- PROFILE SECTION -->
+            <!-- ================================================= -->
+
+            <div
+                id="section-profile"
+                class="section-content"
+            >
+
+                <div class="section-title">
+                    Profile Information
+                </div>
+
+                <div class="section-subtitle">
+                    Update your personal details and public profile.
+                </div>
+
+
+                <!-- Profile Card -->
+                <div class="profile-card">
+
+                    <div class="avatar">
+
+                        {% if request.user.profile.profile_picture %}
+
+                            <img
+                                src="{{ request.user.profile.profile_picture.url }}"
+                                alt="Profile picture"
+                            >
+
+                        {% else %}
+
+                            <i class="bi bi-person-fill"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="profile-info">
+
+                        <div class="name">
+                            {{ request.user.full_name|default:request.user.email }}
+                        </div>
+
+                        <div class="username">
+                            @{{ request.user.email|cut:"@"|cut:"."|truncatechars:15 }}
+                        </div>
+
+
+                        <div class="meta">
+
+                            <span class="meta-item">
+                                <i class="bi bi-envelope"></i>
+                                {{ request.user.email }}
+                            </span>
+
+                            <span class="meta-item">
+                                <i class="bi bi-phone"></i>
+                                {{ request.user.profile.phone_number|default:"Not set" }}
+                            </span>
+
+                            <span class="meta-item">
+                                <i class="bi bi-person-badge"></i>
+                                Student ID:
+                                CC-{{ request.user.id|stringformat:"06d" }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Profile Form -->
+                <form
+                    method="post"
+                    action="{% url 'accounts:profile-edit' %}"
+                    enctype="multipart/form-data"
+                >
+
+                    {% csrf_token %}
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="full_name">
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="full_name"
+                                name="full_name"
+                                value="{{ request.user.full_name|default:'' }}"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="email">
+                                Email Address
+                            </label>
+
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                value="{{ request.user.email }}"
+                                disabled
+                            >
+
+                            <div class="help-text">
+                                Email cannot be changed
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="phone_number">
+                                Phone Number
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="phone_number"
+                                name="phone_number"
+                                value="{{ request.user.profile.phone_number|default:'' }}"
+                                placeholder="+1 (555) 123-4567"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="avatar">
+                                Change Avatar
+                            </label>
+
+                            <input
+                                type="file"
+                                class="form-control"
+                                id="avatar"
+                                name="profile_picture"
+                                accept="image/*"
+                            >
+
+                            <div class="help-text">
+                                Recommended: Square image, max 5MB
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-actions">
+
+                        <button
+                            type="submit"
+                            class="btn-save"
+                        >
+                            <i class="bi bi-check-circle"></i>
+                            Save Changes
+                        </button>
+
+                        <button
+                            type="reset"
+                            class="btn-cancel"
+                        >
+                            <i class="bi bi-x-circle"></i>
+                            Cancel
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- SECURITY SECTION -->
+            <!-- ================================================= -->
+
+            <div
+                id="section-security"
+                class="section-content"
+                style="display: none;"
+            >
+
+                <div class="section-title">
+                    Account &amp; Security
+                </div>
+
+                <div class="section-subtitle">
+                    Manage your password, 2FA, and active sessions.
+                </div>
+
+
+                <!-- Change Password -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Change Password
+                        </div>
+
+                        <div class="security-desc">
+                            Update your account password securely.
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <a
+                            href="{% url 'accounts:password_change' %}"
+                            class="btn-security primary"
+                        >
+                            <i class="bi bi-pencil"></i>
+                            Change
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Two Factor Authentication -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Two-Factor Authentication
+                        </div>
+
+                        <div class="security-desc">
+                            Added security for your account
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <div class="toggle-switch">
+
+                            <input
+                                type="checkbox"
+                                id="twoFactorToggle"
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Active Sessions -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Active Sessions
+                        </div>
+
+                        <div class="security-desc">
+                            Manage devices where you're logged in
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <button
+                            type="button"
+                            class="btn-security"
+                            onclick="alert('Showing active sessions...')"
+                        >
+                            <i class="bi bi-device-desktop"></i>
+                            View Sessions
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="btn-save"
+                        onclick="alert('Security settings updated!')"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Save Security Settings
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- NOTIFICATIONS SECTION -->
+            <!-- ================================================= -->
+
+            <div
+                id="section-notifications"
+                class="section-content"
+                style="display: none;"
+            >
+
+                <div class="section-title">
+                    Notifications
+                </div>
+
+                <div class="section-subtitle">
+                    Manage your notification preferences.
+                </div>
+
+
+                <!-- Email Notifications -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Email Notifications
+                        </div>
+
+                        <div class="security-desc">
+                            Receive practice reminders and updates via email
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <div class="toggle-switch">
+
+                            <input
+                                type="checkbox"
+                                id="emailNotifications"
+                                checked
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Practice Reminders -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Practice Reminders
+                        </div>
+
+                        <div class="security-desc">
+                            Daily reminders to complete your practice sessions
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <div class="toggle-switch">
+
+                            <input
+                                type="checkbox"
+                                id="practiceReminders"
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Achievement Alerts -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Achievement Alerts
+                        </div>
+
+                        <div class="security-desc">
+                            Get notified when you earn new achievements
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <div class="toggle-switch">
+
+                            <input
+                                type="checkbox"
+                                id="achievementAlerts"
+                                checked
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="btn-save"
+                        onclick="alert('Notification preferences saved!')"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Save Preferences
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- PRIVACY SECTION -->
+            <!-- ================================================= -->
+
+            <div
+                id="section-privacy"
+                class="section-content"
+                style="display: none;"
+            >
+
+                <div class="section-title">
+                    Privacy Settings
+                </div>
+
+                <div class="section-subtitle">
+                    Control your privacy and data preferences.
+                </div>
+
+
+                <!-- Profile Visibility -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Profile Visibility
+                        </div>
+
+                        <div class="security-desc">
+                            Who can see your profile information
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <select
+                            class="form-control"
+                            style="
+                                width: auto;
+                                padding: 0.3rem 1rem;
+                                border-radius: 6px;
+                                border: 1px solid #e9ecef;
+                            "
+                        >
+                            <option>
+                                Public
+                            </option>
+
+                            <option selected>
+                                Registered Users
+                            </option>
+
+                            <option>
+                                Private
+                            </option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Practice Data Sharing -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Practice Data Sharing
+                        </div>
+
+                        <div class="security-desc">
+                            Share anonymized practice data for research
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <div class="toggle-switch">
+
+                            <input
+                                type="checkbox"
+                                id="dataSharing"
+                            >
+
+                            <span class="toggle-slider"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Download Data -->
+                <div class="security-item">
+
+                    <div class="security-info">
+
+                        <div class="security-title">
+                            Download Your Data
+                        </div>
+
+                        <div class="security-desc">
+                            Export all your practice data as CSV
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <button
+                            type="button"
+                            class="btn-security primary"
+                            onclick="alert('Downloading your data...')"
+                        >
+                            <i class="bi bi-download"></i>
+                            Export
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="btn-save"
+                        onclick="alert('Privacy settings saved!')"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Save Privacy Settings
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- DANGER ZONE -->
+            <!-- ================================================= -->
+
+            <div
+                id="section-danger"
+                class="section-content"
+                style="display: none;"
+            >
+
+                <div
+                    class="section-title"
+                    style="color: #dc3545;"
+                >
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Danger Zone
+                </div>
+
+                <div
+                    class="section-subtitle"
+                    style="color: #dc3545;"
+                >
+                    These actions are irreversible. Proceed with caution.
+                </div>
+
+
+                <!-- Delete Account -->
+                <div
+                    class="security-item"
+                    style="
+                        border: 1px solid #fee2e2;
+                        border-radius: 8px;
+                        padding: 1rem;
+                        margin-top: 1rem;
+                    "
+                >
+
+                    <div class="security-info">
+
+                        <div
+                            class="security-title"
+                            style="color: #dc3545;"
+                        >
+                            Delete Account
+                        </div>
+
+                        <div class="security-desc">
+                            Permanently delete your account and all associated data
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <button
+                            type="button"
+                            class="btn-security danger"
+                            onclick="confirmDelete()"
+                        >
+                            <i class="bi bi-trash"></i>
+                            Delete Account
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Clear Practice Data -->
+                <div
+                    class="security-item"
+                    style="
+                        border: 1px solid #fee2e2;
+                        border-radius: 8px;
+                        padding: 1rem;
+                        margin-top: 0.5rem;
+                    "
+                >
+
+                    <div class="security-info">
+
+                        <div
+                            class="security-title"
+                            style="color: #dc3545;"
+                        >
+                            Clear Practice Data
+                        </div>
+
+                        <div class="security-desc">
+                            Delete all your practice history and progress data
+                        </div>
+
+                    </div>
+
+
+                    <div class="security-action">
+
+                        <button
+                            type="button"
+                            class="btn-security danger"
+                            onclick="confirmClear()"
+                        >
+                            <i class="bi bi-eraser"></i>
+                            Clear Data
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="btn-cancel"
+                        onclick="showSection('profile')"
+                    >
+                        Back to Profile
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+    // ============================================================
+    // SECTION NAVIGATION
+    // ============================================================
+
+    function showSection(sectionName) {
+        // Hide all sections.
+        document.querySelectorAll(".section-content").forEach(function (element) {
+            element.style.display = "none";
+        });
+
+        // Show selected section.
+        const target = document.getElementById(
+            "section-" + sectionName
+        );
+
+        if (target) {
+            target.style.display = "block";
+        }
+
+        // Update sidebar active state.
+        document.querySelectorAll(".sidebar-item").forEach(function (element) {
+            element.classList.remove("active");
+
+            if (element.dataset.section === sectionName) {
+                element.classList.add("active");
+            }
+        });
+
+        // Save selected section.
+        try {
+            localStorage.setItem(
+                "settings_section",
+                sectionName
+            );
+        } catch (error) {
+            // Ignore localStorage errors.
+        }
+    }
+
+
+    // ============================================================
+    // RESTORE LAST SECTION
+    // ============================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            let lastSection = "profile";
+
+            try {
+                lastSection =
+                    localStorage.getItem(
+                        "settings_section"
+                    ) || "profile";
+            } catch (error) {
+                lastSection = "profile";
+            }
+
+            showSection(lastSection);
+        }
+    );
+
+
+    // ============================================================
+    // DANGER ZONE CONFIRMATIONS
+    // ============================================================
+
+    function confirmDelete() {
+        const firstConfirmation = confirm(
+            "Are you sure you want to delete your account? " +
+            "This action is permanent and cannot be undone."
+        );
+
+        if (!firstConfirmation) {
+            return;
+        }
+
+        const secondConfirmation = confirm(
+            "All your data, practice history, and progress " +
+            "will be permanently removed. Are you absolutely sure?"
+        );
+
+        if (secondConfirmation) {
+            alert(
+                "Account deletion functionality is not implemented yet."
+            );
+        }
+    }
+
+
+    function confirmClear() {
+        const confirmation = confirm(
+            "Are you sure you want to clear all your practice data? " +
+            "This action cannot be undone."
+        );
+
+        if (confirmation) {
+            alert(
+                "Practice data clearing functionality is not implemented yet."
+            );
+        }
+    }
+
+
+    // ============================================================
+    // TOGGLE SWITCHES
+    // ============================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            document
+                .querySelectorAll(".toggle-switch input")
+                .forEach(function (input) {
+                    input.addEventListener(
+                        "change",
+                        function () {
+                            const securityItem =
+                                this.closest(".security-item");
+
+                            if (!securityItem) {
+                                return;
+                            }
+
+                            const title =
+                                securityItem.querySelector(
+                                    ".security-title"
+                                );
+
+                            if (!title) {
+                                return;
+                            }
+
+                            const status =
+                                this.checked
+                                    ? "enabled"
+                                    : "disabled";
+
+                            // Placeholder for future backend
+                            // preference persistence.
+                            console.log(
+                                title.textContent.trim() +
+                                " " +
+                                status
+                            );
+                        }
+                    );
+                });
+        }
+    );
+</script>
+
+{% endblock %}

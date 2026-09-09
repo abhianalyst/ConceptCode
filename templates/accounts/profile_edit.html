@@ -1,111 +1,467 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Edit Profile | ConceptCode{% endblock %}
 
+{% block extra_css %}
+<style>
+    .profile-edit-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .profile-edit-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-edit-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-edit-header h1 i {
+        color: #4facfe;
+    }
+
+    .profile-edit-header p {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+    }
+
+    .profile-card:hover {
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Avatar Section */
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 3px solid #e9ecef;
+        background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-preview .no-image {
+        font-size: 3rem;
+        color: #adb5bd;
+    }
+
+    .avatar-info {
+        flex: 1;
+    }
+
+    .avatar-info .avatar-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        font-size: 1rem;
+        margin-bottom: 0.15rem;
+    }
+
+    .avatar-info .avatar-subtitle {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .avatar-info .file-name {
+        font-size: 0.85rem;
+        color: #0d6efd;
+        font-weight: 500;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .avatar-info .file-name i {
+        font-size: 0.9rem;
+    }
+
+    .avatar-info .file-name .remove-link {
+        color: #dc3545;
+        font-weight: 400;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .avatar-info .file-name .remove-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: #2d3748;
+        margin-bottom: 0.3rem;
+        display: block;
+    }
+
+    .form-group .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        width: 100%;
+        background: #f8f9fa;
+    }
+
+    .form-group .form-control:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+        background: white;
+        outline: none;
+    }
+
+    .form-group .form-control::file-selector-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        background: #0d6efd;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        margin-right: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-group .form-control::file-selector-button:hover {
+        background: #0b5ed7;
+    }
+
+    .form-group .help-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .form-group .error-text {
+        color: #dc3545;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* Custom File Input Wrapper */
+    .file-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .file-input-wrapper .file-label {
+        padding: 0.5rem 1.5rem;
+        border-radius: 8px;
+        background: #0d6efd;
+        color: white;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .file-input-wrapper .file-label:hover {
+        background: #0b5ed7;
+    }
+
+    .file-input-wrapper input[type="file"] {
+        display: none;
+    }
+
+    .file-input-wrapper .file-name-display {
+        font-size: 0.9rem;
+        color: #2d3748;
+        flex: 1;
+    }
+
+    .file-input-wrapper .file-name-display .no-file {
+        color: #6c757d;
+    }
+
+    /* Action Buttons */
+    .profile-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-save {
+        padding: 0.7rem 2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(79, 172, 254, 0.4);
+        color: white;
+    }
+
+    .btn-save:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .btn-cancel {
+        padding: 0.7rem 2rem;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: transparent;
+        color: #6c757d;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #f8f9fa;
+        color: #2d3748;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-edit-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .profile-card {
+            padding: 1.25rem;
+        }
+
+        .avatar-section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .btn-save,
+        .btn-cancel {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<section class="py-5">
-    <div class="container">
+<div class="profile-edit-container">
 
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+    <!-- Header -->
+    <div class="profile-edit-header">
+        <h1><i class="bi bi-pencil-square"></i> Edit Profile</h1>
+        <p>Update your personal information and profile picture.</p>
+    </div>
 
-                <div class="card cc-card shadow-sm">
-                    <div class="card-body p-4">
+    <!-- Profile Card -->
+    <div class="profile-card">
 
-                        <h1 class="h3 mb-4">
-                            Edit Profile
-                        </h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-                        {% if profile.profile_picture %}
-                            <div class="mb-4 text-center">
-                                <p class="fw-semibold mb-2">
-                                    Current profile picture
-                                </p>
-
-                                <img
-                                    src="{{ profile.profile_picture.url }}"
-                                    alt="Current profile picture"
-                                    class="img-thumbnail cc-profile-image"
-                                >
-                            </div>
-                        {% endif %}
-
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ form.non_field_errors }}
-                            </div>
-                        {% endif %}
-
-                        <form
-                            method="post"
-                            enctype="multipart/form-data"
-                            novalidate
-                        >
-                            {% csrf_token %}
-
-                            <div class="mb-3">
-                                {{ form.full_name.label_tag }}
-                                {{ form.full_name }}
-
-                                {% if form.full_name.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.full_name.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.phone_number.label_tag }}
-                                {{ form.phone_number }}
-
-                                {% if form.phone_number.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.phone_number.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="mb-3">
-                                {{ form.profile_picture.label_tag }}
-                                {{ form.profile_picture }}
-
-                                <div class="form-text">
-                                    JPEG or PNG only. Maximum size: 5 MB.
-                                </div>
-
-                                {% if form.profile_picture.errors %}
-                                    <div class="cc-form-error mt-1">
-                                        {{ form.profile_picture.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <button
-                                    type="submit"
-                                    class="btn cc-primary"
-                                >
-                                    Save Profile
-                                </button>
-
-                                <a
-                                    href="{% url 'accounts:account' %}"
-                                    class="btn btn-outline-secondary"
-                                >
-                                    Cancel
-                                </a>
-                            </div>
-
-                        </form>
-
-                    </div>
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-preview">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+                    {% else %}
+                        <div class="no-image">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    {% endif %}
                 </div>
-
+                <div class="avatar-info">
+                    <div class="avatar-title">Profile Picture</div>
+                    <div class="avatar-subtitle">Upload a new profile picture</div>
+                    {% if profile.profile_picture %}
+                        <div class="file-name">
+                            <i class="bi bi-image"></i>
+                            {{ profile.profile_picture.name|cut:"profile/" }}
+                            <a href="#" class="remove-link" onclick="removeImage(event)">Remove</a>
+                        </div>
+                    {% else %}
+                        <div class="file-name" style="color: #6c757d;">
+                            <i class="bi bi-image"></i> No image uploaded
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label for="{{ form.full_name.id_for_label }}">Full Name</label>
+                {{ form.full_name }}
+                {% if form.full_name.errors %}
+                    <span class="error-text">{{ form.full_name.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+                <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+                {{ form.phone_number }}
+                <span class="help-text">{{ form.phone_number.help_text }}</span>
+                {% if form.phone_number.errors %}
+                    <span class="error-text">{{ form.phone_number.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Profile Picture Upload -->
+            <div class="form-group">
+                <label for="id_profile_picture">Profile Picture</label>
+                <div class="file-input-wrapper">
+                    <label for="id_profile_picture" class="file-label">
+                        <i class="bi bi-upload"></i> Choose File
+                    </label>
+                    {{ form.profile_picture }}
+                    <span class="file-name-display" id="fileDisplay">
+                        {% if profile.profile_picture %}
+                            <span class="selected-file">{{ profile.profile_picture.name|cut:"profile/" }}</span>
+                        {% else %}
+                            <span class="no-file">No file chosen</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <span class="help-text">
+                    <i class="bi bi-info-circle"></i> JPEG or PNG only. Maximum size: 5MB.
+                </span>
+                {% if form.profile_picture.errors %}
+                    <span class="error-text">{{ form.profile_picture.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="profile-actions">
+                <button type="submit" class="btn-save" id="saveBtn">
+                    <i class="bi bi-check-circle"></i> Save Profile
+                </button>
+                <a href="{% url 'accounts:account' %}" class="btn-cancel">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+
+        </form>
 
     </div>
-</section>
+
+</div>
+
+<script>
+// ============================================================
+// FILE INPUT - Show selected filename
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('id_profile_picture');
+    const fileDisplay = document.getElementById('fileDisplay');
+
+    if (fileInput && fileDisplay) {
+        const initialFileDisplay = fileDisplay.innerHTML;
+
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                fileDisplay.innerHTML = '<span class="selected-file" style="color: #0d6efd; font-weight: 500;">' + this.files[0].name + '</span>';
+            } else {
+                // Reset to current file if exists
+                fileDisplay.innerHTML = initialFileDisplay;
+            }
+        });
+    }
+
+    // Form submission loading state
+    const form = document.querySelector('form');
+    const saveBtn = document.getElementById('saveBtn');
+
+    if (form && saveBtn) {
+        form.addEventListener('submit', function() {
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Saving...';
+        });
+    }
+});
+
+// ============================================================
+// REMOVE IMAGE
+// ============================================================
+function removeImage(event) {
+    event.preventDefault();
+    if (confirm('Are you sure you want to remove your profile picture?')) {
+        // Create a hidden input to signal image removal
+        const form = document.querySelector('form');
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'remove_profile_picture';
+        input.value = 'true';
+        form.appendChild(input);
+        form.submit();
+    }
+}
+</script>
 
 {% endblock %}

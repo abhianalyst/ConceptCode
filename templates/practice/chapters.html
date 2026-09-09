@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Select Chapter | ConceptCode{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    
+    <div class="mb-3">
+        <a href="{% url 'practice:subjects' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Subjects
+        </a>
+    </div>
+
+    <div class="text-center mb-4">
+        <span class="badge text-bg-dark mb-2">
+            <i class="bi bi-book"></i> Practice
+        </span>
+        <h1 class="h2 mb-2">{{ subject.name }}</h1>
+        <p class="text-muted">Select a chapter to see available topics.</p>
+    </div>
+
+    {% if chapters %}
+        <div class="row g-4">
+            {% for chapter in chapters %}
+                <div class="col-md-4 col-sm-6">
+                    <a href="{% url 'practice:topics' subject_id=subject.id chapter_id=chapter.id %}" class="text-decoration-none">
+                        <div class="card chapter-card shadow-sm h-100 p-3">
+                            <div class="card-body text-center">
+                                <div class="chapter-icon mb-2">
+                                    <i class="bi bi-bookmark text-primary"></i>
+                                </div>
+                                {% if chapter.unit_number %}
+                                    <span class="badge bg-secondary mb-1">Unit {{ chapter.unit_number }}</span>
+                                {% endif %}
+                                <h5 class="fw-semibold mb-1">{{ chapter.name }}</h5>
+                                <small class="text-muted">{{ chapter.topics.all|length }} topics</small>
+                                <div class="mt-2">
+                                    <span class="badge bg-primary">
+                                        <i class="bi bi-arrow-right"></i> Select
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle"></i> No chapters available for this subject.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle fs-4 d-block mb-2"></i>
+            No chapters available for this subject.
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'practice:subjects' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Subjects
+        </a>
+    </div>
+
+</div>
+
+<style>
+.chapter-card {
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    border: 2px solid #e9ecef;
+}
+
+.chapter-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    border-color: #0d6efd;
+}
+
+.chapter-card .chapter-icon {
+    font-size: 1.5rem;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chapter-card {
+    animation: fadeInUp 0.5s ease forwards;
+}
+</style>
+{% endblock %}

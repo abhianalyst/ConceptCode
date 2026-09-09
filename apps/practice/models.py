@@ -47,6 +47,10 @@ class PracticeAttempt(models.Model):
     )
     selected_answer = models.TextField()
     is_correct = models.BooleanField()
+    time_taken = models.FloatField(
+        default=0.0,
+        help_text="Time taken to answer the question in seconds"
+    )
     answered_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

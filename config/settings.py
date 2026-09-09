@@ -73,6 +73,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.accounts.context_processors.pending_reports_count',
+                'apps.accounts.context_processors.notification_count',
             ],
         },
     },
@@ -142,3 +144,4 @@ MAILERS = {
     },
 }
 
+PASSWORD_RESET_TIMEOUT = 86400  # 24 hours in seconds

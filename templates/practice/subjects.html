@@ -1,0 +1,582 @@
+{% extends "base.html" %}
+
+{% block title %}My Subjects | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .subjects-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 0;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: #1a1a2e;
+    }
+
+    .page-header .subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-tabs .filter-btn {
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        border: 2px solid #e9ecef;
+        background: transparent;
+        font-weight: 500;
+        font-size: 0.85rem;
+        color: #6c757d;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .filter-tabs .filter-btn:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
+    }
+
+    .filter-tabs .filter-btn.active {
+        background: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+
+    /* Subject Cards Grid */
+    .subjects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .subject-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .subject-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Subject Icon - Large and Visible */
+    .subject-card .card-icon-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .subject-card .card-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .subject-card .card-icon.biology {
+        background: linear-gradient(135deg, #e8f5e9, #a5d6a7);
+        color: #1b5e20;
+    }
+
+    .subject-card .card-icon.chemistry {
+        background: linear-gradient(135deg, #e3f2fd, #90caf9);
+        color: #0d47a1;
+    }
+
+    .subject-card .card-icon.physics {
+        background: linear-gradient(135deg, #fce4ec, #ef9a9a);
+        color: #b71c1c;
+    }
+
+    .subject-card .card-icon.default {
+        background: linear-gradient(135deg, #f3e5f5, #ce93d8);
+        color: #4a148c;
+    }
+
+    .subject-card .card-icon i {
+        font-size: 2.5rem;
+    }
+
+    .subject-card .card-title-group .card-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 0;
+    }
+
+    .subject-card .card-title-group .card-subtitle {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .subject-card .card-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0.75rem 0;
+    }
+
+    .subject-card .card-stats .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .subject-card .card-stats .stat-item i {
+        font-size: 0.9rem;
+    }
+
+    .subject-card .progress-section {
+        margin-top: 0.5rem;
+    }
+
+    .subject-card .progress-section .progress-track {
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .subject-card .progress-section .progress-track .progress-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    .subject-card .progress-section .progress-fill.high {
+        background: linear-gradient(90deg, #28a745, #20c997);
+    }
+
+    .subject-card .progress-section .progress-fill.medium {
+        background: linear-gradient(90deg, #ffc107, #fd7e14);
+    }
+
+    .subject-card .progress-section .progress-fill.low {
+        background: linear-gradient(90deg, #dc3545, #e83e8c);
+    }
+
+    .subject-card .card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .subject-card .card-actions .progress-text {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .subject-card .card-actions .btn-continue {
+        padding: 0.3rem 1.2rem;
+        border-radius: 20px;
+        border: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .btn-continue.primary {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-continue.primary:hover {
+        background: #0b5ed7;
+        transform: translateY(-2px);
+    }
+
+    .btn-continue.success {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-continue.success:hover {
+        background: #218838;
+        transform: translateY(-2px);
+    }
+
+    .btn-continue.warning {
+        background: #ffc107;
+        color: #212529;
+    }
+
+    .btn-continue.warning:hover {
+        background: #e0a800;
+        transform: translateY(-2px);
+    }
+
+    .btn-continue.outline {
+        background: transparent;
+        color: #6c757d;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-continue.outline:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+    }
+
+    .subject-card .card-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .card-badge.completed {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .card-badge.in-progress {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .card-badge.not-started {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e9ecef;
+    }
+
+    .empty-state .empty-icon {
+        font-size: 4rem;
+        color: #cbd5e0;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        color: #1a1a2e;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state .btn-primary {
+        padding: 0.5rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .subjects-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .filter-tabs .filter-btn {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+        }
+
+        .subject-card {
+            padding: 1.25rem;
+        }
+
+        .subject-card .card-icon {
+            width: 56px;
+            height: 56px;
+            font-size: 1.8rem;
+        }
+
+        .subject-card .card-icon i {
+            font-size: 2rem;
+        }
+
+        .subject-card .card-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+
+        .subject-card .card-actions .btn-continue {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .filter-tabs {
+            gap: 0.3rem;
+        }
+
+        .filter-tabs .filter-btn {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+        }
+
+        .subject-card .card-icon-wrapper {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .subject-card {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+
+    .subject-card:nth-child(2) { animation-delay: 0.05s; }
+    .subject-card:nth-child(3) { animation-delay: 0.1s; }
+    .subject-card:nth-child(4) { animation-delay: 0.15s; }
+    .subject-card:nth-child(5) { animation-delay: 0.2s; }
+    .subject-card:nth-child(6) { animation-delay: 0.25s; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="subjects-container">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1><i class="bi bi-grid-3x3-gap-fill text-primary"></i> My Subjects</h1>
+        <p class="subtitle">Browse and continue your learning journey across all subjects.</p>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <button class="filter-btn active" data-filter="all" onclick="filterSubjects('all')">
+            <i class="bi bi-grid"></i> All
+        </button>
+        <button class="filter-btn" data-filter="in-progress" onclick="filterSubjects('in-progress')">
+            <i class="bi bi-play-circle"></i> In Progress
+        </button>
+        <button class="filter-btn" data-filter="completed" onclick="filterSubjects('completed')">
+            <i class="bi bi-check-circle"></i> Completed
+        </button>
+        <button class="filter-btn" data-filter="not-started" onclick="filterSubjects('not-started')">
+            <i class="bi bi-circle"></i> Not Started
+        </button>
+    </div>
+
+    <!-- Subjects Grid -->
+    <div class="subjects-grid" id="subjectsGrid">
+        {% if subjects %}
+            {% for subject in subjects %}
+                <div class="subject-card" 
+                     data-status="{{ subject.status|default:'not-started' }}"
+                     data-href="{% url 'practice:chapters' subject_id=subject.id %}"
+                     tabindex="0"
+                     role="link"
+                     aria-label="Open {{ subject.name }} chapters">
+                    
+                    <!-- Badge -->
+                    <span class="card-badge {{ subject.status|default:'not-started' }}">
+                        {% if subject.status == 'completed' %}
+                            <i class="bi bi-check-circle"></i> Completed
+                        {% elif subject.status == 'in-progress' %}
+                            <i class="bi bi-play-circle"></i> In Progress
+                        {% else %}
+                            <i class="bi bi-circle"></i> Not Started
+                        {% endif %}
+                    </span>
+
+                    <!-- Icon + Title -->
+                    <div class="card-icon-wrapper">
+                        <div class="card-icon 
+                            {% if subject.name == 'Biology' %}biology
+                            {% elif subject.name == 'Chemistry' %}chemistry
+                            {% elif subject.name == 'Physics' %}physics
+                            {% else %}default{% endif %}">
+                            {% if subject.name == 'Biology' %}
+                                <span style="font-size: 2.5rem;">🧬</span>
+                            {% elif subject.name == 'Chemistry' %}
+                                <span style="font-size: 2.5rem;">🧪</span>
+                            {% elif subject.name == 'Physics' %}
+                                <span style="font-size: 2.5rem;">⚛️</span>
+                            {% else %}
+                                <span style="font-size: 2.5rem;">📚</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-title-group">
+                            <h3 class="card-title">{{ subject.name }}</h3>
+                            <p class="card-subtitle">
+                                {{ subject.description|default:"Explore and master this subject."|truncatechars:60 }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="card-stats">
+                        <span class="stat-item">
+                            <i class="bi bi-bookmarks text-primary"></i>
+                            {{ subject.chapters.all|length }} Chapters
+                        </span>
+                        <span class="stat-item">
+                            <i class="bi bi-check-circle text-success"></i>
+                            {{ subject.progress|default:0 }}% Complete
+                        </span>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="progress-section">
+                        <div class="progress-track">
+                               <div class="progress-fill{% if subject.progress|default:0 >= 70 %} high{% elif subject.progress|default:0 >= 30 %} medium{% else %} low{% endif %}"
+                                   data-progress="{{ subject.progress|default:0 }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card-actions">
+                        <span class="progress-text">
+                            {% if subject.progress|default:0 > 0 %}
+                                {{ subject.progress|default:0 }}% Complete
+                            {% else %}
+                                Ready to start
+                            {% endif %}
+                        </span>
+                        <a href="{% url 'practice:chapters' subject_id=subject.id %}" class="btn-continue 
+                            {% if subject.progress|default:0 >= 100 %}success
+                            {% elif subject.progress|default:0 > 0 %}primary
+                            {% else %}outline{% endif %}">
+                            {% if subject.progress|default:0 >= 100 %}
+                                <i class="bi bi-arrow-repeat"></i> Review
+                            {% elif subject.progress|default:0 > 0 %}
+                                <i class="bi bi-arrow-right"></i> Continue
+                            {% else %}
+                                <i class="bi bi-play-circle"></i> Start
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3>No Subjects Available</h3>
+                <p>Subjects will appear here once they are added by the admin.</p>
+                {% if user.role == 'admin' or user.is_staff %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add Subjects
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Back to Home -->
+    <div class="text-center mt-4">
+        <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+</div>
+
+<script>
+// ===== FILTER SUBJECTS =====
+function filterSubjects(filter) {
+    const cards = document.querySelectorAll('.subject-card');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Update active button
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.filter === filter) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Filter cards
+    cards.forEach(card => {
+        const status = card.dataset.status;
+        if (filter === 'all' || status === filter) {
+            card.style.display = 'block';
+            card.style.animation = 'fadeInUp 0.3s ease forwards';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
+    if (e.key >= '1' && e.key <= '4') {
+        const filters = ['all', 'in-progress', 'completed', 'not-started'];
+        const index = parseInt(e.key) - 1;
+        if (index < filters.length) {
+            filterSubjects(filters[index]);
+        }
+    }
+});
+
+document.querySelectorAll('.progress-fill[data-progress]').forEach(function(fill) {
+    fill.style.width = fill.dataset.progress + '%';
+});
+</script>
+
+{% endblock %}

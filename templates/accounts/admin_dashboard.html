@@ -4,22 +4,28 @@
 
 {% block content %}
 
-<section class="py-5">
+<section class="py-4">
     <div class="container">
 
         <div class="mb-4">
             <h1 class="h2 mb-2">
+                <i class="bi bi-speedometer2"></i>
                 Administrator Dashboard
             </h1>
 
             <p class="text-muted mb-0">
                 Welcome, {{ request.user.full_name }}.
+                Here's an overview of the platform.
             </p>
         </div>
 
-        <section class="mb-5">
-            <h2 class="h4 mb-3">
-                Platform Overview
+
+        <!-- User Stats -->
+        <section class="mb-4">
+
+            <h2 class="h5 mb-3">
+                <i class="bi bi-people text-primary"></i>
+                User Analytics
             </h2>
 
             <div class="row g-3">
@@ -31,12 +37,13 @@
                                 Total Users
                             </div>
 
-                            <div class="display-6 fw-semibold">
-                                {{ total_users }}
+                            <div class="display-6 fw-semibold text-primary">
+                                {{ total_users|default:0 }}
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-md-6 col-lg-3">
                     <div class="card cc-card shadow-sm h-100">
@@ -45,12 +52,13 @@
                                 Students
                             </div>
 
-                            <div class="display-6 fw-semibold">
-                                {{ total_students }}
+                            <div class="display-6 fw-semibold text-success">
+                                {{ total_students|default:0 }}
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-md-6 col-lg-3">
                     <div class="card cc-card shadow-sm h-100">
@@ -59,68 +67,314 @@
                                 Administrators
                             </div>
 
-                            <div class="display-6 fw-semibold">
-                                {{ total_admins }}
+                            <div class="display-6 fw-semibold text-warning">
+                                {{ total_admins|default:0 }}
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-md-6 col-lg-3">
                     <div class="card cc-card shadow-sm h-100">
                         <div class="card-body">
                             <div class="text-muted small mb-2">
-                                Active Users
+                                Daily Active Users
                             </div>
 
-                            <div class="display-6 fw-semibold">
-                                {{ active_users }}
+                            <div class="display-6 fw-semibold text-info">
+                                {{ daily_active_users|default:0 }}
                             </div>
                         </div>
                     </div>
                 </div>
 
             </div>
+
         </section>
 
+
+        <!-- Question Bank Stats -->
+        <section class="mb-4">
+
+            <h2 class="h5 mb-3">
+                <i class="bi bi-database text-success"></i>
+                Question Bank
+            </h2>
+
+            <div class="row g-3">
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Total Questions
+                            </div>
+
+                            <div class="display-6 fw-semibold text-primary">
+                                {{ total_questions|default:0 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Active Questions
+                            </div>
+
+                            <div class="display-6 fw-semibold text-success">
+                                {{ active_questions|default:0 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Subjects
+                            </div>
+
+                            <div class="display-6 fw-semibold text-info">
+                                {{ total_subjects|default:0 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card cc-card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="text-muted small mb-2">
+                                Topics
+                            </div>
+
+                            <div class="display-6 fw-semibold text-warning">
+                                {{ total_topics|default:0 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Question Reports Stats -->
+        <section class="mb-4">
+
+            <h2 class="h5 mb-3">
+                <i class="bi bi-flag text-danger"></i>
+                Question Reports
+            </h2>
+
+            <div class="row g-3">
+
+                <!-- Pending Reports -->
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card cc-card shadow-sm h-100 border-warning">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small mb-2">
+                                Pending Reports
+                            </div>
+
+                            <div class="display-6 fw-semibold text-warning">
+                                {{ pending_reports|default:0 }}
+                            </div>
+
+                            <a
+                                href="/admin/core/questionreport/?status=pending"
+                                class="btn btn-sm btn-outline-warning mt-2"
+                            >
+                                Review Pending
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Under Review -->
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card cc-card shadow-sm h-100 border-info">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small mb-2">
+                                Under Review
+                            </div>
+
+                            <div class="display-6 fw-semibold text-info">
+                                {{ reviewing_reports|default:0 }}
+                            </div>
+
+                            <a
+                                href="/admin/core/questionreport/?status=reviewing"
+                                class="btn btn-sm btn-outline-info mt-2"
+                            >
+                                View Reviews
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Total Reports -->
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card cc-card shadow-sm h-100 border-secondary">
+
+                        <div class="card-body">
+
+                            <div class="text-muted small mb-2">
+                                Total Reports
+                            </div>
+
+                            <div class="display-6 fw-semibold text-secondary">
+                                {{ total_reports|default:0 }}
+                            </div>
+
+                            <a
+                                href="/admin/core/questionreport/"
+                                class="btn btn-sm btn-outline-secondary mt-2"
+                            >
+                                View All Reports
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Quick Actions -->
         <section>
-            <h2 class="h4 mb-3">
-                Administration
+
+            <h2 class="h5 mb-3">
+                <i class="bi bi-gear text-secondary"></i>
+                Quick Actions
             </h2>
 
             <div class="card cc-card shadow-sm">
+
                 <div class="card-body">
 
                     <div class="d-flex flex-wrap gap-2">
 
+                        <!-- Manage Questions -->
                         <a
-                            href="/admin/"
-                            class="btn cc-primary"
+                            href="{% url 'accounts:admin-questions' %}"
+                            class="btn btn-primary"
                         >
-                            Django Admin
+                            <i class="bi bi-question-circle"></i>
+                            Manage Questions
                         </a>
 
+
+                        <!-- Add Question -->
                         <a
-                            href="{% url 'accounts:account' %}"
-                            class="btn btn-outline-secondary"
+                            href="{% url 'accounts:admin-question-create' %}"
+                            class="btn btn-success"
                         >
-                            My Account
+                            <i class="bi bi-plus-circle"></i>
+                            Add Question
                         </a>
 
+
+                        <!-- Import Questions -->
+                        <a
+                            href="{% url 'accounts:admin-question-import' %}"
+                            class="btn btn-info text-white"
+                        >
+                            <i class="bi bi-upload"></i>
+                            Import Questions
+                        </a>
+
+
+                        <!-- Manage Users -->
                         <a
                             href="{% url 'accounts:admin-users' %}"
-                            class="btn btn-outline-secondary"
+                            class="btn btn-warning"
                         >
+                            <i class="bi bi-people"></i>
                             Manage Users
+                        </a>
+
+
+                        <!-- Question Reports -->
+                        <a
+                            href="{% url 'accounts:admin-reports' %}"
+                            class="btn btn-danger"
+                        >
+                            <i class="bi bi-flag"></i>
+                            Question Reports
+
+                            {% if pending_reports > 0 %}
+                                <span class="badge bg-warning text-dark ms-1">
+                                    {{ pending_reports }}
+                                </span>
+                            {% endif %}
+                        </a>
+
+
+                        <!-- Django Admin -->
+                        <a
+                            href="/admin/"
+                            target="_blank"
+                            class="btn btn-dark"
+                        >
+                            <i class="bi bi-gear"></i>
+                            Django Admin
                         </a>
 
                     </div>
 
                 </div>
+
             </div>
+
         </section>
 
     </div>
 </section>
+
+
+<style>
+    .cc-card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.2s;
+    }
+
+    .cc-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .display-6 {
+        font-size: 2rem;
+    }
+</style>
 
 {% endblock %}
