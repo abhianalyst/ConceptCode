@@ -702,16 +702,20 @@
 
             <!-- Question Header -->
             <div class="question-header">
-
-                <span class="q-number" id="qNumber">
-                    Question 1 of {{ total_questions }}
-                </span>
-
-                <span class="q-status unanswered" id="qStatus">
-                    <i class="bi bi-circle"></i>
-                    Unanswered
-                </span>
-
+                <span class="q-number">Question <span id="qNum">1</span> of {{ total_questions }}</span>
+                <div>
+                    <span class="q-status" id="qStatus">
+                        <i class="bi bi-circle"></i> Unanswered
+                    </span>
+                    {% if adaptive_difficulty %}
+                        <span class="badge bg-info ms-2" id="adaptiveBadge">
+                            <i class="bi bi-robot"></i> Adaptive: {{ adaptive_difficulty }}
+                        </span>
+                    {% endif %}
+                    <button class="btn btn-sm btn-outline-warning ms-2" onclick="toggleFlag()" id="flagBtn">
+                        <i class="bi bi-flag"></i> Flag
+                    </button>
+                </div>
             </div>
 
             <!-- Question Text -->
@@ -1651,6 +1655,30 @@ async function nextQuestion() {
         }
 
 
+        /*
+         * Update adaptive difficulty badge.
+         */
+        const adaptiveBadge =
+            document.getElementById('adaptiveBadge');
+
+        if (
+            adaptiveBadge &&
+            data.adaptive_difficulty
+        ) {
+
+            adaptiveBadge.textContent =
+                `🤖 Adaptive: ${data.adaptive_difficulty}`;
+
+            adaptiveBadge.style.display =
+                'inline-block';
+
+        } else if (adaptiveBadge) {
+
+            adaptiveBadge.style.display =
+                'none';
+        }
+
+
         if (data.completed) {
 
             finishPractice();
@@ -1684,7 +1712,6 @@ async function nextQuestion() {
          * Store question data and its shuffled
          * option order.
          */
-
         questions[nextIndex] = {
 
             id: nextQuestionData.id,

@@ -82,7 +82,7 @@ def create_session(request, topic_id):
 
 @login_required
 def practice_session(request, session_id):
-    """Render the practice session page."""
+    """Render the practice session page with adaptive difficulty."""
 
     session = get_object_or_404(
         PracticeSession,
@@ -90,9 +90,17 @@ def practice_session(request, session_id):
         user=request.user,
     )
 
-    question = get_next_question(
-        session=session,
-    )
+    # Use adaptive difficulty to get next question
+    from .adaptive import AdaptiveService
+    
+    result = AdaptiveService.get_next_adaptive_question(session)
+    
+    if isinstance(result, tuple):
+        question, adaptive_difficulty = result
+        # Store adaptive difficulty in session for logging
+        request.session[f'adaptive_difficulty_{session.id}'] = adaptive_difficulty
+    else:
+        question = result
 
     total_questions = Question.objects.filter(
         topic=session.topic,
@@ -104,6 +112,10 @@ def practice_session(request, session_id):
         "question": question,
         "total_questions": total_questions,
     }
+
+    # Add adaptive info if available
+    if question:
+        context['adaptive_difficulty'] = adaptive_difficulty if 'adaptive_difficulty' in locals() else None
 
     return render(
         request,
@@ -200,7 +212,7 @@ def practice_results(request, session_id):
 @require_GET
 @login_required
 def next_question(request, session_id):
-    """Return the next unanswered question for a practice session."""
+    """Return the next unanswered question with adaptive difficulty."""
 
     session = get_object_or_404(
         PracticeSession,
@@ -208,9 +220,10 @@ def next_question(request, session_id):
         user=request.user,
     )
 
-    question = get_next_question(
-        session=session,
-    )
+    from .adaptive import AdaptiveService
+    
+    # Get next question with adaptive difficulty
+    question, adaptive_difficulty = AdaptiveService.get_next_adaptive_question(session)
 
     if question is None:
         return JsonResponse(
@@ -232,9 +245,10 @@ def next_question(request, session_id):
             },
             "question_number": session.attempts.count() + 1,
             "difficulty": question.difficulty,
+            "adaptive_difficulty": adaptive_difficulty,  # Send recommended difficulty
+            "is_adaptive": True,
         }
     )
-
 
 @csrf_exempt
 @require_POST
