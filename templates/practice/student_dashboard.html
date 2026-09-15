@@ -119,25 +119,11 @@
         margin-top: 0.25rem;
     }
 
-    .stat-card .stat-number.primary {
-        color: #0d6efd;
-    }
-
-    .stat-card .stat-number.success {
-        color: #28a745;
-    }
-
-    .stat-card .stat-number.warning {
-        color: #ffc107;
-    }
-
-    .stat-card .stat-number.danger {
-        color: #dc3545;
-    }
-
-    .stat-card .stat-number.info {
-        color: #0dcaf0;
-    }
+    .stat-card .stat-number.primary { color: #0d6efd; }
+    .stat-card .stat-number.success { color: #28a745; }
+    .stat-card .stat-number.warning { color: #ffc107; }
+    .stat-card .stat-number.danger { color: #dc3545; }
+    .stat-card .stat-number.info { color: #0dcaf0; }
 
     .dashboard-grid {
         display: grid;
@@ -225,17 +211,9 @@
         font-weight: 600;
     }
 
-    .weak-topic-item .topic-accuracy.low {
-        color: #dc3545;
-    }
-
-    .weak-topic-item .topic-accuracy.medium {
-        color: #ffc107;
-    }
-
-    .weak-topic-item .topic-accuracy.high {
-        color: #28a745;
-    }
+    .weak-topic-item .topic-accuracy.low { color: #dc3545; }
+    .weak-topic-item .topic-accuracy.medium { color: #ffc107; }
+    .weak-topic-item .topic-accuracy.high { color: #28a745; }
 
     .subject-chart-container {
         height: 200px;
@@ -303,17 +281,9 @@
         text-align: center;
     }
 
-    .leaderboard-item .rank.gold {
-        color: #ffc107;
-    }
-
-    .leaderboard-item .rank.silver {
-        color: #adb5bd;
-    }
-
-    .leaderboard-item .rank.bronze {
-        color: #cd7f32;
-    }
+    .leaderboard-item .rank.gold { color: #ffc107; }
+    .leaderboard-item .rank.silver { color: #adb5bd; }
+    .leaderboard-item .rank.bronze { color: #cd7f32; }
 
     .leaderboard-item .user-name {
         flex: 1;
@@ -355,14 +325,182 @@
         font-size: 0.8rem;
         color: #856404;
     }
+
+    /* ==========================================
+       AI WEAK AREAS
+       ========================================== */
+
+    .ai-weak-areas-card {
+        border: 1px solid rgba(13, 110, 253, 0.15);
+        background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    }
+
+    .ai-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .ai-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .ai-card-title i {
+        color: #0d6efd;
+        font-size: 1.1rem;
+    }
+
+    .ai-ml-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.55rem;
+    }
+
+    .ai-weak-area {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eef1f5;
+    }
+
+    .ai-weak-area:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .ai-weak-area:first-child {
+        padding-top: 0;
+    }
+
+    .ai-topic-info {
+        min-width: 0;
+    }
+
+    .ai-topic-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .ai-topic-path {
+        display: block;
+        font-size: 0.72rem;
+        color: #6c757d;
+        margin-top: 0.15rem;
+    }
+
+    .ai-accuracy {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .ai-accuracy-value {
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .ai-accuracy-attempts {
+        display: block;
+        font-size: 0.7rem;
+        color: #6c757d;
+        margin-top: 0.1rem;
+    }
+
+    .ai-classification {
+        font-size: 0.65rem;
+        margin-left: 0.35rem;
+        vertical-align: middle;
+    }
+
+    /* ==========================================
+       AI RECOMMENDATION
+       ========================================== */
+
+    .ai-recommendation {
+        background: linear-gradient(135deg, #e7f1ff 0%, #f1f8ff 100%);
+        border: 1px solid rgba(13, 110, 253, 0.2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .ai-recommendation-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .ai-recommendation-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .ai-recommendation-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .ai-recommendation-label {
+        font-size: 0.72rem;
+        color: #6c757d;
+        margin-bottom: 0.15rem;
+    }
+
+    .ai-recommendation-topic {
+        font-weight: 700;
+        color: #1a1a2e;
+        font-size: 0.95rem;
+    }
+
+    .ai-recommendation-btn {
+        border: none;
+        white-space: nowrap;
+    }
+
+    /* Mobile AI section */
+    @media (max-width: 576px) {
+        .ai-card-header {
+            align-items: flex-start;
+        }
+
+        .ai-recommendation-content {
+            align-items: stretch;
+        }
+
+        .ai-recommendation-btn {
+            width: 100%;
+        }
+
+        .ai-topic-path {
+            max-width: 180px;
+        }
+    }
 </style>
 {% endblock %}
+
 
 {% block content %}
 
 <div class="dashboard-container">
 
-    <!-- Welcome Section -->
+    <!-- ==========================================
+         WELCOME SECTION
+         ========================================== -->
+
     <div class="welcome-section">
 
         <div class="row align-items-center">
@@ -382,6 +520,7 @@
 
                     <div class="streak-badge">
                         <i class="bi bi-fire"></i>
+
                         <span>
                             {{ streak_days|default:0 }}-day learning streak.
                             Keep it up!
@@ -390,10 +529,13 @@
 
                 </div>
 
+
                 <!-- Quick Navigation -->
+
                 <div class="quick-nav">
 
                     <!-- Subjects -->
+
                     <a
                         href="{% url 'practice:subjects' %}"
                         class="nav-item"
@@ -402,7 +544,9 @@
                         Subjects
                     </a>
 
+
                     <!-- Analytics -->
+
                     <a
                         href="{% url 'practice:analytics' %}"
                         class="nav-item"
@@ -411,7 +555,9 @@
                         Analytics
                     </a>
 
+
                     <!-- Mock Tests -->
+
                     <a
                         href="{% url 'practice:mock-test-dashboard' %}"
                         class="nav-item"
@@ -420,8 +566,11 @@
                         Mock Tests
                     </a>
 
+
                     <!-- Admin -->
+
                     {% if user.role == 'admin' or user.is_staff %}
+
                         <a
                             href="{% url 'accounts:admin-dashboard' %}"
                             class="nav-item"
@@ -429,11 +578,13 @@
                             <i class="bi bi-shield-lock"></i>
                             Admin
                         </a>
+
                     {% endif %}
 
                 </div>
 
             </div>
+
 
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
 
@@ -452,7 +603,10 @@
     </div>
 
 
-    <!-- Stats Cards -->
+    <!-- ==========================================
+         STATS CARDS
+         ========================================== -->
+
     <div class="stats-grid">
 
         <div class="stat-card">
@@ -467,6 +621,7 @@
 
         </div>
 
+
         <div class="stat-card">
 
             <div class="stat-number success">
@@ -479,6 +634,7 @@
 
         </div>
 
+
         <div class="stat-card">
 
             <div class="stat-number info">
@@ -490,6 +646,7 @@
             </div>
 
         </div>
+
 
         <div class="stat-card">
 
@@ -506,13 +663,203 @@
     </div>
 
 
-    <!-- Dashboard Grid -->
+    <!-- ==========================================
+         AI DETECTED WEAK AREAS
+         ========================================== -->
+
+    <div class="dash-card ai-weak-areas-card">
+
+        <div class="ai-card-header">
+
+            <div class="ai-card-title">
+
+                <i class="bi bi-robot"></i>
+
+                <span>
+                    AI-Detected Weak Areas
+                </span>
+
+                <span class="badge bg-primary ai-ml-badge">
+                    ML
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {% if weak_areas %}
+
+            {% for perf in weak_areas %}
+
+                <div class="ai-weak-area">
+
+                    <div class="d-flex justify-content-between align-items-center gap-3">
+
+                        <!-- Topic Information -->
+
+                        <div class="ai-topic-info">
+
+                            <div class="ai-topic-name">
+
+                                {{ perf.topic.name }}
+
+                                <span
+                                    class="badge ai-classification
+                                    {% if perf.classification == 'Weak' %}
+                                        bg-danger
+                                    {% elif perf.classification == 'Moderate' %}
+                                        bg-warning text-dark
+                                    {% else %}
+                                        bg-success
+                                    {% endif %}"
+                                >
+                                    {{ perf.classification }}
+                                </span>
+
+                            </div>
+
+
+                            <small class="ai-topic-path">
+
+                                {{ perf.topic.chapter.subject.name }}
+                                /
+                                {{ perf.topic.chapter.name }}
+
+                            </small>
+
+                        </div>
+
+
+                        <!-- Accuracy -->
+
+                        <div class="ai-accuracy">
+
+                            <div class="ai-accuracy-value
+                                {% if perf.classification == 'Weak' %}
+                                    text-danger
+                                {% elif perf.classification == 'Moderate' %}
+                                    text-warning
+                                {% else %}
+                                    text-success
+                                {% endif %}
+                            ">
+                                {{ perf.accuracy|floatformat:1 }}%
+                            </div>
+
+                            <small class="ai-accuracy-attempts">
+                                {{ perf.attempts }} attempts
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="text-center py-3">
+
+                <i class="bi bi-check-circle text-success fs-4"></i>
+
+                <p class="text-muted mb-0 mt-2">
+                    No weak areas detected. Keep practicing!
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ==========================================
+         AI RECOMMENDED TOPIC
+         ========================================== -->
+
+    {% if recommended_topic %}
+
+        <div class="ai-recommendation">
+
+            <div class="ai-recommendation-content">
+
+                <div class="ai-recommendation-info">
+
+                    <div class="ai-recommendation-icon">
+
+                        <i class="bi bi-lightbulb"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="ai-recommendation-label">
+
+                            AI Recommended Next
+
+                        </div>
+
+                        <div class="ai-recommendation-topic">
+
+                            {{ recommended_topic.name }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!--
+                    create_session is POST-only,
+                    therefore use a form instead of <a href>.
+                -->
+
+                <form
+                    method="post"
+                    action="{% url 'practice:create-practice-session' topic_id=recommended_topic.id %}"
+                    class="mb-0"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-sm ai-recommendation-btn"
+                    >
+                        <i class="bi bi-play-fill"></i>
+                        Start Practice
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ==========================================
+         DASHBOARD GRID
+         ========================================== -->
+
     <div class="dashboard-grid">
 
-        <!-- Left Column -->
+
+        <!-- ======================================
+             LEFT COLUMN
+             ====================================== -->
+
         <div class="left-column">
 
+
             <!-- Continue Where You Left Off -->
+
             {% if active_session %}
 
                 <div class="dash-card">
@@ -530,26 +877,41 @@
 
                     </div>
 
+
                     <h5>
                         {{ active_session.topic_name }}
                     </h5>
 
+
                     <p class="text-muted small">
+
                         {{ active_session.answered_questions }}
+
                         of
+
                         {{ active_session.total_questions }}
+
                         questions
+
                     </p>
+
 
                     <div class="progress-track">
 
                         <div
                             class="progress-fill active-session-progress"
                             data-progress="{{ active_session.progress }}"
-                            style="background: linear-gradient(90deg, #4facfe, #00f2fe);"
+                            style="
+                                background: linear-gradient(
+                                    90deg,
+                                    #4facfe,
+                                    #00f2fe
+                                );
+                            "
                         ></div>
 
                     </div>
+
 
                     <a
                         href="{% url 'practice:practice-session' session_id=active_session.id %}"
@@ -565,6 +927,7 @@
 
 
             <!-- Subject-wise Performance Chart -->
+
             <div class="dash-card">
 
                 <div class="card-title">
@@ -575,6 +938,7 @@
                     </span>
 
                 </div>
+
 
                 <div class="chart-bars">
 
@@ -589,10 +953,13 @@
                                     --bar-color: {{ subject.color }};
                                 "
                             >
+
                                 <span class="bar-value">
                                     {{ subject.accuracy }}%
                                 </span>
+
                             </div>
+
 
                             <span class="bar-label">
                                 {{ subject.name }}
@@ -614,6 +981,7 @@
 
 
             <!-- Weakest Topics -->
+
             <div class="dash-card">
 
                 <div class="card-title">
@@ -629,6 +997,7 @@
 
                 </div>
 
+
                 {% if weak_topics %}
 
                     {% for topic in weak_topics %}
@@ -638,6 +1007,7 @@
                             <span class="topic-name">
                                 {{ topic.name }}
                             </span>
+
 
                             <span class="topic-accuracy low">
                                 {{ topic.accuracy }}% accuracy
@@ -650,8 +1020,11 @@
                 {% else %}
 
                     <p class="text-muted text-center py-3">
+
                         <i class="bi bi-check-circle text-success"></i>
+
                         No weak topics detected. Keep practicing!
+
                     </p>
 
                 {% endif %}
@@ -661,10 +1034,15 @@
         </div>
 
 
-        <!-- Right Column -->
+        <!-- ======================================
+             RIGHT COLUMN
+             ====================================== -->
+
         <div class="right-column">
 
+
             <!-- Upcoming Mock Tests -->
+
             <div class="dash-card">
 
                 <div class="card-title">
@@ -676,6 +1054,7 @@
 
                 </div>
 
+
                 {% if upcoming_mock_tests %}
 
                     {% for test in upcoming_mock_tests %}
@@ -683,6 +1062,7 @@
                         <div class="mock-test-reminder">
 
                             <div class="test-info">
+
                                 <i class="bi bi-file-earmark-text"></i>
 
                                 <span>
@@ -690,6 +1070,7 @@
                                 </span>
 
                             </div>
+
 
                             <span class="test-date">
                                 {{ test.date }}
@@ -711,6 +1092,7 @@
 
 
             <!-- Mock Tests Quick Access -->
+
             <div class="dash-card">
 
                 <div class="card-title">
@@ -720,6 +1102,7 @@
                         Mock Tests
                     </span>
 
+
                     <a
                         href="{% url 'practice:mock-test-dashboard' %}"
                         class="text-decoration-none small"
@@ -728,6 +1111,7 @@
                     </a>
 
                 </div>
+
 
                 <div class="text-center py-2">
 
@@ -749,6 +1133,7 @@
 
                         </div>
 
+
                         <div class="col-6">
 
                             <div class="bg-light rounded p-2">
@@ -767,6 +1152,7 @@
 
                     </div>
 
+
                     <a
                         href="{% url 'practice:mock-test-dashboard' %}"
                         class="btn btn-outline-primary btn-sm mt-2 w-100"
@@ -781,6 +1167,7 @@
 
 
             <!-- Recent Practice -->
+
             <div class="dash-card">
 
                 <div class="card-title">
@@ -789,6 +1176,7 @@
                         <i class="bi bi-clock-history text-primary"></i>
                         Recent Practice
                     </span>
+
 
                     <a
                         href="{% url 'practice:subjects' %}"
@@ -799,6 +1187,7 @@
 
                 </div>
 
+
                 {% if recent_sessions %}
 
                     {% for session in recent_sessions|slice:":5" %}
@@ -808,6 +1197,7 @@
                             <span class="topic-name">
                                 {{ session.topic_name|truncatechars:25 }}
                             </span>
+
 
                             <span
                                 class="
@@ -838,6 +1228,7 @@
 
 
             <!-- Quick Stats -->
+
             <div class="dash-card">
 
                 <div class="card-title">
@@ -848,6 +1239,7 @@
                     </span>
 
                 </div>
+
 
                 <div class="row g-2">
 
@@ -867,6 +1259,7 @@
 
                     </div>
 
+
                     <div class="col-6">
 
                         <div class="bg-light rounded p-2 text-center">
@@ -883,6 +1276,7 @@
 
                     </div>
 
+
                     <div class="col-6">
 
                         <div class="bg-light rounded p-2 text-center">
@@ -898,6 +1292,7 @@
                         </div>
 
                     </div>
+
 
                     <div class="col-6">
 
@@ -929,16 +1324,24 @@
 
 
 {% block extra_js %}
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
         const progressElement = document.querySelector(
             '.active-session-progress'
         );
 
         if (progressElement) {
+
+            const progress =
+                parseFloat(progressElement.dataset.progress) || 0;
+
             progressElement.style.width =
-                `${progressElement.dataset.progress}%`;
+                `${Math.min(Math.max(progress, 0), 100)}%`;
         }
+
     });
 </script>
+
 {% endblock %}

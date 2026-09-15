@@ -1,6 +1,7 @@
 # apps/practice/views.py
 
 import json
+import logging
 from django.utils import timezone
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -15,7 +16,6 @@ from apps.core.models import Subject, Chapter, Topic, Question, MockTest, MockTe
 
 from .models import PracticeSession, PracticeAttempt
 
-# Import all services from the main services.py file
 from .services import (
     complete_practice_session,
     create_practice_session,
@@ -27,6 +27,8 @@ from .services import (
 from .progress import get_practice_progress
 from .dashboard import get_student_dashboard
 
+logger = logging.getLogger(__name__)
+
 
 # ============================================================
 # PRACTICE SESSION VIEWS
@@ -35,77 +37,33 @@ from .dashboard import get_student_dashboard
 @require_POST
 def create_session(request, topic_id):
     """Create a practice session for the requested topic."""
-
     if not request.user.is_authenticated:
-        return JsonResponse(
-            {"error": "authentication required"},
-            status=401,
-        )
+        return JsonResponse({"error": "authentication required"}, status=401)
 
-    topic = get_object_or_404(
-        Topic,
-        id=topic_id,
-        is_active=True,
-    )
-
-    questions = Question.objects.filter(
-        topic=topic,
-        is_active=True,
-    )
+    topic = get_object_or_404(Topic, id=topic_id, is_active=True)
+    questions = Question.objects.filter(topic=topic, is_active=True)
 
     if not questions.exists():
-        return JsonResponse(
-            {"error": "No questions available for this topic yet."},
-            status=404,
-        )
+        return JsonResponse({"error": "No questions available for this topic yet."}, status=404)
 
-    session = create_practice_session(
-        user=request.user,
-        topic=topic,
-    )
+    session = create_practice_session(user=request.user, topic=topic)
 
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return JsonResponse(
-            {
-                "session_id": session.id,
-                "topic_id": topic.id,
-                "status": session.status,
-            },
-            status=201,
-        )
+        return JsonResponse({
+            "session_id": session.id,
+            "topic_id": topic.id,
+            "status": session.status,
+        }, status=201)
 
-    return redirect(
-        "practice:practice-session",
-        session_id=session.id,
-    )
+    return redirect("practice:practice-session", session_id=session.id)
 
 
 @login_required
 def practice_session(request, session_id):
-    """Render the practice session page with adaptive difficulty."""
-
-    session = get_object_or_404(
-        PracticeSession,
-        id=session_id,
-        user=request.user,
-    )
-
-    # Use adaptive difficulty to get next question
-    from .adaptive import AdaptiveService
-    
-    result = AdaptiveService.get_next_adaptive_question(session)
-    
-    if isinstance(result, tuple):
-        question, adaptive_difficulty = result
-        # Store adaptive difficulty in session for logging
-        request.session[f'adaptive_difficulty_{session.id}'] = adaptive_difficulty
-    else:
-        question = result
-
-    total_questions = Question.objects.filter(
-        topic=session.topic,
-        is_active=True,
-    ).count()
+    """Render the practice session page."""
+    session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
+    question = get_next_question(session=session)
+    total_questions = Question.objects.filter(topic=session.topic, is_active=True).count()
 
     context = {
         "session": session,
@@ -113,26 +71,13 @@ def practice_session(request, session_id):
         "total_questions": total_questions,
     }
 
-    # Add adaptive info if available
-    if question:
-        context['adaptive_difficulty'] = adaptive_difficulty if 'adaptive_difficulty' in locals() else None
-
-    return render(
-        request,
-        "practice/practice.html",
-        context,
-    )
+    return render(request, "practice/practice.html", context)
 
 
 @login_required
 def practice_results(request, session_id):
     """Display practice session results."""
-
-    session = get_object_or_404(
-        PracticeSession,
-        id=session_id,
-        user=request.user,
-    )
+    session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
 
     attempts = session.attempts.all()
     total_questions = session.topic.questions.filter(is_active=True).count()
@@ -141,13 +86,8 @@ def practice_results(request, session_id):
     incorrect_answers = attempts.filter(is_correct=False).count()
     skipped_questions = max(total_questions - answered_questions, 0)
 
-    accuracy = (
-        round((correct_answers / total_questions) * 100, 0)
-        if total_questions > 0
-        else 0
-    )
+    accuracy = round((correct_answers / total_questions) * 100, 0) if total_questions > 0 else 0
 
-    # Calculate total time spent
     total_time_spent = sum(attempt.time_taken for attempt in attempts)
     minutes = int(total_time_spent // 60)
     seconds = int(total_time_spent % 60)
@@ -155,38 +95,26 @@ def practice_results(request, session_id):
 
     previous_session = (
         PracticeSession.objects
-        .filter(
-            user=request.user,
-            topic=session.topic,
-            status=PracticeSession.Status.COMPLETED,
-        )
+        .filter(user=request.user, topic=session.topic, status=PracticeSession.Status.COMPLETED)
         .exclude(id=session.id)
         .order_by("-completed_at")
         .first()
     )
 
     previous_accuracy = 0
-
     if previous_session:
         previous_attempts = previous_session.attempts.all()
         previous_total = previous_session.topic.questions.filter(is_active=True).count()
         previous_correct = previous_attempts.filter(is_correct=True).count()
-        previous_accuracy = (
-            round((previous_correct / previous_total) * 100, 0)
-            if previous_total > 0
-            else 0
-        )
+        previous_accuracy = round((previous_correct / previous_total) * 100, 0) if previous_total > 0 else 0
 
     weak_areas = []
-
     if incorrect_answers > 0:
-        weak_areas.append(
-            {
-                "name": session.topic.chapter.name,
-                "incorrect": incorrect_answers,
-                "skipped": skipped_questions,
-            }
-        )
+        weak_areas.append({
+            "name": session.topic.chapter.name,
+            "incorrect": incorrect_answers,
+            "skipped": skipped_questions,
+        })
 
     context = {
         "session": session,
@@ -202,65 +130,39 @@ def practice_results(request, session_id):
         "time_display": time_display,
     }
 
-    return render(
-        request,
-        "practice/results.html",
-        context,
-    )
+    return render(request, "practice/results.html", context)
 
 
 @require_GET
 @login_required
 def next_question(request, session_id):
-    """Return the next unanswered question with adaptive difficulty."""
-
-    session = get_object_or_404(
-        PracticeSession,
-        id=session_id,
-        user=request.user,
-    )
-
-    from .adaptive import AdaptiveService
-    
-    # Get next question with adaptive difficulty
-    question, adaptive_difficulty = AdaptiveService.get_next_adaptive_question(session)
+    """Return the next unanswered question for a practice session."""
+    session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
+    question = get_next_question(session=session)
 
     if question is None:
-        return JsonResponse(
-            {
-                "completed": True,
-                "message": "Practice session completed!",
-            }
-        )
+        return JsonResponse({"completed": True, "message": "Practice session completed!"})
 
-    return JsonResponse(
-        {
-            "question_id": question.id,
-            "question_text": question.question,
-            "options": {
-                "A": question.option_a,
-                "B": question.option_b,
-                "C": question.option_c,
-                "D": question.option_d,
-            },
-            "question_number": session.attempts.count() + 1,
-            "difficulty": question.difficulty,
-            "adaptive_difficulty": adaptive_difficulty,  # Send recommended difficulty
-            "is_adaptive": True,
-        }
-    )
+    return JsonResponse({
+        "question_id": question.id,
+        "question_text": question.question,
+        "options": {
+            "A": question.option_a,
+            "B": question.option_b,
+            "C": question.option_c,
+            "D": question.option_d,
+        },
+        "question_number": session.attempts.count() + 1,
+        "difficulty": question.difficulty,
+    })
+
 
 @csrf_exempt
 @require_POST
 @login_required
 def submit_session_answer(request, session_id):
     """Submit an answer for a practice session question."""
-
-    session = get_object_or_404(
-        PracticeSession,
-        id=session_id,
-        user=request.user,
-    )
+    session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
 
     try:
         data = json.loads(request.body)
@@ -268,34 +170,18 @@ def submit_session_answer(request, session_id):
         selected_answer = data.get("selected_answer", "").upper()
         time_taken = data.get("time_taken", 0.0)
     except json.JSONDecodeError:
-        return JsonResponse(
-            {"error": "Invalid JSON data"},
-            status=400,
-        )
+        return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
     if not question_id:
-        return JsonResponse(
-            {"error": "question_id is required"},
-            status=400,
-        )
+        return JsonResponse({"error": "question_id is required"}, status=400)
 
-    question = get_object_or_404(
-        Question,
-        id=question_id,
-        is_active=True,
-    )
+    question = get_object_or_404(Question, id=question_id, is_active=True)
 
     if question.topic_id != session.topic_id:
-        return JsonResponse(
-            {"error": "Question does not belong to this session's topic"},
-            status=400,
-        )
+        return JsonResponse({"error": "Question does not belong to this session's topic"}, status=400)
 
     if session.attempts.filter(question=question).exists():
-        return JsonResponse(
-            {"error": "Question has already been answered"},
-            status=400,
-        )
+        return JsonResponse({"error": "Question has already been answered"}, status=400)
 
     attempt = submit_answer(
         session=session,
@@ -304,70 +190,46 @@ def submit_session_answer(request, session_id):
         time_taken=time_taken,
     )
 
-    return JsonResponse(
-        {
-            "is_correct": attempt.is_correct,
-            "correct_answer": question.correct_answer,
-            "explanation": question.explanation,
-            "question_number": session.attempts.count(),
-            "difficulty": question.difficulty,
-        }
-    )
+    return JsonResponse({
+        "is_correct": attempt.is_correct,
+        "correct_answer": question.correct_answer,
+        "explanation": question.explanation,
+        "question_number": session.attempts.count(),
+        "difficulty": question.difficulty,
+    })
 
 
 @require_POST
 @login_required
 def complete_session(request, session_id):
     """Complete a practice session."""
+    session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
+    complete_practice_session(session=session)
 
-    session = get_object_or_404(
-        PracticeSession,
-        id=session_id,
-        user=request.user,
-    )
-
-    complete_practice_session(
-        session=session,
-    )
-
-    return JsonResponse(
-        {
-            "success": True,
-            "message": "Practice session completed!",
-            "session_id": session.id,
-        }
-    )
+    return JsonResponse({
+        "success": True,
+        "message": "Practice session completed!",
+        "session_id": session.id,
+    })
 
 
 @require_GET
 @login_required
 def session_progress(request, session_id):
     """Get progress for a practice session."""
-
-    session = get_object_or_404(
-        PracticeSession,
-        id=session_id,
-        user=request.user,
-    )
-
-    progress = get_practice_progress(
-        session=session,
-    )
-
+    session = get_object_or_404(PracticeSession, id=session_id, user=request.user)
+    progress = get_practice_progress(session=session)
     return JsonResponse(progress)
 
 
 @login_required
 def student_dashboard(request):
     """Student dashboard showing practice history and stats."""
-
     from apps.core.models import MockTestAttempt, MockTest
+    from apps.ml_module.services import WeakAreaDetector
 
-    dashboard_data = get_student_dashboard(
-        user=request.user,
-    )
+    dashboard_data = get_student_dashboard(user=request.user)
 
-    # Get mock test stats
     mock_attempts = MockTestAttempt.objects.filter(
         user=request.user,
         status__in=[MockTestAttempt.Status.COMPLETED, MockTestAttempt.Status.AUTO_SUBMITTED]
@@ -376,11 +238,14 @@ def student_dashboard(request):
     avg_mock_score_data = mock_attempts.aggregate(avg_score=models.Avg('score'))
     avg_mock_score = avg_mock_score_data.get('avg_score', 0) or 0
 
-    # Get upcoming mock tests
     upcoming_mock_tests = MockTest.objects.filter(
         is_active=True,
         scheduled_date__isnull=False
     ).order_by('scheduled_date')[:3]
+
+    # ML Predictions
+    weak_areas = WeakAreaDetector.get_weak_topics(request.user, limit=3)
+    recommended_topic = WeakAreaDetector.get_recommended_topic(request.user)
 
     context = {
         'total_sessions': dashboard_data.get('total_sessions', 0),
@@ -398,7 +263,6 @@ def student_dashboard(request):
         'study_time': dashboard_data.get('study_time', '0m'),
         'user_rank': dashboard_data.get('user_rank', 1),
         'subject_performance': dashboard_data.get('subject_performance', []),
-        'weak_topics': dashboard_data.get('weak_topics', []),
         'upcoming_mock_tests': upcoming_mock_tests,
         'recent_performance': dashboard_data.get('recent_performance', []),
         'xp_earned': dashboard_data.get('xp_earned', 0),
@@ -406,16 +270,13 @@ def student_dashboard(request):
         'xp_progress': dashboard_data.get('xp_progress', 0),
         'completed_goals': dashboard_data.get('completed_goals', 0),
         'total_goals': dashboard_data.get('total_goals', 3),
-        # Mock test stats
         'total_mock_attempts': total_mock_attempts,
         'avg_mock_score': round(avg_mock_score, 1),
+        'weak_areas': weak_areas,
+        'recommended_topic': recommended_topic,
     }
 
-    return render(
-        request,
-        "practice/student_dashboard.html",
-        context,
-    )
+    return render(request, "practice/student_dashboard.html", context)
 
 
 # ============================================================
@@ -425,49 +286,21 @@ def student_dashboard(request):
 @login_required
 def subjects_view(request):
     """View all subjects for practice selection with progress."""
-
-    subjects = (
-        Subject.objects
-        .filter(is_active=True)
-        .prefetch_related("chapters__topics")
-    )
+    subjects = Subject.objects.filter(is_active=True).prefetch_related("chapters__topics")
 
     subject_data = []
-
     for subject in subjects:
-        topics = Topic.objects.filter(
-            chapter__subject=subject,
-            is_active=True,
-        )
-
-        total_questions = sum(
-            topic.questions.filter(
-                is_active=True,
-            ).count()
-            for topic in topics
-        )
-
+        topics = Topic.objects.filter(chapter__subject=subject, is_active=True)
+        total_questions = sum(topic.questions.filter(is_active=True).count() for topic in topics)
         attempted_questions = (
             PracticeAttempt.objects
-            .filter(
-                session__user=request.user,
-                session__topic__in=topics,
-            )
+            .filter(session__user=request.user, session__topic__in=topics)
             .values("question")
             .distinct()
             .count()
         )
 
-        progress = (
-            min(
-                round(
-                    (attempted_questions / total_questions) * 100
-                ),
-                100,
-            )
-            if total_questions > 0
-            else 0
-        )
+        progress = min(round((attempted_questions / total_questions) * 100), 100) if total_questions > 0 else 0
 
         if progress >= 100:
             status = "completed"
@@ -476,52 +309,28 @@ def subjects_view(request):
         else:
             status = "not-started"
 
-        subject_data.append(
-            {
-                "id": subject.id,
-                "name": subject.name,
-                "description": subject.description,
-                "progress": progress,
-                "status": status,
-                "chapters": subject.chapters.filter(
-                    is_active=True,
-                ),
-            }
-        )
+        subject_data.append({
+            "id": subject.id,
+            "name": subject.name,
+            "description": subject.description,
+            "progress": progress,
+            "status": status,
+            "chapters": subject.chapters.filter(is_active=True),
+        })
 
-    return render(
-        request,
-        "practice/subjects.html",
-        {
-            "subjects": subject_data,
-        },
-    )
+    return render(request, "practice/subjects.html", {"subjects": subject_data})
 
 
 @login_required
 def chapters_view(request, subject_id):
     """View all chapters for a specific subject."""
+    subject = get_object_or_404(Subject, id=subject_id, is_active=True)
+    chapters = subject.chapters.filter(is_active=True).prefetch_related("topics")
 
-    subject = get_object_or_404(
-        Subject,
-        id=subject_id,
-        is_active=True,
-    )
-
-    chapters = (
-        subject.chapters
-        .filter(is_active=True)
-        .prefetch_related("topics")
-    )
-
-    return render(
-        request,
-        "practice/chapters.html",
-        {
-            "subject": subject,
-            "chapters": chapters,
-        },
-    )
+    return render(request, "practice/chapters.html", {
+        "subject": subject,
+        "chapters": chapters,
+    })
 
 
 @login_required
@@ -578,9 +387,10 @@ def topics_view(request, subject_id, chapter_id):
 @login_required
 def analytics_view(request):
     """Learning Analytics page with performance insights."""
-    from django.db.models import Count, Q, Avg, Sum
+    from django.db.models import Avg
     from datetime import datetime, timedelta
     from apps.core.models import Subject, Topic
+    from apps.ml_module.services import WeakAreaDetector
 
     attempts = PracticeAttempt.objects.filter(session__user=request.user)
     sessions = PracticeSession.objects.filter(user=request.user)
@@ -663,6 +473,10 @@ def analytics_view(request):
             'activity_level': activity_level
         })
 
+    # ML Predictions
+    weak_areas = WeakAreaDetector.get_weak_topics(request.user, limit=5)
+    recommended_topic = WeakAreaDetector.get_recommended_topic(request.user)
+
     context = {
         'total_study_time': total_study_time_display,
         'accuracy': accuracy,
@@ -672,21 +486,21 @@ def analytics_view(request):
         'subject_progress': subject_progress,
         'topic_accuracy': topic_accuracy,
         'daily_activity': daily_activity,
+        'weak_areas': weak_areas,
+        'recommended_topic': recommended_topic,
     }
 
     return render(request, 'practice/analytics.html', context)
 
 
 # ============================================================
-# BOOKMARK & REPORT
+# BOOKMARK & REPORT (RESTORED)
 # ============================================================
 
 @login_required
 @require_POST
 def toggle_bookmark(request, question_id):
     """Toggle bookmark for a question."""
-    from apps.core.models import Bookmark
-
     question = get_object_or_404(Question, id=question_id, is_active=True)
 
     bookmark = Bookmark.objects.filter(user=request.user, question=question)
@@ -703,12 +517,8 @@ def toggle_bookmark(request, question_id):
 @require_GET
 def bookmark_status(request, question_id):
     """Check if a question is bookmarked."""
-    from apps.core.models import Bookmark
-
     question = get_object_or_404(Question, id=question_id, is_active=True)
-
     bookmarked = Bookmark.objects.filter(user=request.user, question=question).exists()
-
     return JsonResponse({'bookmarked': bookmarked})
 
 
@@ -716,8 +526,6 @@ def bookmark_status(request, question_id):
 @require_POST
 def report_question(request, question_id):
     """Report a question as incorrect or unclear."""
-    from apps.core.models import QuestionReport
-
     question = get_object_or_404(Question, id=question_id, is_active=True)
 
     try:
@@ -760,9 +568,6 @@ def report_question(request, question_id):
 @login_required
 def mock_test_dashboard(request):
     """Display available mock tests and past attempts."""
-    from apps.core.models import MockTest, MockTestAttempt
-    from django.db import models
-
     available_tests = MockTest.objects.filter(is_active=True)
 
     past_attempts = MockTestAttempt.objects.filter(
@@ -791,8 +596,6 @@ def mock_test_dashboard(request):
 @login_required
 def mock_test_start(request, test_id):
     """Start a mock test."""
-    from apps.core.models import MockTest, MockTestAttempt
-
     mock_test = get_object_or_404(MockTest, id=test_id, is_active=True)
 
     existing = MockTestAttempt.objects.filter(
@@ -814,11 +617,7 @@ def mock_test_session(request, attempt_id):
     from django.utils import timezone
     from datetime import timedelta
 
-    attempt = get_object_or_404(
-        MockTestAttempt,
-        id=attempt_id,
-        user=request.user
-    )
+    attempt = get_object_or_404(MockTestAttempt, id=attempt_id, user=request.user)
 
     if attempt.status != MockTestAttempt.Status.IN_PROGRESS:
         return redirect('practice:mock-test-results', attempt_id=attempt.id)
@@ -833,11 +632,7 @@ def mock_test_session(request, attempt_id):
 
     questions_data = []
     for mq in mock_questions:
-        answer = MockTestAnswer.objects.filter(
-            attempt=attempt,
-            question=mq.question
-        ).first()
-
+        answer = MockTestAnswer.objects.filter(attempt=attempt, question=mq.question).first()
         questions_data.append({
             'order': mq.order,
             'question': mq.question,
@@ -872,11 +667,7 @@ def mock_test_session(request, attempt_id):
 @require_POST
 def mock_test_submit_answer(request, attempt_id):
     """Submit an answer for a mock test question."""
-    attempt = get_object_or_404(
-        MockTestAttempt,
-        id=attempt_id,
-        user=request.user
-    )
+    attempt = get_object_or_404(MockTestAttempt, id=attempt_id, user=request.user)
 
     if attempt.status != MockTestAttempt.Status.IN_PROGRESS:
         return JsonResponse({'error': 'Test already completed'}, status=400)
@@ -889,9 +680,7 @@ def mock_test_submit_answer(request, attempt_id):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
-    answer = MockTestService.submit_answer(
-        attempt, question_id, selected_answer, time_spent
-    )
+    answer = MockTestService.submit_answer(attempt, question_id, selected_answer, time_spent)
 
     return JsonResponse({
         'success': True,
@@ -905,11 +694,7 @@ def mock_test_submit_answer(request, attempt_id):
 @require_POST
 def mock_test_toggle_review(request, attempt_id):
     """Toggle review status for a mock test question."""
-    attempt = get_object_or_404(
-        MockTestAttempt,
-        id=attempt_id,
-        user=request.user
-    )
+    attempt = get_object_or_404(MockTestAttempt, id=attempt_id, user=request.user)
 
     try:
         data = json.loads(request.body)
@@ -919,21 +704,14 @@ def mock_test_toggle_review(request, attempt_id):
 
     is_reviewed = MockTestService.toggle_review(attempt, question_id)
 
-    return JsonResponse({
-        'success': True,
-        'is_reviewed': is_reviewed,
-    })
+    return JsonResponse({'success': True, 'is_reviewed': is_reviewed})
 
 
 @login_required
 @require_POST
 def mock_test_complete(request, attempt_id):
     """Complete a mock test."""
-    attempt = get_object_or_404(
-        MockTestAttempt,
-        id=attempt_id,
-        user=request.user
-    )
+    attempt = get_object_or_404(MockTestAttempt, id=attempt_id, user=request.user)
 
     if attempt.status != MockTestAttempt.Status.IN_PROGRESS:
         return JsonResponse({'error': 'Test already completed'}, status=400)
@@ -949,17 +727,12 @@ def mock_test_complete(request, attempt_id):
 @login_required
 def mock_test_results(request, attempt_id):
     """Display mock test results."""
-    attempt = get_object_or_404(
-        MockTestAttempt,
-        id=attempt_id,
-        user=request.user
-    )
+    attempt = get_object_or_404(MockTestAttempt, id=attempt_id, user=request.user)
 
     if attempt.status == MockTestAttempt.Status.IN_PROGRESS:
         return redirect('practice:mock-test-session', attempt_id=attempt.id)
 
     result = MockTestService.calculate_score(attempt)
-
     answers = attempt.answers.select_related('question').all()
 
     time_stats = {
@@ -998,8 +771,6 @@ def mock_test_history(request):
         user=request.user
     ).select_related('mock_test').order_by('-started_at')
 
-    context = {
-        'attempts': attempts,
-    }
+    context = {'attempts': attempts}
 
     return render(request, 'practice/mock_test_history.html', context)

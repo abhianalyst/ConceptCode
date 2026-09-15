@@ -30,6 +30,10 @@ urlpatterns = [
         'doubts/', 
         include('apps.doubt_solver.urls', namespace='doubt_solver')
     ),
+
+    path(
+        'ml/', include('apps.ml_module.urls', namespace='ml_module')
+    ),
 ]
 
 

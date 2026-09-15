@@ -38,6 +38,10 @@
         margin: 0 auto;
     }
 
+    /* ============================================================
+       STATS
+       ============================================================ */
+
     .stats-grid-analytics {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -104,10 +108,25 @@
         color: #155724;
     }
 
-    .stat-card-analytics .stat-number.primary { color: #0d6efd; }
-    .stat-card-analytics .stat-number.success { color: #28a745; }
-    .stat-card-analytics .stat-number.warning { color: #ffc107; }
-    .stat-card-analytics .stat-number.info { color: #0dcaf0; }
+    .stat-card-analytics .stat-number.primary {
+        color: #0d6efd;
+    }
+
+    .stat-card-analytics .stat-number.success {
+        color: #28a745;
+    }
+
+    .stat-card-analytics .stat-number.warning {
+        color: #ffc107;
+    }
+
+    .stat-card-analytics .stat-number.info {
+        color: #0dcaf0;
+    }
+
+    /* ============================================================
+       CHART GRID
+       ============================================================ */
 
     .chart-grid {
         display: grid;
@@ -149,6 +168,10 @@
         color: #4facfe;
     }
 
+    /* ============================================================
+       LEARNING TREND
+       ============================================================ */
+
     .trend-chart {
         display: flex;
         justify-content: space-between;
@@ -164,6 +187,8 @@
         align-items: center;
         flex: 1;
         gap: 0.3rem;
+        height: 100%;
+        justify-content: flex-end;
     }
 
     .trend-bar-wrapper .bar {
@@ -185,6 +210,10 @@
         font-size: 0.65rem;
         color: #6c757d;
     }
+
+    /* ============================================================
+       SUBJECT PROGRESS
+       ============================================================ */
 
     .subject-progress-item {
         margin-bottom: 0.75rem;
@@ -215,6 +244,7 @@
         height: 10px;
         border-radius: 50%;
         display: inline-block;
+        flex-shrink: 0;
     }
 
     .subject-progress-item .subject-stats {
@@ -234,6 +264,10 @@
         border-radius: 3px;
         transition: width 0.5s ease;
     }
+
+    /* ============================================================
+       HEATMAP
+       ============================================================ */
 
     .heatmap-grid {
         display: grid;
@@ -255,11 +289,30 @@
         font-weight: 600;
     }
 
-    .heatmap-cell.active-1 { background: #d4edda; color: #155724; }
-    .heatmap-cell.active-2 { background: #a8d8b0; color: #155724; }
-    .heatmap-cell.active-3 { background: #7cc48a; color: #155724; }
-    .heatmap-cell.active-4 { background: #50b064; color: white; }
-    .heatmap-cell.active-5 { background: #28a745; color: white; }
+    .heatmap-cell.active-1 {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .heatmap-cell.active-2 {
+        background: #a8d8b0;
+        color: #155724;
+    }
+
+    .heatmap-cell.active-3 {
+        background: #7cc48a;
+        color: #155724;
+    }
+
+    .heatmap-cell.active-4 {
+        background: #50b064;
+        color: white;
+    }
+
+    .heatmap-cell.active-5 {
+        background: #28a745;
+        color: white;
+    }
 
     .heatmap-legend {
         display: flex;
@@ -276,6 +329,10 @@
         border-radius: 4px;
         display: inline-block;
     }
+
+    /* ============================================================
+       TOPIC ACCURACY
+       ============================================================ */
 
     .topic-accuracy-item {
         display: flex;
@@ -302,6 +359,7 @@
         height: 8px;
         border-radius: 50%;
         display: inline-block;
+        flex-shrink: 0;
     }
 
     .topic-accuracy-item .topic-score {
@@ -325,6 +383,176 @@
         background: #f8d7da;
         color: #721c24;
     }
+
+    /* ============================================================
+       AI WEAK AREAS
+       ============================================================ */
+
+    .ai-section {
+        background: white;
+        border-radius: 14px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .ai-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .ai-section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .ai-section-title i {
+        color: #6f42c1;
+    }
+
+    .weak-area-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 1rem;
+    }
+
+    .weak-area-item:last-child {
+        border-bottom: none;
+    }
+
+    .weak-area-info {
+        min-width: 0;
+    }
+
+    .weak-area-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #2d3748;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .weak-area-path {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 0.2rem;
+    }
+
+    .weak-area-stats {
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .weak-area-accuracy {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .weak-area-attempts {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+
+    .classification-weak {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .classification-moderate {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .classification-strong {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    /* ============================================================
+       RECOMMENDED TOPIC
+       ============================================================ */
+
+    .recommendation-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #e7f3ff, #f1f8ff);
+        border: 1px solid #b8dcff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .recommendation-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+    }
+
+    .recommendation-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #0d6efd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.15rem;
+    }
+
+    .recommendation-text strong {
+        display: block;
+        color: #1a1a2e;
+        margin-bottom: 0.15rem;
+    }
+
+    .recommendation-text span {
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    .recommendation-btn {
+        flex-shrink: 0;
+        text-decoration: none;
+        padding: 0.55rem 1rem;
+        border-radius: 9px;
+        background: #0d6efd;
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .recommendation-btn:hover {
+        background: #0b5ed7;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       BOTTOM ACTIONS
+       ============================================================ */
 
     .bottom-actions-analytics {
         display: flex;
@@ -384,204 +612,911 @@
         box-shadow: 0 4px 16px rgba(220, 53, 69, 0.3);
     }
 
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+
     @media (max-width: 768px) {
+
         .analytics-header {
             padding: 1.25rem;
         }
+
         .analytics-header h1 {
             font-size: 1.5rem;
         }
+
         .trend-chart {
             height: 120px;
         }
+
         .bottom-actions-analytics {
             flex-direction: column;
             align-items: stretch;
         }
+
         .btn-action-analytics {
             justify-content: center;
+        }
+
+        .recommendation-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .recommendation-btn {
+            text-align: center;
+            width: 100%;
+        }
+
+        .weak-area-item {
+            align-items: flex-start;
         }
     }
 
     @media (max-width: 480px) {
+
         .stats-grid-analytics {
             grid-template-columns: 1fr 1fr;
         }
+
         .heatmap-grid {
             gap: 2px;
         }
+
         .heatmap-cell {
             font-size: 0.5rem;
+        }
+
+        .ai-section {
+            padding: 1rem;
+        }
+
+        .weak-area-item {
+            flex-direction: column;
+        }
+
+        .weak-area-stats {
+            text-align: left;
+        }
+    }
+
+    /* ============================================================
+   WEAK AREAS STYLES
+   ============================================================ */
+    .weak-areas-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .weak-area-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border-left: 4px solid #e9ecef;
+        transition: all 0.2s ease;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .weak-area-item:hover {
+        background: #f0f7ff;
+        transform: translateX(4px);
+    }
+
+    .weak-area-item:has(.bg-danger) {
+        border-left-color: #dc3545;
+    }
+
+    .weak-area-item:has(.bg-warning) {
+        border-left-color: #ffc107;
+    }
+
+    .weak-area-info {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .weak-area-name {
+        font-weight: 600;
+        color: #1a1a2e;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .classification-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .weak-area-meta {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.15rem;
+    }
+
+    .weak-area-stats {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-box {
+        text-align: center;
+        min-width: 70px;
+    }
+
+    .stat-box .stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .stat-box .stat-label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+        .weak-area-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .weak-area-stats {
+            width: 100%;
+            justify-content: space-between;
         }
     }
 </style>
 {% endblock %}
 
+
 {% block content %}
 
 <div class="analytics-container">
 
-    <!-- Header -->
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+
     <div class="analytics-header">
-        <h1><i class="bi bi-bar-chart"></i> Learning Analytics</h1>
-        <p>Track your progress and AI-driven insights.</p>
+
+        <h1>
+            <i class="bi bi-bar-chart"></i>
+            Learning Analytics
+        </h1>
+
+        <p>
+            Track your progress and AI-driven insights.
+        </p>
+
     </div>
 
-    <!-- Stats Cards -->
+
+    <!-- ============================================================
+         STATS CARDS
+         ============================================================ -->
+
     <div class="stats-grid-analytics">
+
         <div class="stat-card-analytics">
+
             <span class="stat-icon">⏱️</span>
-            <div class="stat-number primary">{{ total_study_time|default:"0h 0m" }}</div>
-            <div class="stat-label">Total Study Time</div>
-            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 12% this week</span>
+
+            <div class="stat-number primary">
+                {{ total_study_time|default:"0h 0m" }}
+            </div>
+
+            <div class="stat-label">
+                Total Study Time
+            </div>
+
+            <span class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                12% this week
+            </span>
+
         </div>
+
+
         <div class="stat-card-analytics">
+
             <span class="stat-icon">🎯</span>
-            <div class="stat-number success">{{ accuracy|default:0 }}%</div>
-            <div class="stat-label">Overall Accuracy</div>
-            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 8% improvement</span>
+
+            <div class="stat-number success">
+                {{ accuracy|default:0 }}%
+            </div>
+
+            <div class="stat-label">
+                Overall Accuracy
+            </div>
+
+            <span class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                8% improvement
+            </span>
+
         </div>
+
+
         <div class="stat-card-analytics">
+
             <span class="stat-icon">📊</span>
-            <div class="stat-number warning">{{ completion_rate|default:0 }}%</div>
-            <div class="stat-label">Completion Rate</div>
-            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 4% this week</span>
+
+            <div class="stat-number warning">
+                {{ completion_rate|default:0 }}%
+            </div>
+
+            <div class="stat-label">
+                Completion Rate
+            </div>
+
+            <span class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                4% this week
+            </span>
+
         </div>
+
+
         <div class="stat-card-analytics">
+
             <span class="stat-icon">🔥</span>
-            <div class="stat-number info">{{ streak_days|default:0 }}</div>
-            <div class="stat-label">Day Streak</div>
-            <span class="stat-change positive"><i class="bi bi-arrow-up"></i> 3 in progress</span>
+
+            <div class="stat-number info">
+                {{ streak_days|default:0 }}
+            </div>
+
+            <div class="stat-label">
+                Day Streak
+            </div>
+
+            <span class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                3 in progress
+            </span>
+
         </div>
+
     </div>
 
-    <!-- Charts Grid -->
+
+   <!-- ============================================================
+     ML WEAK AREAS SECTION
+     ============================================================ -->
+<div class="chart-card" style="grid-column: 1 / -1;">
+    <div class="chart-title">
+        <i class="bi bi-robot" style="color: #a855f7;"></i> AI-Detected Weak Areas
+        <span class="badge ms-auto" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: white;">
+            🤖 ML Powered
+        </span>
+    </div>
+    
+    {% if weak_areas %}
+        <div class="weak-areas-list">
+            {% for perf in weak_areas %}
+                <div class="weak-area-item">
+                    <div class="weak-area-info">
+                        <div class="weak-area-name">
+                            <span class="classification-dot 
+                                {% if perf.classification == 'Weak' %}bg-danger
+                                {% elif perf.classification == 'Moderate' %}bg-warning
+                                {% else %}bg-success{% endif %}">
+                            </span>
+                            {{ perf.topic.name }}
+                            <span class="badge 
+                                {% if perf.classification == 'Weak' %}bg-danger
+                                {% elif perf.classification == 'Moderate' %}bg-warning
+                                {% else %}bg-success{% endif %} ms-2">
+                                {{ perf.classification }}
+                            </span>
+                        </div>
+                        <div class="weak-area-meta">
+                            {{ perf.topic.chapter.subject.name }} · {{ perf.topic.chapter.name }}
+                        </div>
+                    </div>
+                    
+                    <div class="weak-area-stats">
+                        <div class="stat-box">
+                            <div class="stat-value">{{ perf.accuracy|floatformat:1 }}%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">{{ perf.attempts }}</div>
+                            <div class="stat-label">Attempts</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">{{ perf.confidence|floatformat:0 }}%</div>
+                            <div class="stat-label">Confidence</div>
+                        </div>
+                        <a href="{% url 'practice:create-practice-session' topic_id=perf.topic.id %}" 
+                           class="btn btn-sm btn-primary">
+                            <i class="bi bi-play-circle"></i> Practice
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-check-circle text-success display-4"></i>
+            <p class="text-muted mt-3">No weak areas detected! Keep up the great work! 🎉</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Recommended Topic -->
+{% if recommended_topic %}
+<div class="chart-card" style="grid-column: 1 / -1; border-left: 4px solid #a855f7;">
+    <div class="chart-title">
+        <i class="bi bi-lightbulb" style="color: #ffc107;"></i> Recommended Next Topic
+    </div>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h5 class="mb-1">{{ recommended_topic.name }}</h5>
+            <p class="text-muted small mb-0">
+                {{ recommended_topic.chapter.subject.name }} · {{ recommended_topic.chapter.name }}
+            </p>
+        </div>
+        <a href="{% url 'practice:create-practice-session' topic_id=recommended_topic.id %}" 
+           class="btn btn-primary">
+            <i class="bi bi-play-circle"></i> Start Practice
+        </a>
+    </div>
+</div>
+{% endif %}
+
+    <!-- ============================================================
+         RECOMMENDED TOPIC
+         ============================================================ -->
+
+    {% if recommended_topic %}
+
+        <div class="recommendation-card">
+
+            <div class="recommendation-content">
+
+                <div class="recommendation-icon">
+
+                    <i class="bi bi-lightbulb"></i>
+
+                </div>
+
+
+                <div class="recommendation-text">
+
+                    <strong>
+                        Recommended Next
+                    </strong>
+
+                    <span>
+                        Based on your performance, AI recommends:
+                        <strong>
+                            {{ recommended_topic.name }}
+                        </strong>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                create_session is POST-only.
+                Therefore use POST form instead of <a href>.
+            -->
+
+            <form
+                method="post"
+                action="{% url 'practice:create-session' topic_id=recommended_topic.id %}"
+                class="mb-0"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="recommendation-btn"
+                >
+
+                    <i class="bi bi-play-fill"></i>
+                    Start Practice
+
+                </button>
+
+            </form>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ============================================================
+         CHARTS GRID
+         ============================================================ -->
+
     <div class="chart-grid">
 
-        <!-- Learning Trend -->
+
+        <!-- ========================================================
+             LEARNING TREND
+             ======================================================== -->
+
         <div class="chart-card">
+
             <div class="chart-title">
-                <i class="bi bi-graph-up"></i> Learning Trend
-                <span class="badge bg-light text-dark ms-auto">Last 4 Weeks</span>
+
+                <i class="bi bi-graph-up"></i>
+
+                Learning Trend
+
+                <span class="badge bg-light text-dark ms-auto">
+                    Last 4 Weeks
+                </span>
+
             </div>
+
+
             <div class="trend-chart">
+
                 {% if weekly_trend %}
+
                     {% for week in weekly_trend %}
+
                         <div class="trend-bar-wrapper">
-                            <div class="bar" style="height: {{ week.value|default:0 }}%; background-color: {{ week.color|default:'#4e73df' }};"></div>
-                            <span class="bar-value">{{ week.value|default:0 }}%</span>
-                            <span class="bar-label">{{ week.label|default:'' }}</span>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted text-center py-3">No trend data available.</p>
-                {% endif %}
-            </div>
-        </div>
 
-        <!-- Subject Progress -->
-        <div class="chart-card">
-            <div class="chart-title">
-                <i class="bi bi-bar-chart"></i> Subject Progress
-                <span class="badge bg-light text-dark ms-auto">Overall</span>
-            </div>
-            {% if subject_progress %}
-                {% for subject in subject_progress %}
-                    <div class="subject-progress-item">
-                        <div class="subject-header">
-                            <span class="subject-name">
-                                <span class="subject-dot" style="background: {{ subject.color|default:'#6c757d' }};"></span>
-                                {{ subject.name }}
+                            <div
+                                class="bar trend-bar"
+                                data-height="{{ week.value|default:0 }}"
+                                data-color="{{ week.color|default:'#4facfe' }}"
+                                aria-label="{{ week.label|default:'' }}: {{ week.value|default:0 }}%"
+                                role="img"
+                            ></div>
+
+                            <span class="bar-value">
+                                {{ week.value|default:0 }}%
                             </span>
-                            <span class="subject-stats">{{ subject.completed|default:0 }}/{{ subject.total|default:0 }} topics</span>
+
+                            <span class="bar-label">
+                                {{ week.label|default:'' }}
+                            </span>
+
                         </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width: {{ subject.progress|default:0 }}%; background: {{ subject.color|default:'#4e73df' }};"></div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-muted text-center py-3">No subject progress data available.</p>
-            {% endif %}
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted text-center py-3">
+                        No trend data available.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
         </div>
 
-        <!-- Daily Activity -->
+
+        <!-- ========================================================
+             SUBJECT PROGRESS
+             ======================================================== -->
+
         <div class="chart-card">
+
             <div class="chart-title">
-                <i class="bi bi-calendar"></i> Daily Activity
-                <span class="badge bg-light text-dark ms-auto">Last 7 Days</span>
+
+                <i class="bi bi-bar-chart"></i>
+
+                Subject Progress
+
+                <span class="badge bg-light text-dark ms-auto">
+                    Overall
+                </span>
+
             </div>
+
+
+            {% if subject_progress %}
+
+                {% for subject in subject_progress %}
+
+                    <div class="subject-progress-item">
+
+                        <div class="subject-header">
+
+                            <span class="subject-name">
+
+                                <!--
+                                    Django template tags removed from style.
+                                    Color is now handled using data-color.
+                                -->
+
+                                <span
+                                    class="subject-dot"
+                                    data-color="{{ subject.color|default:'#6c757d' }}"
+                                ></span>
+
+                                {{ subject.name }}
+
+                            </span>
+
+
+                            <span class="subject-stats">
+
+                                {{ subject.completed|default:0 }}
+                                /
+                                {{ subject.total|default:0 }}
+                                topics
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="progress-track">
+
+                            <div
+                                class="progress-fill subject-progress-bar"
+                                data-progress="{{ subject.progress|default:0 }}"
+                                data-color="{{ subject.color|default:'#4e73df' }}"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="text-muted text-center py-3">
+                    No subject progress data available.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ========================================================
+             DAILY ACTIVITY
+             ======================================================== -->
+
+        <div class="chart-card">
+
+            <div class="chart-title">
+
+                <i class="bi bi-calendar"></i>
+
+                Daily Activity
+
+                <span class="badge bg-light text-dark ms-auto">
+                    Last 7 Days
+                </span>
+
+            </div>
+
+
             <div class="heatmap-grid">
+
                 {% if daily_activity %}
+
                     {% for day in daily_activity %}
-                        <div class="heatmap-cell {% if day.activity > 0 %}active-{{ day.activity_level }}{% endif %}" 
-                             title="{{ day.date }}: {{ day.activity }} questions">
+
+                        <div
+                            class="heatmap-cell
+                            {% if day.activity > 0 %}
+                                active-{{ day.activity_level }}
+                            {% endif %}"
+                            title="{{ day.date }}: {{ day.activity }} questions"
+                        >
                             {{ day.day }}
                         </div>
+
                     {% endfor %}
+
                 {% else %}
-                    <p class="text-muted text-center py-3">No activity data available.</p>
+
+                    <p class="text-muted text-center py-3">
+                        No activity data available.
+                    </p>
+
                 {% endif %}
+
             </div>
+
+
             <div class="heatmap-legend">
+
                 <span>Less</span>
-                <span class="legend-dot" style="background: #d4edda;"></span>
-                <span class="legend-dot" style="background: #a8d8b0;"></span>
-                <span class="legend-dot" style="background: #7cc48a;"></span>
-                <span class="legend-dot" style="background: #50b064;"></span>
-                <span class="legend-dot" style="background: #28a745;"></span>
+
+                <span
+                    class="legend-dot legend-1"
+                ></span>
+
+                <span
+                    class="legend-dot legend-2"
+                ></span>
+
+                <span
+                    class="legend-dot legend-3"
+                ></span>
+
+                <span
+                    class="legend-dot legend-4"
+                ></span>
+
+                <span
+                    class="legend-dot legend-5"
+                ></span>
+
                 <span>More</span>
+
             </div>
+
         </div>
 
-        <!-- Accuracy by Topic -->
+
+        <!-- ========================================================
+             ACCURACY BY TOPIC
+             ======================================================== -->
+
         <div class="chart-card">
+
             <div class="chart-title">
-                <i class="bi bi-pie-chart"></i> Accuracy by Topic
-                <span class="badge bg-light text-dark ms-auto">Top Topics</span>
+
+                <i class="bi bi-pie-chart"></i>
+
+                Accuracy by Topic
+
+                <span class="badge bg-light text-dark ms-auto">
+                    Top Topics
+                </span>
+
             </div>
+
+
             {% if topic_accuracy %}
+
                 {% for topic in topic_accuracy %}
+
                     <div class="topic-accuracy-item">
+
                         <span class="topic-name">
-                            <span class="topic-dot" style="background: 
-                                {% if topic.accuracy >= 80 %}#28a745
-                                {% elif topic.accuracy >= 60 %}#ffc107
-                                {% else %}#dc3545{% endif %};">
-                            </span>
+
+                            <!--
+                                Dynamic color is handled by JavaScript.
+                                No Django tags inside style attribute.
+                            -->
+
+                            <span
+                                class="topic-dot"
+                                data-accuracy="{{ topic.accuracy|default:0 }}"
+                            ></span>
+
                             {{ topic.name }}
+
                         </span>
-                        <span class="topic-score 
-                            {% if topic.accuracy >= 80 %}high
-                            {% elif topic.accuracy >= 60 %}medium
-                            {% else %}low{% endif %}">
+
+
+                        <span
+                            class="topic-score
+                            {% if topic.accuracy >= 80 %}
+                                high
+                            {% elif topic.accuracy >= 60 %}
+                                medium
+                            {% else %}
+                                low
+                            {% endif %}"
+                        >
+
                             {{ topic.accuracy }}%
+
                         </span>
+
                     </div>
+
                 {% endfor %}
+
             {% else %}
-                <p class="text-muted text-center py-3">No topic accuracy data available.</p>
+
+                <p class="text-muted text-center py-3">
+                    No topic accuracy data available.
+                </p>
+
             {% endif %}
+
         </div>
 
     </div>
 
-    <!-- Bottom Actions -->
+
+    <!-- ============================================================
+         BOTTOM ACTIONS
+         ============================================================ -->
+
     <div class="bottom-actions-analytics">
-        <a href="#" class="btn-action-analytics btn-upgrade">
-            <i class="bi bi-star"></i> Upgrade to Pro
+
+        <a
+            href="#"
+            class="btn-action-analytics btn-upgrade"
+        >
+
+            <i class="bi bi-star"></i>
+
+            Upgrade to Pro
+
         </a>
-        <a href="{% url 'accounts:profile-edit' %}" class="btn-action-analytics btn-settings">
-            <i class="bi bi-gear"></i> Settings
+
+
+        <a
+            href="{% url 'accounts:profile-edit' %}"
+            class="btn-action-analytics btn-settings"
+        >
+
+            <i class="bi bi-gear"></i>
+
+            Settings
+
         </a>
-        <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+
+
+        <form
+            method="post"
+            action="{% url 'accounts:logout' %}"
+            class="d-inline"
+        >
+
             {% csrf_token %}
-            <button type="submit" class="btn-action-analytics btn-logout">
-                <i class="bi bi-box-arrow-right"></i> Logout
+
+            <button
+                type="submit"
+                class="btn-action-analytics btn-logout"
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                Logout
+
             </button>
+
         </form>
+
     </div>
 
 </div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* ============================================================
+           SUBJECT PROGRESS BARS
+           ============================================================ */
+
+        const subjectProgressBars =
+            document.querySelectorAll('.subject-progress-bar');
+
+        subjectProgressBars.forEach(function (bar) {
+
+            const progress =
+                parseFloat(bar.dataset.progress) || 0;
+
+            const color =
+                bar.dataset.color || '#4e73df';
+
+            const safeProgress =
+                Math.min(Math.max(progress, 0), 100);
+
+            bar.style.width =
+                `${safeProgress}%`;
+
+            bar.style.backgroundColor =
+                color;
+
+        });
+
+
+        /* ============================================================
+           SUBJECT DOT COLORS
+           ============================================================ */
+
+        const subjectDots =
+            document.querySelectorAll('.subject-dot');
+
+        subjectDots.forEach(function (dot) {
+
+            const color =
+                dot.dataset.color || '#6c757d';
+
+            dot.style.backgroundColor =
+                color;
+
+        });
+
+
+        /* ============================================================
+           LEARNING TREND BARS
+           ============================================================ */
+
+        const trendBars =
+            document.querySelectorAll('.trend-bar');
+
+        trendBars.forEach(function (bar) {
+
+            const height =
+                parseFloat(bar.dataset.height) || 0;
+
+            const color =
+                bar.dataset.color || '#4facfe';
+
+            const safeHeight =
+                Math.min(Math.max(height, 0), 100);
+
+            /*
+                The chart has a 160px height.
+                Convert percentage into a percentage-based CSS height.
+            */
+
+            bar.style.height =
+                `${safeHeight}%`;
+
+            bar.style.backgroundColor =
+                color;
+
+        });
+
+
+        /* ============================================================
+           TOPIC ACCURACY DOT COLORS
+           ============================================================ */
+
+        const topicDots =
+            document.querySelectorAll('.topic-dot');
+
+        topicDots.forEach(function (dot) {
+
+            const accuracy =
+                parseFloat(dot.dataset.accuracy) || 0;
+
+            if (accuracy >= 80) {
+
+                dot.style.backgroundColor =
+                    '#28a745';
+
+            } else if (accuracy >= 60) {
+
+                dot.style.backgroundColor =
+                    '#ffc107';
+
+            } else {
+
+                dot.style.backgroundColor =
+                    '#dc3545';
+
+            }
+
+        });
+
+    });
+</script>
 
 {% endblock %}

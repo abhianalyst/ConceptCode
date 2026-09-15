@@ -3,7 +3,8 @@ from django.utils import timezone
 from datetime import timedelta
 from .adaptive import AdaptiveService, AdaptiveDifficulty
 from .models import PracticeAttempt, PracticeSession
-
+import logging
+logger = logging.getLogger(__name__)
 
 @transaction.atomic
 def create_practice_session(*, user, topic) -> PracticeSession:
@@ -106,7 +107,7 @@ def submit_answer(
 
 @transaction.atomic
 def complete_practice_session(*, session) -> PracticeSession:
-    """Mark a practice session as completed."""
+    """Mark a practice session as completed and update ML predictions."""
 
     if session is None:
         raise ValueError("session is required")
@@ -120,8 +121,18 @@ def complete_practice_session(*, session) -> PracticeSession:
         update_fields=["status", "completed_at"],
     )
 
-    return session
+    # ============================================================
+    # UPDATE ML PREDICTIONS (FR-10-03)
+    # ============================================================
+    try:
+        from apps.ml_module.services import WeakAreaDetector
+        WeakAreaDetector.update_user_performance(session.user)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"ML update failed: {e}")
 
+    return session
 
 # ============================================================
 # MOCK TEST SERVICE
