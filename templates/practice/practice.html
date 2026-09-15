@@ -1162,12 +1162,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function showReportModal() {
 
-    const modal =
-        new bootstrap.Modal(
-            document.getElementById('reportModal')
-        );
-
-    modal.show();
+    const modalElement = document.getElementById('reportModal');
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
 }
 
 
@@ -1197,6 +1196,8 @@ async function submitReport() {
         document.querySelector(
             '#reportModal .btn-danger'
         );
+
+    if (!submitBtn) return;
 
     const originalText =
         submitBtn.innerHTML;
@@ -1249,17 +1250,15 @@ async function submitReport() {
         alert('✅ ' + data.message);
 
 
-        const modal =
-            bootstrap.Modal.getInstance(
-                document.getElementById('reportModal')
-            );
+        const modalElement = document.getElementById('reportModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+        }
 
-        modal.hide();
 
-
-        document.getElementById(
-            'reportDescription'
-        ).value = '';
+        const descEl = document.getElementById('reportDescription');
+        if (descEl) descEl.value = '';
 
 
     } catch (error) {
@@ -1286,6 +1285,8 @@ async function toggleBookmark() {
 
     const btn =
         document.getElementById('bookmarkBtn');
+
+    if (!btn) return;
 
     const originalText =
         btn.innerHTML;
@@ -1365,6 +1366,8 @@ async function checkBookmarkStatus() {
     const btn =
         document.getElementById('bookmarkBtn');
 
+    if (!btn) return;
+
     btn.innerHTML =
         '<i class="bi bi-bookmark"></i> Bookmark';
 
@@ -1418,14 +1421,13 @@ function startTimer() {
             const secs =
                 seconds % 60;
 
-
-            document.getElementById(
-                'timer-display'
-            ).textContent =
-
-                String(mins).padStart(2, '0') +
-                ':' +
-                String(secs).padStart(2, '0');
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) {
+                timerDisplay.textContent =
+                    String(mins).padStart(2, '0') +
+                    ':' +
+                    String(secs).padStart(2, '0');
+            }
 
 
             const timer =
@@ -1467,6 +1469,7 @@ function initPalette() {
             'paletteGrid'
         );
 
+    if (!paletteGrid) return;
 
     paletteGrid.innerHTML = '';
 
@@ -1968,13 +1971,13 @@ function processAnswer(data) {
             'qStatus'
         );
 
+    if (statusEl) {
+        statusEl.className =
+            'q-status answered';
 
-    statusEl.className =
-        'q-status answered';
-
-
-    statusEl.innerHTML =
-        '<i class="bi bi-check-circle"></i> Answered';
+        statusEl.innerHTML =
+            '<i class="bi bi-check-circle"></i> Answered';
+    }
 
 
     const feedbackSection =
@@ -1982,83 +1985,76 @@ function processAnswer(data) {
             'feedbackSection'
         );
 
-
     const feedbackTitle =
         document.getElementById(
             'feedbackTitle'
         );
-
 
     const feedbackIcon =
         document.getElementById(
             'feedbackIcon'
         );
 
-
     const feedbackHeading =
         document.getElementById(
             'feedbackHeading'
         );
-
 
     const feedbackExplanation =
         document.getElementById(
             'feedbackExplanation'
         );
 
-
     const feedbackCorrect =
         document.getElementById(
             'feedbackCorrectAnswer'
         );
 
+    if (feedbackSection) {
+        feedbackSection.className =
+            'feedback-section show ' +
+            (
+                data.is_correct
+                    ? 'correct'
+                    : 'incorrect'
+            );
 
-    feedbackSection.className =
-        'feedback-section show ' +
-        (
-            data.is_correct
-                ? 'correct'
-                : 'incorrect'
-        );
-
-
-    feedbackSection.style.display =
-        'block';
-
-
-    if (data.is_correct) {
-
-        feedbackTitle.className =
-            'feedback-title correct-text';
-
-        feedbackIcon.textContent =
-            '✅';
-
-        feedbackHeading.textContent =
-            'Correct!';
-
-    } else {
-
-        feedbackTitle.className =
-            'feedback-title incorrect-text';
-
-        feedbackIcon.textContent =
-            '❌';
-
-        feedbackHeading.textContent =
-            'Incorrect';
+        feedbackSection.style.display =
+            'block';
     }
 
+    if (feedbackTitle) {
+        if (data.is_correct) {
+            feedbackTitle.className =
+                'feedback-title correct-text';
+        } else {
+            feedbackTitle.className =
+                'feedback-title incorrect-text';
+        }
+    }
 
-    feedbackExplanation.textContent =
-        data.explanation ||
-        'No explanation provided.';
+    if (feedbackIcon) {
+        feedbackIcon.textContent =
+            data.is_correct ? '✅' : '❌';
+    }
 
+    if (feedbackHeading) {
+        feedbackHeading.textContent =
+            data.is_correct ? 'Correct!' : 'Incorrect';
+    }
 
-    feedbackCorrect.textContent =
-        data.is_correct
-            ? ''
-            : `Correct answer: ${data.correct_answer}`;
+    if (feedbackExplanation) {
+        feedbackExplanation.textContent =
+            data.explanation ||
+            'No explanation provided.';
+    }
+
+    if (feedbackCorrect) {
+        feedbackCorrect.textContent =
+            data.is_correct
+                ? ''
+                : `Correct answer: ${data.correct_answer}`;
+    }
 
 
     /*
@@ -2157,62 +2153,62 @@ function toggleFlag() {
             'flagBtn'
         );
 
-
     const statusEl =
         document.getElementById(
             'qStatus'
         );
 
-
     if (isFlagged) {
 
-        flagBtn.classList.add(
-            'flagged'
-        );
+        if (flagBtn) {
+            flagBtn.classList.add(
+                'flagged'
+            );
 
-        flagBtn.innerHTML =
-            '<i class="bi bi-flag-fill"></i> Flagged';
+            flagBtn.innerHTML =
+                '<i class="bi bi-flag-fill"></i> Flagged';
+        }
 
+        if (statusEl) {
+            statusEl.className =
+                'q-status flagged';
 
-        statusEl.className =
-            'q-status flagged';
-
-        statusEl.innerHTML =
-            '<i class="bi bi-flag"></i> Flagged';
-
+            statusEl.innerHTML =
+                '<i class="bi bi-flag"></i> Flagged';
+        }
 
     } else {
 
-        flagBtn.classList.remove(
-            'flagged'
-        );
+        if (flagBtn) {
+            flagBtn.classList.remove(
+                'flagged'
+            );
 
-        flagBtn.innerHTML =
-            '<i class="bi bi-flag"></i> Flag for Review';
-
+            flagBtn.innerHTML =
+                '<i class="bi bi-flag"></i> Flag for Review';
+        }
 
         /*
          * If the question is already answered,
          * preserve the Answered status.
          */
 
-        if (
-            questions[currentIndex].answered
-        ) {
+        if (statusEl) {
+            if (
+                questions[currentIndex].answered
+            ) {
+                statusEl.className =
+                    'q-status answered';
 
-            statusEl.className =
-                'q-status answered';
+                statusEl.innerHTML =
+                    '<i class="bi bi-check-circle"></i> Answered';
+            } else {
+                statusEl.className =
+                    'q-status unanswered';
 
-            statusEl.innerHTML =
-                '<i class="bi bi-check-circle"></i> Answered';
-
-        } else {
-
-            statusEl.className =
-                'q-status unanswered';
-
-            statusEl.innerHTML =
-                '<i class="bi bi-circle"></i> Unanswered';
+                statusEl.innerHTML =
+                    '<i class="bi bi-circle"></i> Unanswered';
+            }
         }
     }
 
@@ -2237,20 +2233,18 @@ function updateQuestionDisplay() {
     const q =
         currentQuestionData;
 
+    const qNumEl = document.getElementById('qNumber');
+    if (qNumEl) {
+        qNumEl.textContent =
+            `Question ${currentIndex + 1} of ${totalQuestions}`;
+    }
 
-    document.getElementById(
-        'qNumber'
-    ).textContent =
-
-        `Question ${currentIndex + 1} of ${totalQuestions}`;
-
-
-    document.getElementById(
-        'questionContent'
-    ).textContent =
-
-        q.text ||
-        'Loading question...';
+    const questionContentEl = document.getElementById('questionContent');
+    if (questionContentEl) {
+        questionContentEl.textContent =
+            q.text ||
+            'Loading question...';
+    }
 
 
     /*
@@ -2322,16 +2316,11 @@ function updateQuestionDisplay() {
                 option.label;
 
 
-            el.querySelector(
-                '.option-label'
-            ).textContent =
-                displayLabel;
+            const labelEl = el.querySelector('.option-label');
+            const textEl = el.querySelector('.option-text');
 
-
-            el.querySelector(
-                '.option-text'
-            ).textContent =
-                option.text;
+            if (labelEl) labelEl.textContent = displayLabel;
+            if (textEl) textEl.textContent = option.text;
 
 
             /*
@@ -2353,48 +2342,41 @@ function updateQuestionDisplay() {
             'qStatus'
         );
 
+    if (statusEl) {
+        if (qData.answered) {
 
-    if (qData.answered) {
+            isAnswered = true;
 
-        isAnswered = true;
+            statusEl.className =
+                'q-status answered';
 
+            statusEl.innerHTML =
+                '<i class="bi bi-check-circle"></i> Answered';
 
-        statusEl.className =
-            'q-status answered';
+        } else if (qData.flagged) {
 
+            isAnswered = false;
 
-        statusEl.innerHTML =
-            '<i class="bi bi-check-circle"></i> Answered';
+            isFlagged = true;
 
+            statusEl.className =
+                'q-status flagged';
 
-    } else if (qData.flagged) {
+            statusEl.innerHTML =
+                '<i class="bi bi-flag"></i> Flagged';
 
-        isAnswered = false;
+        } else {
 
-        isFlagged = true;
+            isAnswered = false;
 
+            isFlagged = false;
 
-        statusEl.className =
-            'q-status flagged';
+            statusEl.className =
+                'q-status unanswered';
 
-
-        statusEl.innerHTML =
-            '<i class="bi bi-flag"></i> Flagged';
-
-
-    } else {
-
-        isAnswered = false;
-
-        isFlagged = false;
-
-
-        statusEl.className =
-            'q-status unanswered';
-
-
-        statusEl.innerHTML =
-            '<i class="bi bi-circle"></i> Unanswered';
+            statusEl.innerHTML =
+                '<i class="bi bi-circle"></i> Unanswered';
+        }
     }
 
 
@@ -2407,25 +2389,22 @@ function updateQuestionDisplay() {
             'flagBtn'
         );
 
+    if (flagBtn) {
+        if (qData.flagged) {
+            flagBtn.classList.add(
+                'flagged'
+            );
 
-    if (qData.flagged) {
+            flagBtn.innerHTML =
+                '<i class="bi bi-flag-fill"></i> Flagged';
+        } else {
+            flagBtn.classList.remove(
+                'flagged'
+            );
 
-        flagBtn.classList.add(
-            'flagged'
-        );
-
-        flagBtn.innerHTML =
-            '<i class="bi bi-flag-fill"></i> Flagged';
-
-
-    } else {
-
-        flagBtn.classList.remove(
-            'flagged'
-        );
-
-        flagBtn.innerHTML =
-            '<i class="bi bi-flag"></i> Flag for Review';
+            flagBtn.innerHTML =
+                '<i class="bi bi-flag"></i> Flag for Review';
+        }
     }
 
 
@@ -2438,24 +2417,23 @@ function updateQuestionDisplay() {
             'feedbackSection'
         );
 
+    if (feedbackSection) {
+        feedbackSection.className =
+            'feedback-section';
 
-    feedbackSection.className =
-        'feedback-section';
-
-
-    feedbackSection.style.display =
-        'none';
+        feedbackSection.style.display =
+            'none';
+    }
 
 
     /* ========================================================
        PREVIOUS BUTTON
        ======================================================== */
 
-    document.getElementById(
-        'prevBtn'
-    ).disabled =
-
-        currentIndex === 0;
+    const prevBtn = document.getElementById('prevBtn');
+    if (prevBtn) {
+        prevBtn.disabled = currentIndex === 0;
+    }
 
 
     /* ========================================================
@@ -2467,28 +2445,23 @@ function updateQuestionDisplay() {
             'nextBtn'
         );
 
+    if (nextBtn) {
+        if (
+            currentIndex ===
+            totalQuestions - 1
+        ) {
+            nextBtn.innerHTML =
+                'Finish <i class="bi bi-check2-circle"></i>';
 
-    if (
-        currentIndex ===
-        totalQuestions - 1
-    ) {
+            nextBtn.onclick =
+                finishPractice;
+        } else {
+            nextBtn.innerHTML =
+                'Next <i class="bi bi-arrow-right"></i>';
 
-        nextBtn.innerHTML =
-            'Finish <i class="bi bi-check2-circle"></i>';
-
-
-        nextBtn.onclick =
-            finishPractice;
-
-
-    } else {
-
-        nextBtn.innerHTML =
-            'Next <i class="bi bi-arrow-right"></i>';
-
-
-        nextBtn.onclick =
-            nextQuestion;
+            nextBtn.onclick =
+                nextQuestion;
+        }
     }
 
 
@@ -2501,22 +2474,34 @@ function updateQuestionDisplay() {
             'bookmarkBtn'
         );
 
+    if (bookmarkBtn) {
+        /*
+         * Bookmark status is loaded separately
+         * through checkBookmarkStatus().
+         */
+        bookmarkBtn.innerHTML =
+            '<i class="bi bi-bookmark"></i> Bookmark';
 
-    /*
-     * Bookmark status is loaded separately
-     * through checkBookmarkStatus().
-     */
+        bookmarkBtn.classList.remove(
+            'bookmarked'
+        );
 
-    bookmarkBtn.innerHTML =
-        '<i class="bi bi-bookmark"></i> Bookmark';
+        isBookmarked = false;
+    }
 
+    // Update submit button state
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.display = 'inline-block';
+        submitBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Submit Answer';
+    }
 
-    bookmarkBtn.classList.remove(
-        'bookmarked'
-    );
-
-
-    isBookmarked = false;
+    // Hide next/finish buttons initially
+    const nextBtnHidden = document.getElementById('next-btn');
+    if (nextBtnHidden) nextBtnHidden.style.display = 'none';
+    const finishBtnHidden = document.getElementById('finish-btn');
+    if (finishBtnHidden) finishBtnHidden.style.display = 'none';
 }
 
 
@@ -2531,21 +2516,19 @@ async function finishPractice() {
             'finishBtn'
         );
 
-
     const nextBtn =
         document.getElementById(
             'nextBtn'
         );
 
-
-    finishBtn.disabled = true;
-
-    nextBtn.disabled = true;
-
-
-    finishBtn.innerHTML =
-        '<span class="spinner-border spinner-border-sm"></span> Finishing...';
-
+    if (finishBtn) {
+        finishBtn.disabled = true;
+        finishBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Finishing...';
+    }
+    if (nextBtn) {
+        nextBtn.disabled = true;
+    }
 
     try {
 
@@ -2592,14 +2575,14 @@ async function finishPractice() {
             error.message
         );
 
-
-        finishBtn.disabled = false;
-
-        nextBtn.disabled = false;
-
-
-        finishBtn.innerHTML =
-            '<i class="bi bi-check2-circle"></i> Finish Test';
+        if (finishBtn) {
+            finishBtn.disabled = false;
+            finishBtn.innerHTML =
+                '<i class="bi bi-check2-circle"></i> Finish Test';
+        }
+        if (nextBtn) {
+            nextBtn.disabled = false;
+        }
     }
 }
 

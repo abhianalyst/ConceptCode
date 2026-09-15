@@ -13,7 +13,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.utils import timezone
 from .forms import (
     LoginForm,
     ProfileForm,
@@ -37,6 +37,10 @@ from apps.core.models import (
 # Only import QuestionImportService.
 # Do NOT import anything from question_generator.
 from apps.core.services.question_import import QuestionImportService
+import csv
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from apps.practice.models import PracticeAttempt, PracticeSession
 
 
 User = get_user_model()
@@ -1429,3 +1433,91 @@ def account(request):
             "accuracy": accuracy,
         },
     )
+
+# apps/accounts/views.py - Enhanced export_data with mock tests
+
+@login_required
+def export_data(request):
+    """Export user's practice data as CSV including mock tests."""
+    import csv
+    from django.http import HttpResponse
+    from django.utils import timezone
+    from apps.practice.models import PracticeAttempt, PracticeSession
+    from apps.core.models import MockTestAttempt, MockTestAnswer
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="conceptcode_data_{request.user.email}_{timezone.now().strftime("%Y%m%d")}.csv"'
+    
+    writer = csv.writer(response)
+    
+    # Write header
+    writer.writerow([
+        'Date',
+        'Type',  # 'Practice' or 'Mock Test'
+        'Subject',
+        'Chapter',
+        'Topic',
+        'Question ID',
+        'Question',
+        'Selected Answer',
+        'Correct Answer',
+        'Is Correct',
+        'Time Taken (seconds)',
+        'Difficulty',
+        'Source',
+        'Session/Test ID',
+        'Status'
+    ])
+    
+    # Practice attempts
+    practice_attempts = PracticeAttempt.objects.filter(
+        session__user=request.user
+    ).select_related(
+        'session__topic__chapter__subject',
+        'question'
+    ).order_by('-answered_at')
+    
+    for attempt in practice_attempts:
+        writer.writerow([
+            attempt.answered_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'Practice',
+            attempt.question.topic.chapter.subject.name,
+            attempt.question.topic.chapter.name,
+            attempt.question.topic.name,
+            attempt.question.id,
+            attempt.question.question[:200] + '...' if len(attempt.question.question) > 200 else attempt.question.question,
+            attempt.selected_answer,
+            attempt.question.correct_answer,
+            'Yes' if attempt.is_correct else 'No',
+            f'{attempt.time_taken:.2f}' if attempt.time_taken else '0.00',
+            attempt.question.difficulty,
+            attempt.question.source,
+            attempt.session.id,
+            attempt.session.status
+        ])
+    
+    # Mock test attempts
+    mock_attempts = MockTestAttempt.objects.filter(
+        user=request.user
+    ).select_related('mock_test').order_by('-started_at')
+    
+    for attempt in mock_attempts:
+        writer.writerow([
+            attempt.started_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'Mock Test',
+            'All Subjects' if attempt.mock_test.subject_type == 'all' else attempt.mock_test.subject_type.title(),
+            'N/A',
+            'N/A',
+            'N/A',
+            attempt.mock_test.title,
+            'N/A',
+            'N/A',
+            f'Score: {attempt.score}',
+            f'{attempt.correct_count} correct, {attempt.incorrect_count} incorrect',
+            'N/A',
+            'N/A',
+            attempt.id,
+            attempt.status
+        ])
+    
+    return response

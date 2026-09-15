@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.core',
     "apps.accounts",
     "apps.practice",
+    'apps.doubt_solver',
 ]
 
 AUTH_USER_MODEL = "accounts.User"

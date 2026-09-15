@@ -251,4 +251,9 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path(
+        'export-data/', 
+        views.export_data, 
+        name='export-data'
+    ),
 ]

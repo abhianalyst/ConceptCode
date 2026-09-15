@@ -25,6 +25,11 @@ urlpatterns = [
     ),
 
     path("", include("apps.core.urls")),
+    
+    path(
+        'doubts/', 
+        include('apps.doubt_solver.urls', namespace='doubt_solver')
+    ),
 ]
 
 

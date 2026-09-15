@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% load static %}
+{% load markdown_filter %}
+
+{% block title %}AI Doubt Solver | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .solver-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+    
+    .solver-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .solver-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+    
+    .solver-header p {
+        color: #6c757d;
+    }
+    
+    .doubt-input-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        margin-bottom: 2rem;
+    }
+    
+    .doubt-input-card textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .doubt-input-card textarea:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
+        outline: none;
+    }
+    
+    .char-counter {
+        text-align: right;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    
+    .btn-ask {
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-ask:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(79, 172, 254, 0.4);
+    }
+    
+    .btn-ask:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .loading-indicator {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .loading-indicator.active {
+        display: block;
+    }
+    
+    .answer-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #28a745;
+    }
+    
+    .answer-card.error {
+        border-left-color: #dc3545;
+    }
+    
+    .answer-question {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 0.75rem;
+    }
+    
+    .answer-content {
+        color: #4a5568;
+        line-height: 1.7;
+    }
+    
+    .answer-content h1,
+    .answer-content h2,
+    .answer-content h3 {
+        color: #1a1a2e;
+        margin-top: 1rem;
+    }
+    
+    .answer-content ul,
+    .answer-content ol {
+        padding-left: 1.5rem;
+    }
+    
+    .answer-content code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    
+    .answer-content pre {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+    
+    .doubt-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .btn-delete {
+        color: #dc3545;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+    
+    .btn-delete:hover {
+        text-decoration: underline;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+    
+    .pagination a,
+    .pagination span {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        background: white;
+        border: 1px solid #e9ecef;
+        text-decoration: none;
+        color: #2d3748;
+    }
+    
+    .pagination .current {
+        background: #0d6efd;
+        color: white;
+        border-color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="solver-container">
+        
+        <!-- Header -->
+        <div class="solver-header">
+            <h1><i class="bi bi-robot"></i> AI Doubt Solver</h1>
+            <p>Ask any NEET-related doubt and get instant explanations.</p>
+        </div>
+        
+        <!-- Doubt Input -->
+        <div class="doubt-input-card">
+            <textarea 
+                id="questionInput" 
+                placeholder="Type your NEET doubt here... (e.g., Explain the difference between mitosis and meiosis)"
+                maxlength="1000"
+            ></textarea>
+            <div class="char-counter">
+                <span id="charCount">0</span> / 1000
+            </div>
+            <button class="btn-ask" id="askBtn" onclick="submitDoubt()">
+                <i class="bi bi-send"></i> Ask AI
+            </button>
+        </div>
+        
+        <!-- Loading Indicator (FR-07-05) -->
+        <div class="loading-indicator" id="loadingIndicator">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">AI is thinking...</p>
+        </div>
+        
+        <!-- Doubt History (FR-07-07) -->
+        <div id="doubtHistory">
+            {% for doubt in page_obj %}
+                <div class="answer-card {% if not doubt.is_resolved %}error{% endif %}" id="doubt-{{ doubt.id }}">
+                    <div class="answer-question">
+                        <i class="bi bi-question-circle"></i> {{ doubt.question }}
+                    </div>
+                    
+                    {% if doubt.is_resolved %}
+                        <div class="answer-content">
+                            {{ doubt.answer|markdown }}
+                        </div>
+                    {% else %}
+                        <div class="answer-content text-danger">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            Unable to get answer. Please try again.
+                        </div>
+                    {% endif %}
+                    
+                    <div class="doubt-meta">
+                        <span>{{ doubt.created_at|date:"M d, Y H:i" }}</span>
+                        <button class="btn-delete" onclick="deleteDoubt('{{ doubt.id }}');">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <p class="text-muted mt-3">No doubts yet. Ask your first question above!</p>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                {% endif %}
+                
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+    </div>
+</div>
+
+<script>
+// Character counter
+const questionInput = document.getElementById('questionInput');
+const charCount = document.getElementById('charCount');
+
+questionInput.addEventListener('input', function() {
+    charCount.textContent = this.value.length;
+});
+
+// Submit doubt
+async function submitDoubt() {
+    const question = questionInput.value.trim();
+    
+    if (!question) {
+        alert('Please enter your question.');
+        return;
+    }
+    
+    if (question.length > 1000) {
+        alert('Question must be under 1000 characters.');
+        return;
+    }
+    
+    const askBtn = document.getElementById('askBtn');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    
+    // Show loading (FR-07-05)
+    askBtn.disabled = true;
+    askBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Asking...';
+    loadingIndicator.classList.add('active');
+    
+    try {
+        const formData = new FormData();
+        formData.append('question', question);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        const response = await fetch('{% url "doubt_solver:ask" %}', {
+            method: 'POST',
+            body: formData,
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Reload page to show new doubt
+            window.location.reload();
+        } else {
+            alert(data.error || 'Unable to get answer. Please try again.');
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    } finally {
+        askBtn.disabled = false;
+        askBtn.innerHTML = '<i class="bi bi-send"></i> Ask AI';
+        loadingIndicator.classList.remove('active');
+    }
+
+    if (data.success) {
+        window.location.reload();
+    } else {
+        // Show the real error
+        alert('Error: ' + (data.error || 'Unable to get answer'));
+    }
+}
+
+// Delete doubt
+async function deleteDoubt(doubtId) {
+    if (!confirm('Are you sure you want to delete this doubt?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/doubts/${doubtId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById(`doubt-${doubtId}`).remove();
+        } else {
+            alert('Failed to delete.');
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+</script>
+{% endblock %}
