@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Select Topic | ConceptCode{% endblock %}
 
@@ -34,7 +35,6 @@
                             </div>
                             <h5 class="fw-semibold mb-2">{{ topic.name }}</h5>
                             
-                            <!-- Stats -->
                             <div class="row g-1 mb-2">
                                 <div class="col-6">
                                     <small class="text-muted d-block">{{ topic.total_questions }} questions</small>
@@ -44,12 +44,10 @@
                                 </div>
                             </div>
                             
-                            <!-- Progress Bar -->
                             <div class="progress-track mb-2" style="height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden;">
                                 <div class="progress-fill {% if topic.completion >= 80 %}progress-complete{% elif topic.completion >= 50 %}progress-in-progress{% else %}progress-needs-attention{% endif %}" data-completion="{{ topic.completion|default:0 }}"></div>
                             </div>
                             
-                            <!-- Status Badge -->
                             <div class="mb-2">
                                 {% if topic.status == 'needs_attention' %}
                                     <span class="badge bg-danger">
@@ -68,9 +66,20 @@
                                 {% endif %}
                             </div>
                             
-                            <button class="btn-start start-practice-btn" data-topic-id="{{ topic.id }}">
-                                <i class="bi bi-play-circle"></i> Start Practice
-                            </button>
+                            <div class="d-grid gap-2">
+                                <button class="btn-start start-practice-btn" data-topic-id="{{ topic.id }}" type="button">
+                                    <i class="bi bi-play-circle"></i> Start Practice
+                                </button>
+                                
+                                <button 
+                                    class="btn-explain-ai" 
+                                    data-topic-id="{{ topic.id }}"
+                                    data-topic-name="{{ topic.name }}"
+                                    type="button"
+                                >
+                                    <i class="bi bi-robot"></i> Explain with AI
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -89,6 +98,54 @@
         </div>
     {% endif %}
 
+</div>
+
+<!-- AI EXPLANATION MODAL -->
+<div class="modal fade" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content explanation-modal">
+            <div class="modal-header ai-modal-header">
+                <div class="ai-header-content">
+                    <div class="ai-avatar">
+                        <i class="bi bi-robot"></i>
+                        <span class="ai-pulse"></span>
+                    </div>
+                    <div class="ai-header-text">
+                        <div class="ai-label">
+                            <i class="bi bi-stars"></i> AI Concept Explainer
+                        </div>
+                        <h5 class="modal-title" id="explanationModalLabel">
+                            <span id="modalTopicName"></span>
+                        </h5>
+                        <div class="ai-subtitle">
+                            Powered by Groq · <span id="cacheStatus">Generating fresh explanation...</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body explanation-modal-body" id="explanationContent">
+            </div>
+            
+            <div class="modal-footer ai-modal-footer">
+                <div class="ai-footer-left">
+                    <span class="ai-hint">
+                        <i class="bi bi-lightbulb"></i>
+                        Tip: Use this as a quick revision before practice
+                    </span>
+                </div>
+                <div class="ai-footer-right">
+                    <button type="button" class="btn-ai-regenerate" id="regenerateBtn" onclick="regenerateExplanation()">
+                        <i class="bi bi-arrow-clockwise"></i> Regenerate
+                    </button>
+                    <button type="button" class="btn-ai-close" data-bs-dismiss="modal">
+                        <i class="bi bi-check2"></i> Got it
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -146,6 +203,369 @@
     background: #c82333;
 }
 
+.btn-explain-ai {
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn-explain-ai:hover {
+    background: linear-gradient(135deg, #9333ea, #4f46e5);
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+    color: white;
+}
+
+.explanation-modal {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+}
+
+.ai-modal-header {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    padding: 1.5rem;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.ai-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ai-pulse {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: pulse-ring 2s ease infinite;
+}
+
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.ai-header-text {
+    color: white;
+}
+
+.ai-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.9;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
+}
+
+.ai-header-text .modal-title {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.ai-subtitle {
+    font-size: 0.8rem;
+    opacity: 0.85;
+    margin-top: 0.15rem;
+}
+
+.explanation-modal-body {
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 2rem 2.5rem;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+    color: #374151;
+}
+
+.explanation-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.explanation-modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.explanation-modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #a855f7, #6366f1);
+    border-radius: 4px;
+}
+
+.explanation-modal-body h1,
+.explanation-modal-body h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1e1b4b;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 3px solid transparent;
+    background-image: linear-gradient(90deg, #a855f7, #6366f1, transparent);
+    background-size: 100% 3px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+}
+
+.explanation-modal-body h1:first-child,
+.explanation-modal-body h2:first-child {
+    margin-top: 0;
+}
+
+.explanation-modal-body h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4338ca;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 4px solid #a855f7;
+}
+
+.explanation-modal-body p {
+    color: #4b5563;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.explanation-modal-body ul,
+.explanation-modal-body ol {
+    padding-left: 1.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.explanation-modal-body li {
+    margin-bottom: 0.6rem;
+    color: #4b5563;
+    line-height: 1.7;
+}
+
+.explanation-modal-body ul li::marker {
+    color: #a855f7;
+}
+
+.explanation-modal-body ol li::marker {
+    color: #6366f1;
+    font-weight: 700;
+}
+
+.explanation-modal-body strong {
+    color: #1e1b4b;
+    font-weight: 700;
+    background: linear-gradient(180deg, transparent 60%, rgba(168, 85, 247, 0.15) 60%);
+    padding: 0 0.15rem;
+}
+
+.explanation-modal-body code {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.88rem;
+    color: #d63384;
+    border: 1px solid #e5e7eb;
+}
+
+.explanation-modal-body table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 1.25rem 0;
+    font-size: 0.9rem;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.1);
+    border: 1px solid #e9d5ff;
+}
+
+.explanation-modal-body table thead {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+.explanation-modal-body table th {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: white;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.explanation-modal-body table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f3e8ff;
+    color: #4b5563;
+    vertical-align: top;
+}
+
+.explanation-modal-body table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.explanation-modal-body table tbody tr:nth-child(even) {
+    background: #faf5ff;
+}
+
+.explanation-modal-body table tbody tr:hover {
+    background: #f3e8ff;
+}
+
+.ai-modal-footer {
+    background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+    border-top: 1px solid #e5e7eb;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.ai-footer-left {
+    flex: 1;
+}
+
+.ai-hint {
+    font-size: 0.8rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ai-hint i {
+    color: #f59e0b;
+}
+
+.ai-footer-right {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-ai-regenerate {
+    background: white;
+    color: #6366f1;
+    border: 2px solid #e0e7ff;
+    padding: 0.5rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-ai-regenerate:hover:not(:disabled) {
+    background: #f3f0ff;
+    border-color: #a855f7;
+    transform: translateY(-2px);
+}
+
+.btn-ai-regenerate:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-ai-close {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-ai-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+    color: white;
+}
+
+.ai-loading-container {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.ai-loading-orb {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    background-size: 200% 200%;
+    animation: gradient-shift 2s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.ai-loading-text {
+    color: #6366f1;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.ai-loading-subtext {
+    color: #9ca3af;
+    font-size: 0.85rem;
+}
+
 .progress-track {
     background: #e9ecef;
     border-radius: 2px;
@@ -157,54 +577,73 @@
     border-radius: 2px;
 }
 
-.progress-complete {
-    background: #28a745;
-}
-
-.progress-in-progress {
-    background: #ffc107;
-}
-
-.progress-needs-attention {
-    background: #dc3545;
-}
+.progress-complete { background: #28a745; }
+.progress-in-progress { background: #ffc107; }
+.progress-needs-attention { background: #dc3545; }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .topic-card {
     animation: fadeInUp 0.5s ease forwards;
 }
+
+@media (max-width: 768px) {
+    .explanation-modal-body {
+        padding: 1.5rem;
+        font-size: 0.9rem;
+    }
+    .ai-footer-left { display: none; }
+    .ai-footer-right { width: 100%; }
+    .btn-ai-regenerate, .btn-ai-close { flex: 1; justify-content: center; }
+}
 </style>
+{% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+// ============================================================
+// CONFIGURE MARKED (with safety check)
+// ============================================================
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        headerIds: false,
+        mangle: false,
+    });
+}
+
+// ============================================================
+// PROGRESS BARS
+// ============================================================
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.progress-fill[data-completion]').forEach(function(progress) {
         progress.style.width = `${Number(progress.dataset.completion) || 0}%`;
     });
-
-    // Handle start practice button clicks
-    document.querySelectorAll('.start-practice-btn').forEach(button => {
-        button.addEventListener('click', async function(event) {
+    // Explain with AI buttons
+    document.querySelectorAll('.btn-explain-ai').forEach(button => {
+        button.addEventListener('click', function() {
             const topicId = this.dataset.topicId;
-            const button = this;
-            const originalText = button.innerHTML;
+            const topicName = this.dataset.topicName;
+            explainTopic(topicId, topicName);
+        });
+    });
+
+    // Start practice buttons
+    document.querySelectorAll('.start-practice-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const topicId = this.dataset.topicId;
+            const btn = this;
+            const originalText = btn.innerHTML;
             
-            // Disable button and show loading state
-            button.disabled = true;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Starting...';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Starting...';
             
             try {
-                // Get CSRF token from cookie
                 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
                     document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
                 
@@ -220,25 +659,134 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const data = await response.json();
                 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Unable to start practice.');
-                }
-                
-                if (data.session_id) {
-                    window.location.href = `/practice/sessions/${data.session_id}/`;
-                } else {
-                    throw new Error('Session ID not returned.');
-                }
+                if (!response.ok) throw new Error(data.error || 'Unable to start practice.');
+                if (data.session_id) window.location.href = `/practice/sessions/${data.session_id}/`;
+                else throw new Error('Session ID not returned.');
                 
             } catch (error) {
                 alert('Error: ' + error.message);
-                button.disabled = false;
-                button.innerHTML = originalText;
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         });
     });
 });
-</script>
-{% endblock %}
 
+// ============================================================
+// AI CONCEPT EXPLAINER
+// ============================================================
+let currentTopicId = null;
+let explanationModal = null;
+
+function showLoadingState(message) {
+    return `
+        <div class="ai-loading-container">
+            <div class="ai-loading-orb">
+                <i class="bi bi-robot"></i>
+            </div>
+            <div class="ai-loading-text">${message}</div>
+            <div class="ai-loading-subtext">
+                <i class="bi bi-stars"></i> Generating a structured explanation for NEET preparation
+            </div>
+        </div>
+    `;
+}
+
+async function explainTopic(topicId, topicName) {
+    console.log('🎯 explainTopic called:', topicId, topicName);
+    
+    currentTopicId = topicId;
+    
+    try {
+        document.getElementById('modalTopicName').textContent = topicName;
+        document.getElementById('cacheStatus').textContent = 'Loading...';
+        
+        const contentEl = document.getElementById('explanationContent');
+        contentEl.innerHTML = showLoadingState('Analyzing this topic...');
+        
+        if (!explanationModal) {
+            explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
+        }
+        explanationModal.show();
+        
+        const response = await fetch(`/doubts/topics/${topicId}/explain/`);
+        const data = await response.json();
+        
+        console.log('✅ Response:', data);
+        
+        if (data.success) {
+            if (typeof marked !== 'undefined') {
+                contentEl.innerHTML = marked.parse(data.explanation);
+            } else {
+                contentEl.innerHTML = data.explanation.replace(/\n/g, '<br>');
+            }
+            document.getElementById('cacheStatus').textContent = data.cached 
+                ? '📦 Loaded from cache' 
+                : '✨ Freshly generated';
+        } else {
+            contentEl.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    ${data.error || 'Unable to generate explanation.'}
+                </div>
+            `;
+            document.getElementById('cacheStatus').textContent = 'Error';
+        }
+    } catch (error) {
+        console.error('❌ Error:', error);
+        document.getElementById('explanationContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i> 
+                Error: ${error.message}
+            </div>
+        `;
+        document.getElementById('cacheStatus').textContent = 'Error';
+    }
+}
+
+async function regenerateExplanation() {
+    if (!currentTopicId) return;
+    
+    const regenerateBtn = document.getElementById('regenerateBtn');
+    const originalText = regenerateBtn.innerHTML;
+    regenerateBtn.disabled = true;
+    regenerateBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Regenerating...';
+    
+    document.getElementById('cacheStatus').textContent = 'Regenerating...';
+    
+    const contentEl = document.getElementById('explanationContent');
+    contentEl.innerHTML = showLoadingState('Regenerating explanation...');
+    
+    try {
+        const response = await fetch(`/doubts/topics/${currentTopicId}/regenerate/`);
+        const data = await response.json();
+        
+        if (data.success) {
+            if (typeof marked !== 'undefined') {
+                contentEl.innerHTML = marked.parse(data.explanation);
+            } else {
+                contentEl.innerHTML = data.explanation.replace(/\n/g, '<br>');
+            }
+            document.getElementById('cacheStatus').textContent = '✨ Freshly regenerated';
+        } else {
+            contentEl.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    ${data.error || 'Unable to regenerate explanation.'}
+                </div>
+            `;
+        }
+    } catch (error) {
+        contentEl.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i> 
+                Error: ${error.message}
+            </div>
+        `;
+    } finally {
+        regenerateBtn.disabled = false;
+        regenerateBtn.innerHTML = originalText;
+    }
+}
+</script>
 {% endblock %}

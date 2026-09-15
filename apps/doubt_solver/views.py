@@ -4,9 +4,12 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
-from .models import Doubt
-from .services import GrokDoubtSolver
 
+from apps.core.models import Topic
+from .models import ConceptExplanation, Doubt
+from .services import ConceptExplainer, GrokDoubtSolver
+from apps.core.models import Question
+from .services import QuestionExplainer
 
 @login_required
 def doubt_solver(request):
@@ -111,3 +114,113 @@ def delete_doubt(request, doubt_id):
     doubt.delete()
     
     return JsonResponse({'success': True})
+
+@login_required
+def explain_topic(request, topic_id):
+    """Get or generate AI explanation for a topic (FR-08)."""
+    topic = get_object_or_404(Topic, id=topic_id, is_active=True)
+    
+    # Check for cached explanation (FR-08-05)
+    try:
+        cached = ConceptExplanation.objects.get(topic=topic, is_valid=True)
+        if not cached.is_expired():
+            return JsonResponse({
+                'success': True,
+                'explanation': cached.explanation,
+                'cached': True,
+            })
+    except ConceptExplanation.DoesNotExist:
+        pass
+    
+    # Generate new explanation
+    explainer = ConceptExplainer()
+    result = explainer.explain_topic(
+        topic_name=topic.name,
+        chapter_name=topic.chapter.name,
+        subject_name=topic.chapter.subject.name,
+    )
+    
+    if result['success']:
+        # Save or update cache (FR-08-05)
+        ConceptExplanation.objects.update_or_create(
+            topic=topic,
+            defaults={
+                'explanation': result['explanation'],
+                'is_valid': True,
+            }
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'explanation': result['explanation'],
+            'cached': False,
+        })
+    else:
+        # FR-08-07: Graceful error handling
+        return JsonResponse({
+            'success': False,
+            'error': 'Unable to generate explanation. Please try again.',
+        }, status=500)
+
+
+@login_required
+def regenerate_explanation(request, topic_id):
+    """Regenerate explanation, bypassing cache (FR-08-06)."""
+    topic = get_object_or_404(Topic, id=topic_id, is_active=True)
+    
+    # Invalidate cache
+    ConceptExplanation.objects.filter(topic=topic).update(is_valid=False)
+    
+    # Generate new explanation
+    explainer = ConceptExplainer()
+    result = explainer.explain_topic(
+        topic_name=topic.name,
+        chapter_name=topic.chapter.name,
+        subject_name=topic.chapter.subject.name,
+    )
+    
+    if result['success']:
+        ConceptExplanation.objects.update_or_create(
+            topic=topic,
+            defaults={
+                'explanation': result['explanation'],
+                'is_valid': True,
+            }
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'explanation': result['explanation'],
+            'cached': False,
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': 'Unable to regenerate explanation. Please try again.',
+        }, status=500)
+
+@login_required
+def explain_question_view(request, question_id):
+    """Generate an explanation for a specific question and student's answer."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid method'}, status=405)
+    
+    question = get_object_or_404(Question, id=question_id, is_active=True)
+    student_answer = request.POST.get('student_answer', '').upper()
+    
+    if not student_answer:
+        return JsonResponse({'error': 'No answer provided.'}, status=400)
+    
+    explainer = QuestionExplainer()
+    result = explainer.explain_question(question, student_answer)
+    
+    if result['success']:
+        return JsonResponse({
+            'success': True,
+            'explanation': result['explanation'],
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': 'Unable to generate explanation. Please try again.',
+        }, status=500)

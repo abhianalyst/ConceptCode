@@ -73,13 +73,8 @@
     }
 
     @keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.5;
-        }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 
     .test-grid {
@@ -138,22 +133,10 @@
         flex-shrink: 0;
     }
 
-    .legend-dot.answered {
-        background: #28a745;
-    }
-
-    .legend-dot.flagged {
-        background: #ffc107;
-    }
-
-    .legend-dot.unanswered {
-        background: #e9ecef;
-        border: 1px solid #dee2e6;
-    }
-
-    .legend-dot.current {
-        background: #0d6efd;
-    }
+    .legend-dot.answered { background: #28a745; }
+    .legend-dot.flagged { background: #ffc107; }
+    .legend-dot.unanswered { background: #e9ecef; border: 1px solid #dee2e6; }
+    .legend-dot.current { background: #0d6efd; }
 
     .palette-grid {
         display: grid;
@@ -179,31 +162,15 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
-    .palette-btn.answered {
-        background: #28a745;
-        color: white;
-    }
-
-    .palette-btn.flagged {
-        background: #ffc107;
-        color: #212529;
-    }
-
+    .palette-btn.answered { background: #28a745; color: white; }
+    .palette-btn.flagged { background: #ffc107; color: #212529; }
     .palette-btn.current {
         background: #0d6efd;
         color: white;
         box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.3);
     }
-
-    .palette-btn.unanswered {
-        background: #e9ecef;
-        color: #6c757d;
-    }
-
-    .palette-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
+    .palette-btn.unanswered { background: #e9ecef; color: #6c757d; }
+    .palette-btn:disabled { cursor: not-allowed; opacity: 0.6; }
 
     .question-area {
         background: white;
@@ -235,20 +202,9 @@
         font-weight: 500;
     }
 
-    .q-status.answered {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .q-status.flagged {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .q-status.unanswered {
-        background: #f8f9fa;
-        color: #6c757d;
-    }
+    .q-status.answered { background: #d4edda; color: #155724; }
+    .q-status.flagged { background: #fff3cd; color: #856404; }
+    .q-status.unanswered { background: #f8f9fa; color: #6c757d; }
 
     .question-area .question-text {
         font-size: 1rem;
@@ -377,13 +333,8 @@
         margin-bottom: 0.2rem;
     }
 
-    .feedback-section .feedback-title.correct-text {
-        color: #28a745;
-    }
-
-    .feedback-section .feedback-title.incorrect-text {
-        color: #dc3545;
-    }
+    .feedback-section .feedback-title.correct-text { color: #28a745; }
+    .feedback-section .feedback-title.incorrect-text { color: #dc3545; }
 
     .feedback-section .feedback-explanation {
         color: #4a5568;
@@ -441,94 +392,52 @@
         cursor: not-allowed;
     }
 
-    .btn-prev {
-        background: #e9ecef;
-        color: #2d3748;
-    }
+    .btn-prev { background: #e9ecef; color: #2d3748; }
+    .btn-prev:hover:not(:disabled) { background: #dee2e6; }
 
-    .btn-prev:hover:not(:disabled) {
-        background: #dee2e6;
-    }
-
-    .btn-next {
-        background: #0d6efd;
-        color: white;
-    }
-
+    .btn-next { background: #0d6efd; color: white; }
     .btn-next:hover:not(:disabled) {
         background: #0b5ed7;
         box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
     }
 
-    .btn-flag {
-        background: #ffc107;
-        color: #212529;
-    }
+    .btn-flag { background: #ffc107; color: #212529; }
+    .btn-flag:hover:not(:disabled) { background: #e0a800; }
+    .btn-flag.flagged { background: #dc3545; color: white; }
+    .btn-flag.flagged:hover:not(:disabled) { background: #c82333; }
 
-    .btn-flag:hover:not(:disabled) {
-        background: #e0a800;
-    }
+    .btn-bookmark { background: #6c757d; color: white; }
+    .btn-bookmark:hover:not(:disabled) { background: #5a6268; color: white; }
+    .btn-bookmark.bookmarked { background: #ffc107; color: #212529; }
+    .btn-bookmark.bookmarked:hover:not(:disabled) { background: #e0a800; color: #212529; }
 
-    .btn-flag.flagged {
-        background: #dc3545;
-        color: white;
-    }
+    .btn-report { background: #dc3545; color: white; }
+    .btn-report:hover:not(:disabled) { background: #c82333; color: white; }
 
-    .btn-flag.flagged:hover:not(:disabled) {
-        background: #c82333;
-    }
-
-    .btn-bookmark {
-        background: #6c757d;
-        color: white;
-    }
-
-    .btn-bookmark:hover:not(:disabled) {
-        background: #5a6268;
-        color: white;
-    }
-
-    .btn-bookmark.bookmarked {
-        background: #ffc107;
-        color: #212529;
-    }
-
-    .btn-bookmark.bookmarked:hover:not(:disabled) {
-        background: #e0a800;
-        color: #212529;
-    }
-
-    .btn-report {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-report:hover:not(:disabled) {
-        background: #c82333;
-        color: white;
-    }
-
-    .btn-finish {
-        background: #28a745;
-        color: white;
-    }
-
+    .btn-finish { background: #28a745; color: white; }
     .btn-finish:hover:not(:disabled) {
         background: #218838;
         box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
         color: white;
     }
 
-    @keyframes fadeSlideIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
+    /* ============================================================
+       EXPLAIN WITH AI BUTTON
+       ============================================================ */
+    .btn-explain-question {
+        background: linear-gradient(135deg, #a855f7, #6366f1);
+        color: white;
+    }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .btn-explain-question:hover:not(:disabled) {
+        background: linear-gradient(135deg, #9333ea, #4f46e5);
+        box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        color: white;
+    }
+
+    @keyframes fadeSlideIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     /* Modal Customization */
@@ -548,76 +457,325 @@
         padding: 1rem 1.5rem;
     }
 
-    @media (max-width: 992px) {
-        .test-grid {
-            grid-template-columns: 1fr;
-        }
+    /* ============================================================
+       AI EXPLANATION MODAL
+       ============================================================ */
+    .explanation-modal {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+    }
 
-        .palette-grid {
-            grid-template-columns: repeat(10, 1fr);
-        }
+    .ai-modal-header {
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+        padding: 1.5rem;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-header-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+        z-index: 1;
+        flex: 1;
+    }
+
+    .ai-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        color: white;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .ai-pulse {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 14px;
+        height: 14px;
+        background: #22c55e;
+        border-radius: 50%;
+        border: 2px solid white;
+        animation: ai-pulse-ring 2s ease infinite;
+    }
+
+    @keyframes ai-pulse-ring {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .ai-header-text { color: white; }
+
+    .ai-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        opacity: 0.9;
+        font-weight: 600;
+        margin-bottom: 0.15rem;
+    }
+
+    .ai-header-text .modal-title {
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .ai-subtitle {
+        font-size: 0.8rem;
+        opacity: 0.85;
+        margin-top: 0.15rem;
+    }
+
+    .explanation-modal-body {
+        max-height: 65vh;
+        overflow-y: auto;
+        padding: 2rem 2.5rem;
+        font-size: 0.95rem;
+        line-height: 1.75;
+        background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+        color: #374151;
+    }
+
+    .explanation-modal-body h1,
+    .explanation-modal-body h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e1b4b;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e0e7ff;
+    }
+
+    .explanation-modal-body h1:first-child,
+    .explanation-modal-body h2:first-child {
+        margin-top: 0;
+    }
+
+    .explanation-modal-body h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #4338ca;
+        margin-top: 1.25rem;
+        margin-bottom: 0.5rem;
+        padding-left: 0.75rem;
+        border-left: 3px solid #a855f7;
+    }
+
+    .explanation-modal-body p {
+        color: #4b5563;
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .explanation-modal-body ul,
+    .explanation-modal-body ol {
+        padding-left: 1.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .explanation-modal-body li {
+        margin-bottom: 0.5rem;
+        color: #4b5563;
+    }
+
+    .explanation-modal-body ul li::marker { color: #a855f7; }
+    .explanation-modal-body ol li::marker { color: #6366f1; font-weight: 700; }
+
+    .explanation-modal-body strong {
+        color: #1e1b4b;
+        font-weight: 700;
+        background: linear-gradient(180deg, transparent 60%, rgba(168, 85, 247, 0.15) 60%);
+        padding: 0 0.15rem;
+    }
+
+    .explanation-modal-body code {
+        background: #f1f5f9;
+        padding: 0.15rem 0.5rem;
+        border-radius: 5px;
+        font-size: 0.88rem;
+        color: #d63384;
+    }
+
+    .explanation-modal-body table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 1rem 0;
+        font-size: 0.88rem;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e0e7ff;
+    }
+
+    .explanation-modal-body table thead {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+    }
+
+    .explanation-modal-body table th {
+        padding: 0.7rem 0.9rem;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .explanation-modal-body table td {
+        padding: 0.7rem 0.9rem;
+        border-bottom: 1px solid #f3e8ff;
+        color: #475569;
+        vertical-align: top;
+    }
+
+    .explanation-modal-body table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .explanation-modal-body table tbody tr:nth-child(even) {
+        background: #faf5ff;
+    }
+
+    .ai-modal-footer {
+        background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+        border-top: 1px solid #e5e7eb;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .ai-footer-right {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .btn-ai-close {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-ai-close:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        color: white;
+    }
+
+    .ai-loading-container {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .ai-loading-orb {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+        background-size: 200% 200%;
+        animation: ai-gradient-shift 2s ease infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+    }
+
+    @keyframes ai-gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .ai-loading-text {
+        color: #6366f1;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .ai-loading-subtext {
+        color: #9ca3af;
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 992px) {
+        .test-grid { grid-template-columns: 1fr; }
+        .palette-grid { grid-template-columns: repeat(10, 1fr); }
     }
 
     @media (max-width: 768px) {
-        .test-header {
-            padding: 0.5rem 1rem;
-        }
-
-        .test-header .test-title .brand {
-            font-size: 0.8rem;
-        }
-
-        .test-header .test-title .subject-name {
-            font-size: 0.75rem;
-        }
-
+        .test-header { padding: 0.5rem 1rem; }
+        .test-header .test-title .brand { font-size: 0.8rem; }
+        .test-header .test-title .subject-name { font-size: 0.75rem; }
         .test-header .test-timer {
             font-size: 0.85rem;
             padding: 0.3rem 0.6rem;
         }
-
-        .question-area {
-            padding: 1rem;
-        }
-
+        .question-area { padding: 1rem; }
         .question-area .question-text {
             font-size: 0.95rem;
             padding: 0.75rem;
         }
-
-        .option-item {
-            padding: 0.6rem 0.75rem;
-        }
-
+        .option-item { padding: 0.6rem 0.75rem; }
         .option-item .option-label {
             width: 24px;
             height: 24px;
             font-size: 0.7rem;
         }
-
-        .option-item .option-text {
-            font-size: 0.85rem;
-        }
-
-        .palette-grid {
-            grid-template-columns: repeat(5, 1fr);
-        }
-
+        .option-item .option-text { font-size: 0.85rem; }
+        .palette-grid { grid-template-columns: repeat(5, 1fr); }
         .action-buttons {
             flex-direction: column;
             align-items: stretch;
         }
-
         .action-buttons .btn-group-left,
         .action-buttons .btn-group-right {
             justify-content: center;
         }
-
         .btn-action {
             padding: 0.4rem 0.8rem;
             font-size: 0.8rem;
             justify-content: center;
             flex: 1;
+        }
+        .explanation-modal-body {
+            padding: 1.5rem;
+            font-size: 0.9rem;
+        }
+        .ai-modal-header { padding: 1rem; }
+        .ai-avatar {
+            width: 44px;
+            height: 44px;
+            font-size: 1.4rem;
         }
     }
 
@@ -626,14 +784,8 @@
             flex-direction: column;
             align-items: flex-start;
         }
-
-        .palette-legend {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .palette-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
+        .palette-legend { grid-template-columns: 1fr 1fr; }
+        .palette-grid { grid-template-columns: repeat(4, 1fr); }
     }
 </style>
 {% endblock %}
@@ -648,14 +800,11 @@
             <span class="brand">
                 <i class="bi bi-code-square"></i> CONCEPTCODE
             </span>
-
             <span class="separator">|</span>
-
             <span class="subject-name">
                 {{ session.topic.chapter.subject.name }} - {{ session.topic.name }}
             </span>
         </div>
-
         <div class="test-timer" id="timer">
             <i class="bi bi-clock"></i>
             <span id="timer-display">00:00</span>
@@ -667,40 +816,26 @@
 
         <!-- Question Palette -->
         <div class="palette-card">
-
             <div class="palette-title">
                 <i class="bi bi-grid"></i> QUESTION PALETTE
             </div>
-
             <div class="palette-legend">
-
                 <div class="legend-item">
-                    <span class="legend-dot answered"></span>
-                    Answered
+                    <span class="legend-dot answered"></span> Answered
                 </div>
-
                 <div class="legend-item">
-                    <span class="legend-dot flagged"></span>
-                    Flagged
+                    <span class="legend-dot flagged"></span> Flagged
                 </div>
-
                 <div class="legend-item">
-                    <span class="legend-dot unanswered"></span>
-                    Unanswered
+                    <span class="legend-dot unanswered"></span> Unanswered
                 </div>
-
             </div>
-
-            <div class="palette-grid" id="paletteGrid">
-                <!-- Palette buttons generated by JavaScript -->
-            </div>
-
+            <div class="palette-grid" id="paletteGrid"></div>
         </div>
 
         <!-- Question Area -->
         <div class="question-area" id="questionArea">
 
-            <!-- Question Header -->
             <div class="question-header">
                 <span class="q-number">Question <span id="qNum">1</span> of {{ total_questions }}</span>
                 <div>
@@ -712,456 +847,332 @@
                             <i class="bi bi-robot"></i> Adaptive: {{ adaptive_difficulty }}
                         </span>
                     {% endif %}
-                    <button class="btn btn-sm btn-outline-warning ms-2" onclick="toggleFlag()" id="flagBtn">
-                        <i class="bi bi-flag"></i> Flag
-                    </button>
                 </div>
             </div>
 
-            <!-- Question Text -->
             <div class="question-text" id="questionText">
                 <span class="q-label">Q.</span>
-                <span id="questionContent">
-                    {{ question.question }}
-                </span>
+                <span id="questionContent">{{ question.question }}</span>
             </div>
 
-            <!-- Options -->
             <div class="options-grid" id="optionsGrid">
-
-                <div class="option-item"
-                     data-option="A"
-                     onclick="selectOption('A')">
-
+                <div class="option-item" data-option="A" onclick="selectOption('A')">
                     <span class="option-label">A</span>
-
-                    <span class="option-text">
-                        {{ question.option_a }}
-                    </span>
-
+                    <span class="option-text">{{ question.option_a }}</span>
                 </div>
-
-                <div class="option-item"
-                     data-option="B"
-                     onclick="selectOption('B')">
-
+                <div class="option-item" data-option="B" onclick="selectOption('B')">
                     <span class="option-label">B</span>
-
-                    <span class="option-text">
-                        {{ question.option_b }}
-                    </span>
-
+                    <span class="option-text">{{ question.option_b }}</span>
                 </div>
-
-                <div class="option-item"
-                     data-option="C"
-                     onclick="selectOption('C')">
-
+                <div class="option-item" data-option="C" onclick="selectOption('C')">
                     <span class="option-label">C</span>
-
-                    <span class="option-text">
-                        {{ question.option_c }}
-                    </span>
-
+                    <span class="option-text">{{ question.option_c }}</span>
                 </div>
-
-                <div class="option-item"
-                     data-option="D"
-                     onclick="selectOption('D')">
-
+                <div class="option-item" data-option="D" onclick="selectOption('D')">
                     <span class="option-label">D</span>
-
-                    <span class="option-text">
-                        {{ question.option_d }}
-                    </span>
-
+                    <span class="option-text">{{ question.option_d }}</span>
                 </div>
-
             </div>
 
-            <!-- Feedback -->
             <div class="feedback-section" id="feedbackSection">
-
                 <div class="feedback-title" id="feedbackTitle">
                     <span id="feedbackIcon"></span>
                     <span id="feedbackHeading"></span>
                 </div>
-
-                <div class="feedback-explanation"
-                     id="feedbackExplanation">
-                </div>
-
-                <div class="feedback-correct-answer"
-                     id="feedbackCorrectAnswer">
-                </div>
-
+                <div class="feedback-explanation" id="feedbackExplanation"></div>
+                <div class="feedback-correct-answer" id="feedbackCorrectAnswer"></div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="action-buttons">
-
                 <div class="btn-group-left">
-
-                    <button
-                        class="btn-action btn-prev"
-                        id="prevBtn"
-                        onclick="prevQuestion()"
-                        disabled>
-
-                        <i class="bi bi-arrow-left"></i>
-                        Previous
-
+                    <button class="btn-action btn-prev" id="prevBtn" onclick="prevQuestion()" disabled>
+                        <i class="bi bi-arrow-left"></i> Previous
                     </button>
-
-                    <button
-                        class="btn-action btn-flag"
-                        id="flagBtn"
-                        onclick="toggleFlag()">
-
-                        <i class="bi bi-flag"></i>
-                        Flag for Review
-
+                    <button class="btn-action btn-flag" id="flagBtn" onclick="toggleFlag()">
+                        <i class="bi bi-flag"></i> Flag for Review
                     </button>
-
-                    <button
-                        class="btn-action btn-bookmark"
-                        id="bookmarkBtn"
-                        onclick="toggleBookmark()">
-
-                        <i class="bi bi-bookmark"></i>
-                        Bookmark
-
+                    <button class="btn-action btn-bookmark" id="bookmarkBtn" onclick="toggleBookmark()">
+                        <i class="bi bi-bookmark"></i> Bookmark
                     </button>
-
-                    <button
-                        class="btn-action btn-report"
-                        id="reportBtn"
-                        onclick="showReportModal()">
-
-                        <i class="bi bi-flag"></i>
-                        Report
-
+                    <button class="btn-action btn-report" id="reportBtn" onclick="showReportModal()">
+                        <i class="bi bi-flag"></i> Report
                     </button>
-
                 </div>
-
                 <div class="btn-group-right">
-
-                    <button
-                        class="btn-action btn-next"
-                        id="nextBtn"
-                        onclick="nextQuestion()">
-
-                        Next
-                        <i class="bi bi-arrow-right"></i>
-
+                    <button class="btn-action btn-explain-question" id="explainQuestionBtn" onclick="explainCurrentQuestion()" style="display: none;">
+                        <i class="bi bi-robot"></i> Explain with AI
                     </button>
-
-                    <button
-                        class="btn-action btn-finish"
-                        id="finishBtn"
-                        onclick="finishPractice()">
-
-                        <i class="bi bi-check2-circle"></i>
-                        Finish Test
-
+                    <button class="btn-action btn-next" id="nextBtn" onclick="nextQuestion()">
+                        Next <i class="bi bi-arrow-right"></i>
                     </button>
-
+                    <button class="btn-action btn-finish" id="finishBtn" onclick="finishPractice()">
+                        <i class="bi bi-check2-circle"></i> Finish Test
+                    </button>
                 </div>
-
             </div>
 
         </div>
-
     </div>
-
 </div>
-
 
 <!-- ============================================================
      REPORT MODAL
      ============================================================ -->
-
-<div
-    class="modal fade"
-    id="reportModal"
-    tabindex="-1"
-    aria-labelledby="reportModalLabel"
-    aria-hidden="true">
-
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-
         <div class="modal-content">
-
             <div class="modal-header">
-
                 <h5 class="modal-title" id="reportModalLabel">
-                    <i class="bi bi-flag text-danger"></i>
-                    Report Question
+                    <i class="bi bi-flag text-danger"></i> Report Question
                 </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close">
-                </button>
-
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body">
-
-                <p class="text-muted small mb-3">
-                    Help us improve by reporting issues with this question.
-                </p>
-
+                <p class="text-muted small mb-3">Help us improve by reporting issues with this question.</p>
                 <div class="mb-3">
-
-                    <label
-                        for="reportType"
-                        class="form-label fw-semibold">
-
-                        Issue Type
-
-                    </label>
-
-                    <select
-                        class="form-control"
-                        id="reportType">
-
-                        <option value="wrong_answer">
-                            Wrong Answer
-                        </option>
-
-                        <option value="incorrect_explanation">
-                            Incorrect Explanation
-                        </option>
-
-                        <option value="typo">
-                            Typo/Spelling Error
-                        </option>
-
-                        <option value="duplicate">
-                            Duplicate Question
-                        </option>
-
-                        <option value="other">
-                            Other
-                        </option>
-
+                    <label for="reportType" class="form-label fw-semibold">Issue Type</label>
+                    <select class="form-control" id="reportType">
+                        <option value="wrong_answer">Wrong Answer</option>
+                        <option value="incorrect_explanation">Incorrect Explanation</option>
+                        <option value="typo">Typo/Spelling Error</option>
+                        <option value="duplicate">Duplicate Question</option>
+                        <option value="other">Other</option>
                     </select>
-
                 </div>
-
                 <div class="mb-3">
-
-                    <label
-                        for="reportDescription"
-                        class="form-label fw-semibold">
-
-                        Description
-
-                    </label>
-
-                    <textarea
-                        class="form-control"
-                        id="reportDescription"
-                        rows="3"
-                        placeholder="Please describe the issue in detail..."></textarea>
-
-                    <div class="form-text">
-                        Provide specific details about what's wrong with this question.
-                    </div>
-
+                    <label for="reportDescription" class="form-label fw-semibold">Description</label>
+                    <textarea class="form-control" id="reportDescription" rows="3"
+                              placeholder="Please describe the issue in detail..."></textarea>
+                    <div class="form-text">Provide specific details about what's wrong with this question.</div>
                 </div>
-
             </div>
-
             <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
-
-                    <i class="bi bi-x-circle"></i>
-                    Cancel
-
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancel
                 </button>
-
-                <button
-                    type="button"
-                    class="btn btn-danger"
-                    onclick="submitReport()">
-
-                    <i class="bi bi-send"></i>
-                    Submit Report
-
+                <button type="button" class="btn btn-danger" onclick="submitReport()">
+                    <i class="bi bi-send"></i> Submit Report
                 </button>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
+<!-- ============================================================
+     AI EXPLANATION MODAL
+     ============================================================ -->
+<div class="modal fade" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content explanation-modal">
+            <div class="modal-header ai-modal-header">
+                <div class="ai-header-content">
+                    <div class="ai-avatar">
+                        <i class="bi bi-robot"></i>
+                        <span class="ai-pulse"></span>
+                    </div>
+                    <div class="ai-header-text">
+                        <div class="ai-label">
+                            <i class="bi bi-stars"></i> AI Question Explainer
+                        </div>
+                        <h5 class="modal-title" id="explanationModalLabel">
+                            <span id="modalTopicName">Explaining this question</span>
+                        </h5>
+                        <div class="ai-subtitle">
+                            Powered by Groq · <span id="cacheStatus">Analyzing...</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body explanation-modal-body" id="explanationContent"></div>
+            <div class="modal-footer ai-modal-footer">
+                <div class="ai-footer-right ms-auto">
+                    <button type="button" class="btn-ai-close" data-bs-dismiss="modal">
+                        <i class="bi bi-check2"></i> Got it
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
+// ============================================================
+// CONFIGURE MARKED
+// ============================================================
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        headerIds: false,
+        mangle: false,
+    });
+}
 
 /* ============================================================
    PRACTICE SESSION STATE
    ============================================================ */
-
 const sessionId = "{{ session.id|escapejs }}";
-
-const totalQuestions =
-    Number("{{ total_questions|escapejs }}");
-
+const totalQuestions = Number("{{ total_questions|escapejs }}");
 let questions = [];
-
 let currentIndex = 0;
-
 let selectedOption = null;
-
 let isAnswered = false;
-
 let isFlagged = false;
-
 let isBookmarked = false;
-
 let timerInterval = null;
-
 let seconds = 0;
-
-let currentQuestionId =
-    Number("{{ question.id|escapejs }}");
-
+let currentQuestionId = Number("{{ question.id|escapejs }}");
 let questionStartTime = 0;
 
-
-/* ============================================================
-   CURRENT QUESTION DATA
-   ============================================================ */
-
 let currentQuestionData = {
-
     id: Number("{{ question.id|escapejs }}"),
-
     text: "{{ question.question|escapejs }}",
-
     option_a: "{{ question.option_a|escapejs }}",
-
     option_b: "{{ question.option_b|escapejs }}",
-
     option_c: "{{ question.option_c|escapejs }}",
-
     option_d: "{{ question.option_d|escapejs }}"
-
 };
-
 
 /* ============================================================
    SHUFFLE ARRAY
    ============================================================ */
-
 function shuffleArray(array) {
-
     for (let i = array.length - 1; i > 0; i--) {
-
-        const j =
-            Math.floor(Math.random() * (i + 1));
-
-        [array[i], array[j]] =
-            [array[j], array[i]];
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
-
     return array;
 }
-
 
 /* ============================================================
    CREATE SHUFFLED OPTIONS
    ============================================================ */
-
 function createShuffledOptions(questionData) {
-
     const options = [
-
-        {
-            label: 'A',
-            text: questionData.option_a || ''
-        },
-
-        {
-            label: 'B',
-            text: questionData.option_b || ''
-        },
-
-        {
-            label: 'C',
-            text: questionData.option_c || ''
-        },
-
-        {
-            label: 'D',
-            text: questionData.option_d || ''
-        }
-
+        { label: 'A', text: questionData.option_a || '' },
+        { label: 'B', text: questionData.option_b || '' },
+        { label: 'C', text: questionData.option_c || '' },
+        { label: 'D', text: questionData.option_d || '' }
     ];
-
     return shuffleArray(options);
 }
-
 
 /* ============================================================
    INITIALIZE
    ============================================================ */
-
 document.addEventListener('DOMContentLoaded', function () {
-
-    /*
-     * Store the first question.
-     * The shuffled options are stored here so
-     * the order remains unchanged while revisiting it.
-     */
-
     questions[0] = {
-
         id: currentQuestionData.id,
-
         data: currentQuestionData,
-
         answered: false,
-
         flagged: false,
-
-        shuffledOptions:
-            createShuffledOptions(currentQuestionData)
-
+        shuffledOptions: createShuffledOptions(currentQuestionData)
     };
 
-
     startTimer();
-
     initPalette();
-
     updateQuestionDisplay();
-
     questionStartTime = Date.now();
-
     checkBookmarkStatus();
-
 });
 
+/* ============================================================
+   AI EXPLANATION - SHOW LOADING
+   ============================================================ */
+function showLoadingState(message) {
+    return `
+        <div class="ai-loading-container">
+            <div class="ai-loading-orb">
+                <i class="bi bi-robot"></i>
+            </div>
+            <div class="ai-loading-text">${message}</div>
+            <div class="ai-loading-subtext">
+                <i class="bi bi-stars"></i> Generating a detailed explanation for you
+            </div>
+        </div>
+    `;
+}
+
+/* ============================================================
+   EXPLAIN CURRENT QUESTION WITH AI
+   ============================================================ */
+async function explainCurrentQuestion() {
+    if (!currentQuestionId) {
+        alert('No question selected.');
+        return;
+    }
+
+    if (!selectedOption) {
+        alert('Please answer the question first to get an explanation.');
+        return;
+    }
+
+    const explainBtn = document.getElementById('explainQuestionBtn');
+    const originalText = explainBtn.innerHTML;
+    explainBtn.disabled = true;
+    explainBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Thinking...';
+
+    // Show the modal
+    const modalElement = document.getElementById('explanationModal');
+    const modal = new bootstrap.Modal(modalElement);
+
+    document.getElementById('modalTopicName').textContent = 'Explaining this question';
+    document.getElementById('cacheStatus').textContent = 'AI is analyzing...';
+    document.getElementById('explanationContent').innerHTML =
+        showLoadingState('Analyzing this question...');
+
+    modal.show();
+
+    try {
+        const formData = new FormData();
+        formData.append('student_answer', selectedOption);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        const response = await fetch(`/doubts/questions/${currentQuestionId}/explain/`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            if (typeof marked !== 'undefined') {
+                document.getElementById('explanationContent').innerHTML =
+                    marked.parse(data.explanation);
+            } else {
+                document.getElementById('explanationContent').innerHTML =
+                    data.explanation.replace(/\n/g, '<br>');
+            }
+            document.getElementById('cacheStatus').textContent = '✨ Explanation ready';
+        } else {
+            document.getElementById('explanationContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    ${data.error || 'Unable to generate explanation.'}
+                </div>
+            `;
+            document.getElementById('cacheStatus').textContent = 'Error';
+        }
+    } catch (error) {
+        document.getElementById('explanationContent').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                Error: ${error.message}
+            </div>
+        `;
+        document.getElementById('cacheStatus').textContent = 'Error';
+    } finally {
+        explainBtn.disabled = false;
+        explainBtn.innerHTML = originalText;
+    }
+}
 
 /* ============================================================
    REPORT MODAL
    ============================================================ */
-
 function showReportModal() {
-
     const modalElement = document.getElementById('reportModal');
     if (modalElement) {
         const modal = new bootstrap.Modal(modalElement);
@@ -1169,86 +1180,42 @@ function showReportModal() {
     }
 }
 
-
 async function submitReport() {
-
-    const reportType =
-        document.getElementById('reportType').value;
-
-    const description =
-        document
-            .getElementById('reportDescription')
-            .value
-            .trim();
-
+    const reportType = document.getElementById('reportType').value;
+    const description = document.getElementById('reportDescription').value.trim();
 
     if (!description) {
-
-        alert(
-            'Please provide a description of the issue.'
-        );
-
+        alert('Please provide a description of the issue.');
         return;
     }
 
-
-    const submitBtn =
-        document.querySelector(
-            '#reportModal .btn-danger'
-        );
-
+    const submitBtn = document.querySelector('#reportModal .btn-danger');
     if (!submitBtn) return;
 
-    const originalText =
-        submitBtn.innerHTML;
-
-
+    const originalText = submitBtn.innerHTML;
     submitBtn.disabled = true;
-
-    submitBtn.innerHTML =
-        '<span class="spinner-border spinner-border-sm"></span> Submitting...';
-
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
 
     try {
+        const response = await fetch(`/practice/questions/${currentQuestionId}/report/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                report_type: reportType,
+                description: description
+            })
+        });
 
-        const response = await fetch(
-            `/practice/questions/${currentQuestionId}/report/`,
-            {
-                method: 'POST',
-
-                headers: {
-                    'Content-Type': 'application/json',
-
-                    'X-CSRFToken':
-                        '{{ csrf_token }}'
-                },
-
-                body: JSON.stringify({
-
-                    report_type: reportType,
-
-                    description: description
-
-                })
-            }
-        );
-
-
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                'Failed to submit report'
-            );
+            throw new Error(data.error || 'Failed to submit report');
         }
 
-
         alert('✅ ' + data.message);
-
 
         const modalElement = document.getElementById('reportModal');
         if (modalElement) {
@@ -1256,1461 +1223,587 @@ async function submitReport() {
             if (modal) modal.hide();
         }
 
-
         const descEl = document.getElementById('reportDescription');
         if (descEl) descEl.value = '';
 
-
     } catch (error) {
-
-        alert(
-            'Error: ' + error.message
-        );
-
+        alert('Error: ' + error.message);
     } finally {
-
         submitBtn.disabled = false;
-
-        submitBtn.innerHTML =
-            originalText;
+        submitBtn.innerHTML = originalText;
     }
 }
-
 
 /* ============================================================
    BOOKMARK
    ============================================================ */
-
 async function toggleBookmark() {
-
-    const btn =
-        document.getElementById('bookmarkBtn');
-
+    const btn = document.getElementById('bookmarkBtn');
     if (!btn) return;
 
-    const originalText =
-        btn.innerHTML;
-
-
+    const originalText = btn.innerHTML;
     btn.disabled = true;
-
-    btn.innerHTML =
-        '<span class="spinner-border spinner-border-sm"></span>';
-
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
     try {
-
-        const response = await fetch(
-            `/practice/questions/${currentQuestionId}/bookmark/`,
-            {
-                method: 'POST',
-
-                headers: {
-                    'X-CSRFToken':
-                        '{{ csrf_token }}'
-                }
+        const response = await fetch(`/practice/questions/${currentQuestionId}/bookmark/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
             }
-        );
+        });
 
-
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         if (data.bookmarked) {
-
-            btn.innerHTML =
-                '<i class="bi bi-bookmark-fill"></i> Bookmarked';
-
+            btn.innerHTML = '<i class="bi bi-bookmark-fill"></i> Bookmarked';
             btn.classList.add('bookmarked');
-
             isBookmarked = true;
-
         } else {
-
-            btn.innerHTML =
-                '<i class="bi bi-bookmark"></i> Bookmark';
-
+            btn.innerHTML = '<i class="bi bi-bookmark"></i> Bookmark';
             btn.classList.remove('bookmarked');
-
             isBookmarked = false;
         }
-
-
     } catch (error) {
-
-        alert(
-            'Error: ' + error.message
-        );
-
-        btn.innerHTML =
-            originalText;
-
+        alert('Error: ' + error.message);
+        btn.innerHTML = originalText;
     } finally {
-
         btn.disabled = false;
     }
 }
 
-
 async function checkBookmarkStatus() {
-
-    /*
-     * Reset first because we are now checking
-     * the bookmark status of a new question.
-     */
-
     isBookmarked = false;
-
-
-    const btn =
-        document.getElementById('bookmarkBtn');
-
+    const btn = document.getElementById('bookmarkBtn');
     if (!btn) return;
 
-    btn.innerHTML =
-        '<i class="bi bi-bookmark"></i> Bookmark';
-
+    btn.innerHTML = '<i class="bi bi-bookmark"></i> Bookmark';
     btn.classList.remove('bookmarked');
 
-
     try {
-
-        const response = await fetch(
-            `/practice/questions/${currentQuestionId}/bookmark-status/`
-        );
-
-
-        const data =
-            await response.json();
-
+        const response = await fetch(`/practice/questions/${currentQuestionId}/bookmark-status/`);
+        const data = await response.json();
 
         if (data.bookmarked) {
-
-            btn.innerHTML =
-                '<i class="bi bi-bookmark-fill"></i> Bookmarked';
-
+            btn.innerHTML = '<i class="bi bi-bookmark-fill"></i> Bookmarked';
             btn.classList.add('bookmarked');
-
             isBookmarked = true;
         }
-
-
-    } catch (error) {
-
-        // Ignore bookmark status errors
-    }
+    } catch (error) {}
 }
-
 
 /* ============================================================
    TIMER
    ============================================================ */
-
 function startTimer() {
+    timerInterval = setInterval(function () {
+        seconds++;
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
 
-    timerInterval =
-        setInterval(function () {
+        const timerDisplay = document.getElementById('timer-display');
+        if (timerDisplay) {
+            timerDisplay.textContent =
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        }
 
-            seconds++;
-
-
-            const mins =
-                Math.floor(seconds / 60);
-
-            const secs =
-                seconds % 60;
-
-            const timerDisplay = document.getElementById('timer-display');
-            if (timerDisplay) {
-                timerDisplay.textContent =
-                    String(mins).padStart(2, '0') +
-                    ':' +
-                    String(secs).padStart(2, '0');
-            }
-
-
-            const timer =
-                document.getElementById('timer');
-
-
-            if (
-                seconds > 600 &&
-                seconds < 660
-            ) {
-
-                timer.classList.add(
-                    'warning'
-                );
-
-            } else if (seconds > 660) {
-
-                timer.classList.remove(
-                    'warning'
-                );
-
-                timer.classList.add(
-                    'danger'
-                );
-            }
-
-        }, 1000);
+        const timer = document.getElementById('timer');
+        if (seconds > 600 && seconds < 660) {
+            timer.classList.add('warning');
+        } else if (seconds > 660) {
+            timer.classList.remove('warning');
+            timer.classList.add('danger');
+        }
+    }, 1000);
 }
-
 
 /* ============================================================
    PALETTE
    ============================================================ */
-
 function initPalette() {
-
-    const paletteGrid =
-        document.getElementById(
-            'paletteGrid'
-        );
-
+    const paletteGrid = document.getElementById('paletteGrid');
     if (!paletteGrid) return;
-
     paletteGrid.innerHTML = '';
 
-
-    for (
-        let i = 1;
-        i <= totalQuestions;
-        i++
-    ) {
-
-        const btn =
-            document.createElement('button');
-
-
-        btn.className =
-            'palette-btn current';
-
-
-        btn.id =
-            'palette-' + i;
-
-
-        btn.textContent =
-            i;
-
-
-        btn.onclick =
-            function () {
-
-                goToQuestion(i - 1);
-
-            };
-
-
+    for (let i = 1; i <= totalQuestions; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn current';
+        btn.id = 'palette-' + i;
+        btn.textContent = i;
+        btn.onclick = function () { goToQuestion(i - 1); };
         paletteGrid.appendChild(btn);
     }
-
-
     updatePalette();
 }
 
-
 function updatePalette() {
+    for (let i = 1; i <= totalQuestions; i++) {
+        const btn = document.getElementById('palette-' + i);
+        if (!btn) continue;
 
-    for (
-        let i = 1;
-        i <= totalQuestions;
-        i++
-    ) {
-
-        const btn =
-            document.getElementById(
-                'palette-' + i
-            );
-
-
-        if (!btn) {
-            continue;
-        }
-
-
-        btn.className =
-            'palette-btn';
-
+        btn.className = 'palette-btn';
 
         if (i - 1 === currentIndex) {
-
-            btn.classList.add(
-                'current'
-            );
+            btn.classList.add('current');
         }
 
-
-        if (
-            questions[i - 1] &&
-            questions[i - 1].answered
-        ) {
-
-            btn.classList.add(
-                'answered'
-            );
-
-        } else if (
-            questions[i - 1] &&
-            questions[i - 1].flagged
-        ) {
-
-            btn.classList.add(
-                'flagged'
-            );
-
+        if (questions[i - 1] && questions[i - 1].answered) {
+            btn.classList.add('answered');
+        } else if (questions[i - 1] && questions[i - 1].flagged) {
+            btn.classList.add('flagged');
         } else {
-
-            btn.classList.add(
-                'unanswered'
-            );
+            btn.classList.add('unanswered');
         }
     }
 }
-
 
 /* ============================================================
    NAVIGATION
    ============================================================ */
-
 function goToQuestion(index) {
+    if (index < 0 || index >= totalQuestions) return;
+    if (!questions[index] || !questions[index].data) return;
 
-    if (
-        index < 0 ||
-        index >= totalQuestions
-    ) {
-        return;
-    }
-
-
-    /*
-     * Only allow navigation to a question
-     * that has already been loaded.
-     *
-     * Future questions are loaded by nextQuestion().
-     */
-
-    if (
-        !questions[index] ||
-        !questions[index].data
-    ) {
-
-        return;
-    }
-
-
-    currentIndex =
-        index;
-
-
-    currentQuestionData =
-        questions[index].data;
-
-
-    currentQuestionId =
-        currentQuestionData.id;
-
+    currentIndex = index;
+    currentQuestionData = questions[index].data;
+    currentQuestionId = currentQuestionData.id;
 
     updateQuestionDisplay();
-
     updatePalette();
-
     checkBookmarkStatus();
-
-    questionStartTime =
-        Date.now();
+    questionStartTime = Date.now();
 }
 
-
 async function nextQuestion() {
-
-    if (
-        currentIndex >=
-        totalQuestions - 1
-    ) {
-
+    if (currentIndex >= totalQuestions - 1) {
         finishPractice();
-
         return;
     }
 
-
     try {
-
-        const response =
-            await fetch(
-                `/practice/sessions/${sessionId}/next/`
-            );
-
-
-        const data =
-            await response.json();
-
+        const response = await fetch(`/practice/sessions/${sessionId}/next/`);
+        const data = await response.json();
 
         if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                'Failed to load next question'
-            );
+            throw new Error(data.error || 'Failed to load next question');
         }
 
-
-        /*
-         * Update adaptive difficulty badge.
-         */
-        const adaptiveBadge =
-            document.getElementById('adaptiveBadge');
-
-        if (
-            adaptiveBadge &&
-            data.adaptive_difficulty
-        ) {
-
-            adaptiveBadge.textContent =
-                `🤖 Adaptive: ${data.adaptive_difficulty}`;
-
-            adaptiveBadge.style.display =
-                'inline-block';
-
+        const adaptiveBadge = document.getElementById('adaptiveBadge');
+        if (adaptiveBadge && data.adaptive_difficulty) {
+            adaptiveBadge.textContent = `🤖 Adaptive: ${data.adaptive_difficulty}`;
+            adaptiveBadge.style.display = 'inline-block';
         } else if (adaptiveBadge) {
-
-            adaptiveBadge.style.display =
-                'none';
+            adaptiveBadge.style.display = 'none';
         }
-
 
         if (data.completed) {
-
             finishPractice();
-
             return;
         }
 
-
         const nextQuestionData = {
-
             id: data.question_id,
-
             text: data.question_text,
-
             option_a: data.options.A,
-
             option_b: data.options.B,
-
             option_c: data.options.C,
-
             option_d: data.options.D
-
         };
 
+        const nextIndex = currentIndex + 1;
 
-        const nextIndex =
-            currentIndex + 1;
-
-
-        /*
-         * Store question data and its shuffled
-         * option order.
-         */
         questions[nextIndex] = {
-
             id: nextQuestionData.id,
-
             data: nextQuestionData,
-
             answered: false,
-
             flagged: false,
-
-            shuffledOptions:
-                createShuffledOptions(
-                    nextQuestionData
-                )
-
+            shuffledOptions: createShuffledOptions(nextQuestionData)
         };
 
-
-        currentIndex =
-            nextIndex;
-
-
-        currentQuestionId =
-            nextQuestionData.id;
-
-
-        currentQuestionData =
-            nextQuestionData;
-
+        currentIndex = nextIndex;
+        currentQuestionId = nextQuestionData.id;
+        currentQuestionData = nextQuestionData;
 
         updateQuestionDisplay();
-
         updatePalette();
-
         checkBookmarkStatus();
-
-        questionStartTime =
-            Date.now();
-
+        questionStartTime = Date.now();
 
     } catch (error) {
-
-        alert(
-            'Error loading next question: ' +
-            error.message
-        );
+        alert('Error loading next question: ' + error.message);
     }
 }
 
-
 function prevQuestion() {
-
-    if (currentIndex <= 0) {
-        return;
-    }
-
+    if (currentIndex <= 0) return;
 
     currentIndex--;
 
-
-    if (
-        questions[currentIndex] &&
-        questions[currentIndex].data
-    ) {
-
-        currentQuestionData =
-            questions[currentIndex].data;
-
-        currentQuestionId =
-            currentQuestionData.id;
+    if (questions[currentIndex] && questions[currentIndex].data) {
+        currentQuestionData = questions[currentIndex].data;
+        currentQuestionId = currentQuestionData.id;
     }
 
-
     updateQuestionDisplay();
-
     updatePalette();
-
     checkBookmarkStatus();
-
-    questionStartTime =
-        Date.now();
+    questionStartTime = Date.now();
 }
-
 
 /* ============================================================
    SELECT OPTION
    ============================================================ */
-
 function selectOption(option) {
+    if (isAnswered) return;
 
-    if (isAnswered) {
-        return;
-    }
+    document.querySelectorAll('.option-item').forEach(function (el) {
+        el.classList.remove('selected');
+    });
 
-
-    document
-        .querySelectorAll('.option-item')
-        .forEach(function (el) {
-
-            el.classList.remove(
-                'selected'
-            );
-
-        });
-
-
-    /*
-     * "option" is the DISPLAYED label.
-     *
-     * Example:
-     *
-     * Displayed A -> Original C
-     *
-     * The user clicked A, but the backend
-     * must receive C.
-     */
-
-    const selectedEl =
-        document.querySelector(
-            `.option-item[data-option="${option}"]`
-        );
-
-
+    const selectedEl = document.querySelector(`.option-item[data-option="${option}"]`);
     if (selectedEl) {
-
-        selectedEl.classList.add(
-            'selected'
-        );
-
-
-        selectedOption =
-            selectedEl.dataset.originalLabel;
-
-
+        selectedEl.classList.add('selected');
+        selectedOption = selectedEl.dataset.originalLabel;
         submitAnswer();
     }
 }
 
-
 /* ============================================================
    SUBMIT ANSWER
    ============================================================ */
-
 async function submitAnswer() {
+    if (!selectedOption || isAnswered) return;
 
-    if (
-        !selectedOption ||
-        isAnswered
-    ) {
-
-        return;
-    }
-
-
-    const timeTaken =
-        (Date.now() - questionStartTime) /
-        1000;
-
+    const timeTaken = (Date.now() - questionStartTime) / 1000;
 
     try {
+        const response = await fetch(`/practice/sessions/${sessionId}/answer/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                question_id: currentQuestionId,
+                selected_answer: selectedOption,
+                time_taken: timeTaken
+            })
+        });
 
-        const response =
-            await fetch(
-                `/practice/sessions/${sessionId}/answer/`,
-                {
-                    method: 'POST',
-
-                    headers: {
-
-                        'Content-Type':
-                            'application/json',
-
-                        'X-CSRFToken':
-                            '{{ csrf_token }}'
-
-                    },
-
-                    body: JSON.stringify({
-
-                        question_id:
-                            currentQuestionId,
-
-                        /*
-                         * This is the ORIGINAL
-                         * database option label.
-                         */
-
-                        selected_answer:
-                            selectedOption,
-
-                        time_taken:
-                            timeTaken
-
-                    })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                'Failed to submit answer'
-            );
+            throw new Error(data.error || 'Failed to submit answer');
         }
 
-
         processAnswer(data);
-
-
     } catch (error) {
-
-        alert(
-            'Error: ' +
-            error.message
-        );
+        alert('Error: ' + error.message);
     }
 }
-
 
 /* ============================================================
    PROCESS ANSWER
    ============================================================ */
-
 function processAnswer(data) {
-
     isAnswered = true;
 
-
     if (!questions[currentIndex]) {
-
         questions[currentIndex] = {};
     }
 
+    questions[currentIndex].answered = true;
+    questions[currentIndex].correct = data.is_correct;
+    questions[currentIndex].data = currentQuestionData;
 
-    questions[currentIndex].answered =
-        true;
-
-
-    questions[currentIndex].correct =
-        data.is_correct;
-
-
-    questions[currentIndex].data =
-        currentQuestionData;
-
-
-    const statusEl =
-        document.getElementById(
-            'qStatus'
-        );
-
+    const statusEl = document.getElementById('qStatus');
     if (statusEl) {
-        statusEl.className =
-            'q-status answered';
-
-        statusEl.innerHTML =
-            '<i class="bi bi-check-circle"></i> Answered';
+        statusEl.className = 'q-status answered';
+        statusEl.innerHTML = '<i class="bi bi-check-circle"></i> Answered';
     }
 
-
-    const feedbackSection =
-        document.getElementById(
-            'feedbackSection'
-        );
-
-    const feedbackTitle =
-        document.getElementById(
-            'feedbackTitle'
-        );
-
-    const feedbackIcon =
-        document.getElementById(
-            'feedbackIcon'
-        );
-
-    const feedbackHeading =
-        document.getElementById(
-            'feedbackHeading'
-        );
-
-    const feedbackExplanation =
-        document.getElementById(
-            'feedbackExplanation'
-        );
-
-    const feedbackCorrect =
-        document.getElementById(
-            'feedbackCorrectAnswer'
-        );
+    const feedbackSection = document.getElementById('feedbackSection');
+    const feedbackTitle = document.getElementById('feedbackTitle');
+    const feedbackIcon = document.getElementById('feedbackIcon');
+    const feedbackHeading = document.getElementById('feedbackHeading');
+    const feedbackExplanation = document.getElementById('feedbackExplanation');
+    const feedbackCorrect = document.getElementById('feedbackCorrectAnswer');
 
     if (feedbackSection) {
-        feedbackSection.className =
-            'feedback-section show ' +
-            (
-                data.is_correct
-                    ? 'correct'
-                    : 'incorrect'
-            );
-
-        feedbackSection.style.display =
-            'block';
+        feedbackSection.className = 'feedback-section show ' +
+            (data.is_correct ? 'correct' : 'incorrect');
+        feedbackSection.style.display = 'block';
     }
 
     if (feedbackTitle) {
-        if (data.is_correct) {
-            feedbackTitle.className =
-                'feedback-title correct-text';
-        } else {
-            feedbackTitle.className =
-                'feedback-title incorrect-text';
-        }
+        feedbackTitle.className = data.is_correct
+            ? 'feedback-title correct-text'
+            : 'feedback-title incorrect-text';
     }
 
-    if (feedbackIcon) {
-        feedbackIcon.textContent =
-            data.is_correct ? '✅' : '❌';
-    }
-
-    if (feedbackHeading) {
-        feedbackHeading.textContent =
-            data.is_correct ? 'Correct!' : 'Incorrect';
-    }
-
-    if (feedbackExplanation) {
-        feedbackExplanation.textContent =
-            data.explanation ||
-            'No explanation provided.';
-    }
-
+    if (feedbackIcon) feedbackIcon.textContent = data.is_correct ? '✅' : '❌';
+    if (feedbackHeading) feedbackHeading.textContent = data.is_correct ? 'Correct!' : 'Incorrect';
+    if (feedbackExplanation) feedbackExplanation.textContent = data.explanation || 'No explanation provided.';
     if (feedbackCorrect) {
-        feedbackCorrect.textContent =
-            data.is_correct
-                ? ''
-                : `Correct answer: ${data.correct_answer}`;
+        feedbackCorrect.textContent = data.is_correct
+            ? ''
+            : `Correct answer: ${data.correct_answer}`;
     }
 
+    document.querySelectorAll('.option-item').forEach(function (el) {
+        el.classList.add('disabled');
+        const originalOption = el.dataset.originalLabel;
 
-    /*
-     * IMPORTANT:
-     *
-     * data.correct_answer is the ORIGINAL
-     * database label.
-     *
-     * Therefore we compare it against
-     * data-original-label, NOT data-option.
-     */
+        if (originalOption === data.correct_answer) {
+            el.classList.add('correct');
+        } else if (originalOption === selectedOption && !data.is_correct) {
+            el.classList.add('incorrect');
+        }
+    });
 
-    document
-        .querySelectorAll('.option-item')
-        .forEach(function (el) {
-
-            el.classList.add(
-                'disabled'
-            );
-
-
-            const originalOption =
-                el.dataset.originalLabel;
-
-
-            /*
-             * Highlight the correct option.
-             */
-
-            if (
-                originalOption ===
-                data.correct_answer
-            ) {
-
-                el.classList.add(
-                    'correct'
-                );
-
-            }
-
-
-            /*
-             * Highlight the selected option
-             * if it was incorrect.
-             */
-
-            else if (
-                originalOption ===
-                    selectedOption &&
-                !data.is_correct
-            ) {
-
-                el.classList.add(
-                    'incorrect'
-                );
-            }
-
-        });
-
+    // Show "Explain with AI" button after answering
+    const explainBtn = document.getElementById('explainQuestionBtn');
+    if (explainBtn) {
+        explainBtn.style.display = 'inline-flex';
+    }
 
     updatePalette();
 }
-
 
 /* ============================================================
    TOGGLE FLAG
    ============================================================ */
-
 function toggleFlag() {
-
     if (!questions[currentIndex]) {
-
         questions[currentIndex] = {};
     }
 
+    isFlagged = !isFlagged;
+    questions[currentIndex].flagged = isFlagged;
 
-    isFlagged =
-        !isFlagged;
-
-
-    questions[currentIndex].flagged =
-        isFlagged;
-
-
-    if (
-        !questions[currentIndex].data
-    ) {
-
-        questions[currentIndex].data =
-            currentQuestionData;
+    if (!questions[currentIndex].data) {
+        questions[currentIndex].data = currentQuestionData;
     }
 
-
-    const flagBtn =
-        document.getElementById(
-            'flagBtn'
-        );
-
-    const statusEl =
-        document.getElementById(
-            'qStatus'
-        );
+    const flagBtn = document.getElementById('flagBtn');
+    const statusEl = document.getElementById('qStatus');
 
     if (isFlagged) {
-
         if (flagBtn) {
-            flagBtn.classList.add(
-                'flagged'
-            );
-
-            flagBtn.innerHTML =
-                '<i class="bi bi-flag-fill"></i> Flagged';
+            flagBtn.classList.add('flagged');
+            flagBtn.innerHTML = '<i class="bi bi-flag-fill"></i> Flagged';
         }
-
         if (statusEl) {
-            statusEl.className =
-                'q-status flagged';
-
-            statusEl.innerHTML =
-                '<i class="bi bi-flag"></i> Flagged';
+            statusEl.className = 'q-status flagged';
+            statusEl.innerHTML = '<i class="bi bi-flag"></i> Flagged';
         }
-
     } else {
-
         if (flagBtn) {
-            flagBtn.classList.remove(
-                'flagged'
-            );
-
-            flagBtn.innerHTML =
-                '<i class="bi bi-flag"></i> Flag for Review';
+            flagBtn.classList.remove('flagged');
+            flagBtn.innerHTML = '<i class="bi bi-flag"></i> Flag for Review';
         }
-
-        /*
-         * If the question is already answered,
-         * preserve the Answered status.
-         */
-
         if (statusEl) {
-            if (
-                questions[currentIndex].answered
-            ) {
-                statusEl.className =
-                    'q-status answered';
-
-                statusEl.innerHTML =
-                    '<i class="bi bi-check-circle"></i> Answered';
+            if (questions[currentIndex].answered) {
+                statusEl.className = 'q-status answered';
+                statusEl.innerHTML = '<i class="bi bi-check-circle"></i> Answered';
             } else {
-                statusEl.className =
-                    'q-status unanswered';
-
-                statusEl.innerHTML =
-                    '<i class="bi bi-circle"></i> Unanswered';
+                statusEl.className = 'q-status unanswered';
+                statusEl.innerHTML = '<i class="bi bi-circle"></i> Unanswered';
             }
         }
     }
-
 
     updatePalette();
 }
 
-
 /* ============================================================
    UPDATE QUESTION DISPLAY
    ============================================================ */
-
 function updateQuestionDisplay() {
-
     selectedOption = null;
 
-
-    const qData =
-        questions[currentIndex] || {};
-
-
-    const q =
-        currentQuestionData;
+    const qData = questions[currentIndex] || {};
+    const q = currentQuestionData;
 
     const qNumEl = document.getElementById('qNumber');
     if (qNumEl) {
-        qNumEl.textContent =
-            `Question ${currentIndex + 1} of ${totalQuestions}`;
+        qNumEl.textContent = `Question ${currentIndex + 1} of ${totalQuestions}`;
     }
 
     const questionContentEl = document.getElementById('questionContent');
     if (questionContentEl) {
-        questionContentEl.textContent =
-            q.text ||
-            'Loading question...';
+        questionContentEl.textContent = q.text || 'Loading question...';
     }
 
-
-    /*
-     * ========================================================
-     * GET STORED SHUFFLED OPTIONS
-     * ========================================================
-     *
-     * If this question has already been displayed,
-     * use its existing shuffle.
-     *
-     * Otherwise create a new shuffle.
-     */
-
-    if (
-        !qData.shuffledOptions
-    ) {
-
-        qData.shuffledOptions =
-            createShuffledOptions(q);
-
-        questions[currentIndex] =
-            qData;
+    if (!qData.shuffledOptions) {
+        qData.shuffledOptions = createShuffledOptions(q);
+        questions[currentIndex] = qData;
     }
 
+    const shuffledOptions = qData.shuffledOptions;
+    const displayLabels = ['A', 'B', 'C', 'D'];
+    const optionItems = document.querySelectorAll('.option-item');
 
-    const shuffledOptions =
-        qData.shuffledOptions;
+    optionItems.forEach(function (el, index) {
+        const displayLabel = displayLabels[index];
+        const option = shuffledOptions[index];
 
+        el.dataset.option = displayLabel;
+        el.dataset.originalLabel = option.label;
 
-    const displayLabels =
-        ['A', 'B', 'C', 'D'];
+        const labelEl = el.querySelector('.option-label');
+        const textEl = el.querySelector('.option-text');
 
+        if (labelEl) labelEl.textContent = displayLabel;
+        if (textEl) textEl.textContent = option.text;
 
-    const optionItems =
-        document.querySelectorAll(
-            '.option-item'
-        );
+        el.className = 'option-item';
+    });
 
-
-    optionItems.forEach(
-        function (el, index) {
-
-            const displayLabel =
-                displayLabels[index];
-
-
-            const option =
-                shuffledOptions[index];
-
-
-            /*
-             * DISPLAYED LABEL
-             *
-             * This is what the user sees.
-             */
-
-            el.dataset.option =
-                displayLabel;
-
-
-            /*
-             * ORIGINAL LABEL
-             *
-             * This is what Django uses
-             * for answer validation.
-             */
-
-            el.dataset.originalLabel =
-                option.label;
-
-
-            const labelEl = el.querySelector('.option-label');
-            const textEl = el.querySelector('.option-text');
-
-            if (labelEl) labelEl.textContent = displayLabel;
-            if (textEl) textEl.textContent = option.text;
-
-
-            /*
-             * Reset option styling.
-             */
-
-            el.className =
-                'option-item';
-        }
-    );
-
-
-    /* ========================================================
-       QUESTION STATUS
-       ======================================================== */
-
-    const statusEl =
-        document.getElementById(
-            'qStatus'
-        );
-
+    const statusEl = document.getElementById('qStatus');
     if (statusEl) {
         if (qData.answered) {
-
             isAnswered = true;
-
-            statusEl.className =
-                'q-status answered';
-
-            statusEl.innerHTML =
-                '<i class="bi bi-check-circle"></i> Answered';
-
+            statusEl.className = 'q-status answered';
+            statusEl.innerHTML = '<i class="bi bi-check-circle"></i> Answered';
         } else if (qData.flagged) {
-
             isAnswered = false;
-
             isFlagged = true;
-
-            statusEl.className =
-                'q-status flagged';
-
-            statusEl.innerHTML =
-                '<i class="bi bi-flag"></i> Flagged';
-
+            statusEl.className = 'q-status flagged';
+            statusEl.innerHTML = '<i class="bi bi-flag"></i> Flagged';
         } else {
-
             isAnswered = false;
-
             isFlagged = false;
-
-            statusEl.className =
-                'q-status unanswered';
-
-            statusEl.innerHTML =
-                '<i class="bi bi-circle"></i> Unanswered';
+            statusEl.className = 'q-status unanswered';
+            statusEl.innerHTML = '<i class="bi bi-circle"></i> Unanswered';
         }
     }
 
-
-    /* ========================================================
-       FLAG BUTTON
-       ======================================================== */
-
-    const flagBtn =
-        document.getElementById(
-            'flagBtn'
-        );
-
+    const flagBtn = document.getElementById('flagBtn');
     if (flagBtn) {
         if (qData.flagged) {
-            flagBtn.classList.add(
-                'flagged'
-            );
-
-            flagBtn.innerHTML =
-                '<i class="bi bi-flag-fill"></i> Flagged';
+            flagBtn.classList.add('flagged');
+            flagBtn.innerHTML = '<i class="bi bi-flag-fill"></i> Flagged';
         } else {
-            flagBtn.classList.remove(
-                'flagged'
-            );
-
-            flagBtn.innerHTML =
-                '<i class="bi bi-flag"></i> Flag for Review';
+            flagBtn.classList.remove('flagged');
+            flagBtn.innerHTML = '<i class="bi bi-flag"></i> Flag for Review';
         }
     }
 
-
-    /* ========================================================
-       FEEDBACK
-       ======================================================== */
-
-    const feedbackSection =
-        document.getElementById(
-            'feedbackSection'
-        );
-
+    const feedbackSection = document.getElementById('feedbackSection');
     if (feedbackSection) {
-        feedbackSection.className =
-            'feedback-section';
-
-        feedbackSection.style.display =
-            'none';
+        feedbackSection.className = 'feedback-section';
+        feedbackSection.style.display = 'none';
     }
-
-
-    /* ========================================================
-       PREVIOUS BUTTON
-       ======================================================== */
 
     const prevBtn = document.getElementById('prevBtn');
-    if (prevBtn) {
-        prevBtn.disabled = currentIndex === 0;
-    }
+    if (prevBtn) prevBtn.disabled = currentIndex === 0;
 
-
-    /* ========================================================
-       NEXT BUTTON
-       ======================================================== */
-
-    const nextBtn =
-        document.getElementById(
-            'nextBtn'
-        );
-
+    const nextBtn = document.getElementById('nextBtn');
     if (nextBtn) {
-        if (
-            currentIndex ===
-            totalQuestions - 1
-        ) {
-            nextBtn.innerHTML =
-                'Finish <i class="bi bi-check2-circle"></i>';
-
-            nextBtn.onclick =
-                finishPractice;
+        if (currentIndex === totalQuestions - 1) {
+            nextBtn.innerHTML = 'Finish <i class="bi bi-check2-circle"></i>';
+            nextBtn.onclick = finishPractice;
         } else {
-            nextBtn.innerHTML =
-                'Next <i class="bi bi-arrow-right"></i>';
-
-            nextBtn.onclick =
-                nextQuestion;
+            nextBtn.innerHTML = 'Next <i class="bi bi-arrow-right"></i>';
+            nextBtn.onclick = nextQuestion;
         }
     }
 
-
-    /* ========================================================
-       BOOKMARK BUTTON
-       ======================================================== */
-
-    const bookmarkBtn =
-        document.getElementById(
-            'bookmarkBtn'
-        );
-
+    const bookmarkBtn = document.getElementById('bookmarkBtn');
     if (bookmarkBtn) {
-        /*
-         * Bookmark status is loaded separately
-         * through checkBookmarkStatus().
-         */
-        bookmarkBtn.innerHTML =
-            '<i class="bi bi-bookmark"></i> Bookmark';
-
-        bookmarkBtn.classList.remove(
-            'bookmarked'
-        );
-
+        bookmarkBtn.innerHTML = '<i class="bi bi-bookmark"></i> Bookmark';
+        bookmarkBtn.classList.remove('bookmarked');
         isBookmarked = false;
     }
 
-    // Update submit button state
-    const submitBtn = document.getElementById('submit-btn');
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.style.display = 'inline-block';
-        submitBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Submit Answer';
+    // Hide "Explain with AI" button when navigating
+    const explainBtn = document.getElementById('explainQuestionBtn');
+    if (explainBtn) {
+        if (qData.answered) {
+            explainBtn.style.display = 'inline-flex';
+        } else {
+            explainBtn.style.display = 'none';
+        }
     }
-
-    // Hide next/finish buttons initially
-    const nextBtnHidden = document.getElementById('next-btn');
-    if (nextBtnHidden) nextBtnHidden.style.display = 'none';
-    const finishBtnHidden = document.getElementById('finish-btn');
-    if (finishBtnHidden) finishBtnHidden.style.display = 'none';
 }
-
 
 /* ============================================================
    FINISH PRACTICE
    ============================================================ */
-
 async function finishPractice() {
-
-    const finishBtn =
-        document.getElementById(
-            'finishBtn'
-        );
-
-    const nextBtn =
-        document.getElementById(
-            'nextBtn'
-        );
+    const finishBtn = document.getElementById('finishBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
     if (finishBtn) {
         finishBtn.disabled = true;
-        finishBtn.innerHTML =
-            '<span class="spinner-border spinner-border-sm"></span> Finishing...';
+        finishBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Finishing...';
     }
-    if (nextBtn) {
-        nextBtn.disabled = true;
-    }
+    if (nextBtn) nextBtn.disabled = true;
 
     try {
+        const response = await fetch(`/practice/sessions/${sessionId}/complete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
 
-        const response =
-            await fetch(
-                `/practice/sessions/${sessionId}/complete/`,
-                {
-                    method: 'POST',
-
-                    headers: {
-
-                        'X-CSRFToken':
-                            '{{ csrf_token }}',
-
-                        'X-Requested-With':
-                            'XMLHttpRequest'
-
-                    }
-                }
-            );
-
-
-        const data =
-            await response.json();
-
+        const data = await response.json();
 
         if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                'Failed to complete session'
-            );
+            throw new Error(data.error || 'Failed to complete session');
         }
 
-
-        window.location.href =
-            `/practice/sessions/${sessionId}/results/`;
-
-
+        window.location.href = `/practice/sessions/${sessionId}/results/`;
     } catch (error) {
-
-        alert(
-            'Error: ' +
-            error.message
-        );
-
+        alert('Error: ' + error.message);
         if (finishBtn) {
             finishBtn.disabled = false;
-            finishBtn.innerHTML =
-                '<i class="bi bi-check2-circle"></i> Finish Test';
+            finishBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Finish Test';
         }
-        if (nextBtn) {
-            nextBtn.disabled = false;
-        }
+        if (nextBtn) nextBtn.disabled = false;
     }
 }
-
 
 /* ============================================================
    KEYBOARD SHORTCUTS
    ============================================================ */
-
-document.addEventListener(
-    'keydown',
-    function (e) {
-
-        /*
-         * 1 = A
-         * 2 = B
-         * 3 = C
-         * 4 = D
-         */
-
-        if (
-            e.key >= '1' &&
-            e.key <= '4' &&
-            !e.ctrlKey &&
-            !e.metaKey
-        ) {
-
-            const options =
-                ['A', 'B', 'C', 'D'];
-
-
-            selectOption(
-                options[
-                    parseInt(e.key) - 1
-                ]
-            );
-        }
-
-
-        /* ====================================================
-           NEXT
-           ==================================================== */
-
-        if (e.key === 'ArrowRight') {
-
-            e.preventDefault();
-
-
-            if (
-                currentIndex ===
-                totalQuestions - 1
-            ) {
-
-                finishPractice();
-
-            } else {
-
-                nextQuestion();
-            }
-        }
-
-
-        /* ====================================================
-           PREVIOUS
-           ==================================================== */
-
-        if (e.key === 'ArrowLeft') {
-
-            e.preventDefault();
-
-            prevQuestion();
-        }
-
-
-        /* ====================================================
-           FLAG
-           ==================================================== */
-
-        if (
-            (e.key === 'f' ||
-             e.key === 'F') &&
-            !e.ctrlKey &&
-            !e.metaKey
-        ) {
-
-            e.preventDefault();
-
-            toggleFlag();
-        }
-
-
-        /* ====================================================
-           BOOKMARK
-           ==================================================== */
-
-        if (
-            (e.key === 'b' ||
-             e.key === 'B') &&
-            !e.ctrlKey &&
-            !e.metaKey
-        ) {
-
-            e.preventDefault();
-
-            toggleBookmark();
-        }
-
+document.addEventListener('keydown', function (e) {
+    if (e.key >= '1' && e.key <= '4' && !e.ctrlKey && !e.metaKey) {
+        const options = ['A', 'B', 'C', 'D'];
+        selectOption(options[parseInt(e.key) - 1]);
     }
-);
 
-
-/* ============================================================
-   CLEANUP TIMER
-   ============================================================ */
-
-window.addEventListener(
-    'beforeunload',
-    function () {
-
-        if (timerInterval) {
-
-            clearInterval(
-                timerInterval
-            );
+    if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (currentIndex === totalQuestions - 1) {
+            finishPractice();
+        } else {
+            nextQuestion();
         }
-
     }
-);
 
+    if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevQuestion();
+    }
+
+    if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        toggleFlag();
+    }
+
+    if ((e.key === 'b' || e.key === 'B') && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        toggleBookmark();
+    }
+});
+
+window.addEventListener('beforeunload', function () {
+    if (timerInterval) clearInterval(timerInterval);
+});
 </script>
 
 {% endblock %}
