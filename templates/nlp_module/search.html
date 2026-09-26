@@ -1,0 +1,545 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Semantic Search | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        min-height: calc(100vh - 200px);
+    }
+
+    .search-hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .search-hero .hero-icon {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 1rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        box-shadow: 0 12px 32px rgba(139, 92, 246, 0.3);
+    }
+
+    .search-hero h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1e1b4b, #6366f1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .search-hero p {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    /* Search Bar */
+    .search-bar-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .search-bar-wrapper .search-input {
+        width: 100%;
+        padding: 1rem 1.5rem 1rem 3.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        font-size: 1.05rem;
+        background: white;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .search-bar-wrapper .search-input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), 0 4px 16px rgba(15, 23, 42, 0.04);
+        outline: none;
+    }
+
+    .search-bar-wrapper .search-icon {
+        position: absolute;
+        left: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1.2rem;
+    }
+
+    /* Filter Chips */
+    .filter-chips {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+
+    .filter-chip {
+        padding: 0.4rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        background: white;
+        color: #475569;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .filter-chip:hover {
+        border-color: #6366f1;
+        color: #6366f1;
+    }
+
+    .filter-chip.active {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        border-color: transparent;
+    }
+
+    /* Results */
+    .results-section {
+        margin-top: 2rem;
+    }
+
+    .results-section .section-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+        padding-left: 0.5rem;
+        border-left: 3px solid #6366f1;
+    }
+
+    .result-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .result-card:hover {
+        border-color: #6366f1;
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-title {
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 0.95rem;
+        flex: 1;
+        line-height: 1.5;
+    }
+
+    .result-similarity {
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .result-meta {
+        font-size: 0.8rem;
+        color: #64748b;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .result-meta i {
+        font-size: 0.85rem;
+        margin-right: 0.25rem;
+    }
+
+    .result-badge {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .result-badge.question { background: #dbeafe; color: #1e40af; }
+    .result-badge.topic { background: #fce7f3; color: #9d174d; }
+    .result-badge.chapter { background: #fef3c7; color: #92400e; }
+    .result-badge.subject { background: #d1fae5; color: #065f46; }
+
+    /* Loading & Empty States */
+    .loading-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        display: none;
+    }
+
+    .loading-state.active {
+        display: block;
+    }
+
+    .loading-orb {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+        background-size: 200% 200%;
+        animation: gradient-shift 2s ease infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: #f8fafc;
+        border-radius: 16px;
+        border: 2px dashed #cbd5e1;
+    }
+
+    .empty-state .empty-icon {
+        font-size: 3rem;
+        color: #cbd5e1;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        color: #1e293b;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    /* Suggestions */
+    .suggestions {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .suggestions .suggestion-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-bottom: 0.75rem;
+    }
+
+    .suggestions .suggestion-chips {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .suggestions .suggestion-chip {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        padding: 0.4rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .suggestions .suggestion-chip:hover {
+        background: #e0e7ff;
+        border-color: #6366f1;
+        color: #6366f1;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-page">
+
+    <!-- Hero -->
+    <div class="search-hero">
+        <div class="hero-icon">
+            <i class="bi bi-search"></i>
+        </div>
+        <h1>Semantic Search</h1>
+        <p>Search by meaning, not just keywords.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-bar-wrapper">
+        <span class="search-icon">
+            <i class="bi bi-search"></i>
+        </span>
+        <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Try: 'how do cells divide' or 'newton laws'..."
+            autocomplete="off"
+        >
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-chips">
+        <button class="filter-chip active" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="question">Questions</button>
+        <button class="filter-chip" data-filter="topic">Topics</button>
+        <button class="filter-chip" data-filter="chapter">Chapters</button>
+        <button class="filter-chip" data-filter="subject">Subjects</button>
+    </div>
+
+    <!-- Suggestions (shown before search) -->
+    <div class="suggestions" id="suggestions">
+        <div class="suggestion-label">Try these searches:</div>
+        <div class="suggestion-chips">
+            <span class="suggestion-chip" onclick="useSuggestion('how do cells divide')">How do cells divide?</span>
+            <span class="suggestion-chip" onclick="useSuggestion('powerhouse of the cell')">Powerhouse of the cell</span>
+            <span class="suggestion-chip" onclick="useSuggestion('laws of motion')">Laws of motion</span>
+            <span class="suggestion-chip" onclick="useSuggestion('photosynthesis process')">Photosynthesis</span>
+            <span class="suggestion-chip" onclick="useSuggestion('periodic table trends')">Periodic trends</span>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loadingState">
+        <div class="loading-orb">
+            <i class="bi bi-search"></i>
+        </div>
+        <p class="text-muted">Searching...</p>
+    </div>
+
+    <!-- Results -->
+    <div class="results-section" id="resultsSection"></div>
+
+    <!-- Empty State (after no results) -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">
+            <i class="bi bi-search"></i>
+        </div>
+        <h3>No results found</h3>
+        <p>Try rephrasing your query or use different keywords.</p>
+    </div>
+
+</div>
+
+<script>
+const searchInput = document.getElementById('searchInput');
+const resultsSection = document.getElementById('resultsSection');
+const loadingState = document.getElementById('loadingState');
+const emptyState = document.getElementById('emptyState');
+const suggestions = document.getElementById('suggestions');
+
+let currentFilter = 'all';
+let searchTimeout = null;
+
+// ============================================================
+// SEARCH INPUT HANDLER (with debounce)
+// ============================================================
+searchInput.addEventListener('input', function () {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+
+    if (query.length < 2) {
+        resultsSection.innerHTML = '';
+        emptyState.style.display = 'none';
+        suggestions.style.display = 'block';
+        return;
+    }
+
+    searchTimeout = setTimeout(() => {
+        performSearch(query);
+    }, 400);
+});
+
+// ============================================================
+// FILTER CHIP HANDLER
+// ============================================================
+document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function () {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+
+        const query = searchInput.value.trim();
+        if (query.length >= 2) {
+            performSearch(query);
+        }
+    });
+});
+
+// ============================================================
+// USE SUGGESTION
+// ============================================================
+function useSuggestion(text) {
+    searchInput.value = text;
+    performSearch(text);
+}
+
+// ============================================================
+// PERFORM SEARCH
+// ============================================================
+async function performSearch(query) {
+    loadingState.classList.add('active');
+    emptyState.style.display = 'none';
+    suggestions.style.display = 'none';
+
+    try {
+        const response = await fetch(`/nlp/api/search/?q=${encodeURIComponent(query)}&limit=5`);
+        const data = await response.json();
+
+        loadingState.classList.remove('active');
+
+        if (!data.success) {
+            showError(data.error || 'Search failed');
+            return;
+        }
+
+        renderResults(data.results, currentFilter);
+    } catch (error) {
+        loadingState.classList.remove('active');
+        showError('Network error: ' + error.message);
+    }
+}
+
+// ============================================================
+// RENDER RESULTS
+// ============================================================
+function renderResults(results, filter) {
+    resultsSection.innerHTML = '';
+
+    const groups = {
+        questions: { title: 'Questions', icon: 'bi-question-circle' },
+        topics: { title: 'Topics', icon: 'bi-bookmark' },
+        chapters: { title: 'Chapters', icon: 'bi-book' },
+        subjects: { title: 'Subjects', icon: 'bi-journal-bookmark' },
+    };
+
+    let hasResults = false;
+
+    for (const [key, meta] of Object.entries(groups)) {
+        if (filter !== 'all' && filter !== key.slice(0, -1)) continue;
+
+        const items = results[key] || [];
+        if (items.length === 0) continue;
+
+        hasResults = true;
+
+        const section = document.createElement('div');
+        section.className = 'results-section';
+        section.innerHTML = `
+            <div class="section-title">
+                <i class="bi ${meta.icon}"></i> ${meta.title} (${items.length})
+            </div>
+        `;
+
+        items.forEach(item => {
+            section.appendChild(createResultCard(item));
+        });
+
+        resultsSection.appendChild(section);
+    }
+
+    if (!hasResults) {
+        emptyState.style.display = 'block';
+    }
+}
+
+// ============================================================
+// CREATE RESULT CARD
+// ============================================================
+function createResultCard(item) {
+    const card = document.createElement('div');
+    card.className = 'result-card';
+
+    const meta = item.metadata || {};
+    const typeLabel = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+
+    let metaText = '';
+    if (item.type === 'question') {
+        metaText = `<i class="bi bi-book"></i> ${meta.subject} · ${meta.chapter} · ${meta.topic}`;
+    } else if (item.type === 'topic') {
+        metaText = `<i class="bi bi-book"></i> ${meta.subject} · ${meta.chapter}`;
+    } else if (item.type === 'chapter') {
+        metaText = `<i class="bi bi-book"></i> ${meta.subject}${meta.unit_number ? ' · Unit ' + meta.unit_number : ''}`;
+    } else {
+        metaText = `<i class="bi bi-journal-bookmark"></i> Subject`;
+    }
+
+    card.innerHTML = `
+        <div class="result-header">
+            <div class="result-title">${escapeHtml(item.display_text)}</div>
+            <span class="result-similarity">${item.similarity}%</span>
+        </div>
+        <div class="result-meta">
+            <span class="result-badge ${item.type}">${typeLabel}</span>
+            <span>${metaText}</span>
+        </div>
+    `;
+
+    // Make card clickable if it's a question
+    if (item.type === 'question' && meta.topic_id) {
+        card.style.cursor = 'pointer';
+        card.onclick = () => {
+            window.location.href = `/practice/topics/${meta.topic_id}/sessions/`;
+        };
+    }
+
+    return card;
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function showError(message) {
+    resultsSection.innerHTML = `
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> ${escapeHtml(message)}
+        </div>
+    `;
+}
+</script>
+{% endblock %}

@@ -34,6 +34,10 @@ urlpatterns = [
     path(
         'ml/', include('apps.ml_module.urls', namespace='ml_module')
     ),
+
+    path(
+        'nlp/', include('apps.nlp_module.urls', namespace='nlp_module')
+    ),
 ]
 
 
