@@ -463,6 +463,12 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'nlp_module:search' %}">
+                                    <i class="bi bi-search"></i> Search
+                                </a>
+                            </li>
+
                         {% endif %}
 
                         {% if user.is_authenticated and user.role != 'admin' and not user.is_staff %}
