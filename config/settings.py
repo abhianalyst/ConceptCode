@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.doubt_solver',
     'apps.ml_module',
     'apps.nlp_module',
+    'apps.planner',
 ]
 
 AUTH_USER_MODEL = "accounts.User"

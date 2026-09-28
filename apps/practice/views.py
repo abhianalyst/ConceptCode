@@ -774,3 +774,18 @@ def mock_test_history(request):
     context = {'attempts': attempts}
 
     return render(request, 'practice/mock_test_history.html', context)
+
+@login_required
+def start_practice_for_topic(request, topic_id):
+    """
+    GET-friendly wrapper that creates a practice session and redirects
+    to the session page. Used by the Study Planner's 'Practice' button.
+    """
+    topic = get_object_or_404(Topic, id=topic_id, is_active=True)
+
+    if not topic.questions.filter(is_active=True).exists():
+        messages.error(request, "No questions available for this topic yet.")
+        return redirect("practice:topics", subject_id=topic.chapter.subject.id, chapter_id=topic.chapter.id)
+
+    session = create_practice_session(user=request.user, topic=topic)
+    return redirect("practice:practice-session", session_id=session.id)

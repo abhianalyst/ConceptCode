@@ -38,6 +38,10 @@ urlpatterns = [
     path(
         'nlp/', include('apps.nlp_module.urls', namespace='nlp_module')
     ),
+
+    path(
+        "planner/", include("apps.planner.urls")
+    ),
 ]
 
 

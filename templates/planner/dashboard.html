@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Study Planner | ConceptCode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .planner-container { max-width: 1100px; margin: 0 auto; padding: 1rem 0; }
+
+    .planner-header {
+        padding: 1.75rem 2rem;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        color: white;
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .planner-header h1 { font-size: 1.75rem; font-weight: 700; margin: 0; }
+    .planner-header p { margin: 0.25rem 0 0; opacity: 0.9; font-size: 0.9rem; }
+    .planner-header .days-badge {
+        background: rgba(255,255,255,0.2);
+        padding: 0.6rem 1.1rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(8px);
+    }
+
+    .progress-panel {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 640px) { .progress-panel { grid-template-columns: 1fr; } }
+
+    .progress-card {
+        background: white;
+        padding: 1.25rem;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid rgba(0,0,0,0.04);
+    }
+    .progress-card .label { font-size: 0.75rem; color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px; }
+    .progress-card .value { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-top: 0.25rem; }
+    .progress-bar-mini { height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden; margin-top: 0.5rem; }
+    .progress-bar-mini progress { width: 100%; height: 100%; display: block; border: 0; appearance: none; }
+    .progress-bar-mini progress::-webkit-progress-bar { background: #e9ecef; border-radius: 3px; }
+    .progress-bar-mini progress::-webkit-progress-value { background: linear-gradient(90deg, #6366f1, #a855f7); border-radius: 3px; }
+    .progress-bar-mini progress::-moz-progress-bar { background: linear-gradient(90deg, #6366f1, #a855f7); border-radius: 3px; }
+
+    .calendar-strip {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        background: white;
+        padding: 1rem;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid rgba(0,0,0,0.04);
+    }
+    .cal-day {
+        text-align: center;
+        padding: 0.6rem 0.25rem;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+        transition: all 0.2s;
+        cursor: default;
+    }
+    .cal-day.is-today { border-color: #6366f1; background: #f5f3ff; }
+    .cal-day .dlabel { font-size: 0.7rem; color: #6c757d; text-transform: uppercase; }
+    .cal-day .dnum { font-size: 1.15rem; font-weight: 700; color: #1a1a2e; }
+    .cal-day .dtasks { font-size: 0.7rem; color: #6c757d; }
+    .cal-day .dtasks .done { color: #28a745; font-weight: 600; }
+
+    .tasks-card {
+        background: white;
+        border-radius: 14px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid rgba(0,0,0,0.04);
+        margin-bottom: 1.5rem;
+    }
+    .tasks-card h2 { font-size: 1.15rem; font-weight: 600; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    .task-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #f0f0f0;
+        margin-bottom: 0.6rem;
+        transition: all 0.2s;
+    }
+    .task-item:hover { border-color: #d0c8ff; background: #faf9ff; }
+    .task-item.completed { opacity: 0.6; background: #f8fff9; border-color: #d4edda; }
+    .task-item.skipped { opacity: 0.5; }
+
+    .task-check {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        border: 2px solid #ced4da;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: all 0.2s;
+    }
+    .task-check:hover { border-color: #6366f1; }
+    .task-check.checked { background: #6366f1; border-color: #6366f1; color: white; }
+
+    .task-info { flex: 1; min-width: 0; }
+    .task-topic { font-weight: 600; color: #1a1a2e; }
+    .task-meta { font-size: 0.75rem; color: #6c757d; margin-top: 0.15rem; }
+    .task-reason {
+        font-size: 0.75rem;
+        color: #a855f7;
+        font-weight: 500;
+        margin-top: 0.25rem;
+    }
+
+    .priority-badge {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .priority-high { background: #f8d7da; color: #721c24; }
+    .priority-medium { background: #fff3cd; color: #856404; }
+    .priority-low { background: #d1ecf1; color: #0c5460; }
+
+    .task-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .task-actions a, .task-actions button {
+        padding: 0.35rem 0.75rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-practice { background: #6366f1; color: white; }
+    .btn-practice:hover { background: #4f46e5; color: white; }
+    .btn-skip { background: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; }
+    .btn-skip:hover { background: #e9ecef; }
+
+    .empty-state { text-align: center; padding: 3rem 1rem; color: #6c757d; }
+    .empty-state i { font-size: 3rem; color: #dee2e6; }
+
+    .btn-regenerate {
+        background: #f8f9fa;
+        color: #6c757d;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-regenerate:hover { background: #e9ecef; color: #495057; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="planner-container">
+
+    <div class="planner-header">
+        <div>
+            <h1><i class="bi bi-calendar-check"></i> Your Study Plan</h1>
+            <p>Exam on {{ plan.exam_date|date:"F j, Y" }} · {{ plan.daily_hours }} hours/day target</p>
+        </div>
+        <div class="days-badge">
+            <i class="bi bi-hourglass-split"></i>
+            {{ plan.days_remaining }} days remaining
+        </div>
+    </div>
+
+    <div class="progress-panel">
+        <div class="progress-card">
+            <div class="label">Overall Progress</div>
+            <div class="value">{{ plan.progress_percent }}%</div>
+            <div class="progress-bar-mini"><progress value="{{ plan.progress_percent }}" max="100" aria-label="Overall progress"></progress></div>
+        </div>
+        <div class="progress-card">
+            <div class="label">Completed Tasks</div>
+            <div class="value">{{ plan.completed_tasks }} / {{ plan.total_tasks }}</div>
+        </div>
+        <div class="progress-card">
+            <div class="label">Today's Tasks</div>
+            <div class="value">{{ todays_tasks|length }}</div>
+        </div>
+    </div>
+
+    <div class="calendar-strip">
+        {% for day in calendar_strip %}
+            <div class="cal-day {% if day.is_today %}is-today{% endif %}">
+                <div class="dlabel">{{ day.label }}</div>
+                <div class="dnum">{{ day.num }}</div>
+                <div class="dtasks">
+                    {% if day.total %}<span class="done">{{ day.completed }}</span>/{{ day.total }}{% else %}—{% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="tasks-card">
+        <h2>
+            <i class="bi bi-list-task" style="color: #6366f1;"></i>
+            Today's Tasks
+            <form method="post" action="{% url 'planner:regenerate-plan' %}" class="ms-auto mb-0"
+                onsubmit="return confirm('Regenerate your plan? This will replace all current tasks.');">
+                {% csrf_token %}
+                <button type="submit" class="btn-regenerate">
+                    <i class="bi bi-arrow-clockwise"></i> Regenerate
+                </button>
+            </form>
+        </h2>
+
+        {% if todays_tasks %}
+            {% for task in todays_tasks %}
+                <div class="task-item {% if task.status == 'completed' %}completed{% elif task.status == 'skipped' %}skipped{% endif %}"
+                     data-task-id="{{ task.id }}">
+                    <div class="task-check {% if task.status == 'completed' %}checked{% endif %}"
+                        data-task-status="{{ task.status }}"
+                        onclick="toggleTask(this.closest('.task-item').dataset.taskId, this.dataset.taskStatus)">
+                        {% if task.status == 'completed' %}<i class="bi bi-check"></i>{% endif %}
+                    </div>
+                    <div class="task-info">
+                        <div class="task-topic">{{ task.topic.name }}</div>
+                        <div class="task-meta">
+                            {{ task.topic.chapter.subject.name }} · {{ task.topic.chapter.name }}
+                            · {{ task.duration_minutes }} min
+                            <span class="priority-badge priority-{{ task.priority }} ms-2">{{ task.get_priority_display }}</span>
+                        </div>
+                        {% if task.reason %}<div class="task-reason"><i class="bi bi-info-circle"></i> {{ task.reason }}</div>{% endif %}
+                    </div>
+                    <div class="task-actions">
+                        <a href="{% url 'practice:start-practice-for-topic' topic_id=task.topic.id %}"
+                           class="btn-practice" title="Start practice">
+                            <i class="bi bi-play-fill"></i> Practice
+                        </a>
+                        {% if task.status == 'pending' %}
+                            <button class="btn-skip" onclick="skipTask('{{ task.id }}')" title="Skip">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-emoji-smile"></i>
+                <p class="mt-2 mb-0">No tasks scheduled for today. Enjoy the break!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="tasks-card">
+        <h2><i class="bi bi-calendar-week" style="color: #a855f7;"></i> Upcoming This Week</h2>
+
+        {% if upcoming_tasks %}
+            {% for task in upcoming_tasks %}
+                <div class="task-item">
+                    <div style="min-width: 70px; font-size: 0.8rem; color: #6c757d;">
+                        {{ task.scheduled_date|date:"D, M j" }}
+                    </div>
+                    <div class="task-info">
+                        <div class="task-topic">{{ task.topic.name }}</div>
+                        <div class="task-meta">
+                            {{ task.topic.chapter.subject.name }}
+                            <span class="priority-badge priority-{{ task.priority }} ms-2">{{ task.get_priority_display }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <p class="mt-2 mb-0">No upcoming tasks.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    const CSRF_TOKEN = '{{ csrf_token }}';
+
+    function toggleTask(taskId, status) {
+        if (status === 'completed') return;
+        fetch(`/planner/task/${taskId}/complete/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF_TOKEN, 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert(data.error || 'Failed to complete task.');
+        })
+        .catch(() => alert('Network error.'));
+    }
+
+    function skipTask(taskId) {
+        if (!confirm('Skip this task? You can regenerate later.')) return;
+        fetch(`/planner/task/${taskId}/skip/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF_TOKEN, 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert(data.error || 'Failed to skip task.');
+        })
+        .catch(() => alert('Network error.'));
+    }
+</script>
+{% endblock %}

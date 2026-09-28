@@ -12,6 +12,7 @@ from .views import (
     practice_session,
     report_question,
     session_progress,
+    start_practice_for_topic,
     student_dashboard,
     submit_session_answer,
     subjects_view,
@@ -210,5 +211,17 @@ urlpatterns = [
         "mock-tests/history/",
         mock_test_history,
         name="mock-test-history",
+    ),
+
+    path(
+        "topics/<int:topic_id>/start/",
+        start_practice_for_topic,
+        name="start-practice-for-topic",
+    ),
+
+    path(
+        "topics/<int:topic_id>/start/",
+        start_practice_for_topic,
+        name="start-practice-for-topic",
     ),
 ]
